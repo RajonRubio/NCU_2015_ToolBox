@@ -1,6 +1,7 @@
-﻿# ncu2015-ToolBox
-A project of ToolBox
+# Prototype練習分配
 
-# 成員名單
-組長：吳政陽  
-組員：賴建勳、蔡孟谷、林唐正、林奉祁、吳承霖、吳易璋
+1. Event Dispatcher：政陽
+2. TCP-Client-Server：承霖、建勳
+3. UDP-Client-Server：易璋
+4. Animation：孟谷
+5. Background：奉祁、唐正
