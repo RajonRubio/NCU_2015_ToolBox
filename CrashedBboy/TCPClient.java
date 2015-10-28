@@ -2,19 +2,20 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class MyClient {  
+public class TCPClient {  
 	private String serverAddress;       
 	private int serverPort;
 	private BufferedReader reader;           
 	private PrintStream writer;
 	private Socket sock;
 	private int[] treasures;
+	private static final String[] treasureName = {"A", "B", "C"};
 
 	public static void main(String[] args){
-		MyClient client = new MyClient();
+		TCPClient client = new TCPClient();
 	}
 
-	public MyClient (){ 
+	public TCPClient (){ 
 		this.treasures = new int[]{0, 0, 0};
 		this.setServer();
 		this.connect(serverAddress, serverPort);
@@ -27,6 +28,14 @@ public class MyClient {
 		Thread treasureThread = new Thread(new TreasureAsker());
 		treasureThread.start();
 
+		/** Create new thread to count down treasure's available time */
+		Thread treasureTimerThread1 = new Thread(new TreasureTimer(0));
+		Thread treasureTimerThread2 = new Thread(new TreasureTimer(1));
+		Thread treasureTimerThread3 = new Thread(new TreasureTimer(2));
+		
+		treasureTimerThread1.start();
+		treasureTimerThread2.start();
+		treasureTimerThread3.start();
 	}
 
 	/** Set up host information */
@@ -43,10 +52,10 @@ public class MyClient {
 	/** Create connection */
 	private void connect(String host, int port) {
 		try{
-			sock = new Socket(host, port);      
+			this.sock = new Socket(host, port);      
 			InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());  
-			reader = new BufferedReader(streamReader);    
-			writer = new PrintStream(sock.getOutputStream());
+			this.reader = new BufferedReader(streamReader);    
+			this.writer = new PrintStream(sock.getOutputStream());
 		}catch(IOException e){
 			e.printStackTrace(System.out);
 		}
@@ -57,7 +66,20 @@ public class MyClient {
 			String message;
 			try{
 				while ((message = reader.readLine()) != null){
-					System.out.println("Someone:"+message);
+					String[] msgArray = message.split(" ");
+					if(msgArray[0] == "YES"){
+						switch(msgArray[1]){
+							case "A":
+								treasures[0] = 5;
+								break;
+							case "B":
+								treasures[1] = 5;
+								break;
+							case "C":
+								treasures[2] = 5;
+								break;
+						}
+					}
 				}
 			}catch(Exception e){
 				e.printStackTrace();
@@ -68,11 +90,10 @@ public class MyClient {
 	public class TreasureAsker implements Runnable{
 		public void run() {
 			int target = 0;
-			String[] name = {"A", "B", "C"};
 			try {
 				while(true) {
 					if(treasures[target] == 0) {
-						writer.println("GET " + name[target]);
+						writer.println("GET " + treasureName[target]);
 						writer.flush();
 						Thread.sleep(1000);
 					}
@@ -83,4 +104,30 @@ public class MyClient {
 			}
 		}
 	}
+
+	public class TreasureTimer implements Runnable{
+		private int target;
+		public TreasureTimer(int target) {
+			this.target = target;
+		}
+		public void run() {
+			try {
+				while(true) {
+					if (treasures[target] != 0) {
+						int pre = treasures[target];
+						treasures[target] -= 1;
+						if (treasures[target] < 0) {
+							treasures[target] = 0;
+							writer.println("RELEASE " + treasureName[target]);
+							writer.flush();
+						}
+						Thread.sleep((pre - treasures[target]) * 1000);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 }
