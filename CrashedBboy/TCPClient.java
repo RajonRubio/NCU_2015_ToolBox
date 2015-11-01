@@ -32,10 +32,12 @@ public class TCPClient {
 		Thread treasureTimerThread1 = new Thread(new TreasureTimer(0));
 		Thread treasureTimerThread2 = new Thread(new TreasureTimer(1));
 		Thread treasureTimerThread3 = new Thread(new TreasureTimer(2));
-		
 		treasureTimerThread1.start();
 		treasureTimerThread2.start();
 		treasureTimerThread3.start();
+
+		Thread logThread = new Thread(new LogHandler());
+		logThread.start();
 	}
 
 	/** Set up host information */
@@ -67,7 +69,7 @@ public class TCPClient {
 			try{
 				while ((message = reader.readLine()) != null){
 					String[] msgArray = message.split(" ");
-					if(msgArray[0] == "YES"){
+					if(msgArray[0].equals("YES")){
 						switch(msgArray[1]){
 							case "A":
 								treasures[0] = 5;
@@ -116,13 +118,13 @@ public class TCPClient {
 					if (treasures[target] != 0) {
 						int pre = treasures[target];
 						treasures[target] -= 1;
-						if (treasures[target] < 0) {
+						if (treasures[target] <= 0) {
 							treasures[target] = 0;
 							writer.println("RELEASE " + treasureName[target]);
 							writer.flush();
 						}
-						Thread.sleep((pre - treasures[target]) * 1000);
 					}
+					Thread.sleep(1000);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -130,4 +132,18 @@ public class TCPClient {
 		}
 	}
 
+	public class LogHandler implements Runnable{
+		public void run() {
+			try {
+				while (true) {
+					System.out.println("A " + (treasures[0]==0?"NO ":"YES ") + treasures[0]);
+					System.out.println("B " + (treasures[1]==0?"NO ":"YES ") + treasures[1]);
+					System.out.println("C " + (treasures[2]==0?"NO ":"YES ") + treasures[2]);
+					Thread.sleep(3000);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

@@ -3,31 +3,33 @@ import java.net.*;
 import java.util.*;
 
 public class TCPServer{
-	private static Vector output;
 	private int listenPort;
 	private static ServerSocket serverSock;
 	private int[] treasure;
+	private final static String[] treasureName = {"A", "B", "C"};
 
 	public static void main (String args[]){
 		TCPServer server = new TCPServer();
 		server.startListen();
-		while (true) {
+	}
+
+	public TCPServer() {
+		this.treasure = new int[]{0, 0, 0};
+		this.startListen();
+		int connNum = 0;
+		Thread logThread = new Thread(new LogHandler());
+		logThread.start();
+		while (connNum < 2) {
 			try {
 					Socket s = serverSock.accept();    
-					PrintStream writer = new PrintStream(s.getOutputStream());  
-					System.out.println("Get one connection from " + s.getInetAddress()); 
-					output.add(writer);         
-					Thread t = new Thread(new TCPServer().new ConnectionHandler(s)); 
+					System.out.println("Get one connection from " + s.getInetAddress());
+					connNum += 1;
+					Thread t = new Thread(new ConnectionHandler(s, connNum)); 
 					t.start();           
 			} catch (Exception e) {
 				e.printStackTrace(System.out);
 			}
 		}
-	}
-
-	public TCPServer() {
-		this.output = new Vector();          
-		treasure = new int[]{0, 0, 0};
 	}
 
 	private void startListen() {
@@ -44,15 +46,18 @@ public class TCPServer{
 
 	public class ConnectionHandler implements Runnable{   
 
-		/** Reads text from a character-input stream */
-		BufferedReader reader;  
-		Socket sock;            
+		private Socket sock;
+		private BufferedReader reader;
+		private PrintStream writer;
+		private int connectionID;
 
-		public ConnectionHandler (Socket s){
+		public ConnectionHandler (Socket s, int id){
 			try{
-				sock = s;
-				InputStreamReader isReader = new InputStreamReader(sock.getInputStream()); 
-				reader = new BufferedReader(isReader);
+				this.sock = s;
+				this.connectionID = id;
+				InputStreamReader isReader = new InputStreamReader(this.sock.getInputStream()); 
+				this.reader = new BufferedReader(isReader);
+				this.writer = new PrintStream(this.sock.getOutputStream());  
 			} catch (Exception e) {
 				e.printStackTrace(System.out);
 			} 
@@ -64,13 +69,49 @@ public class TCPServer{
 			try {
 				while ((message=reader.readLine()) != null){   
 					String[] msgArray = message.split(" ");
-					if (msgArray[0] == "GET") {
-						/** Check and response */
-					} else if (msgArray[0] == "RELEASE") {
-						/** Reset treasure */
+					if (msgArray[0].equals("GET")) {
+						this.get(msgArray[1]);
+					} else if (msgArray[0].equals("RELEASE")) {
+						this.release(msgArray[1]);
 					}
 				}
 			} catch (Exception e){
+				e.printStackTrace(System.out);
+			}
+		}
+
+		private void get(String name) {
+			try {
+				Random ran = new Random();
+				int treasureID = Arrays.asList(treasureName).indexOf(name);
+				if (treasureID != -1 && treasure[treasureID] == 0/* && ran.nextInt(2) == 1*/) {
+						treasure[treasureID] = this.connectionID;
+						this.writer.println("YES " + treasureName[treasureID]);
+				} else {
+						this.writer.println("NO " + treasureName[treasureID]);
+				}
+				writer.flush();
+			} catch (Exception e) {
+				e.printStackTrace(System.out);
+			}
+		}
+
+		private void release(String name) {
+			int treasureID = Arrays.asList(treasureName).indexOf(name);
+			treasure[treasureID] = 0;
+		}
+	}
+
+	public class LogHandler	implements Runnable {
+		public void run() {
+			try {
+				while (true) {
+					System.out.println("A " + (treasure[0]==0?"NO ":"YES ") + treasure[0]);
+					System.out.println("B " + (treasure[1]==0?"NO ":"YES ") + treasure[1]);
+					System.out.println("C " + (treasure[2]==0?"NO ":"YES ") + treasure[2]);
+					Thread.sleep(3000);
+				}
+			} catch (Exception e) {
 				e.printStackTrace(System.out);
 			}
 		}
