@@ -3,18 +3,26 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class TCPSM{
+public class TCPServer{
 	private static final int LISTENPORT = 8000;
 	private static ServerSocket serverSock;
 	private Vector<String> clientIPTable;
+	private static TCPServer server = null;
 
-	public TCPSM() {
+	private TCPServer() {
 		int connNum = 0;
 		clientIPTable = new Vector<String>();
 		serverSock = null;
 	}
 
-	protected void initTCPServer() {
+	public static TCPServer getServer() {
+		if (server == null) {
+			server = new TCPServer();
+		}
+		return server;
+	}
+
+	public void initTCPServer() {
 		try {
 			this.serverSock = new ServerSocket(this.LISTENPORT);  
 			Thread ch = new Thread(new ConnectionHandler(this.serverSock, this.clientIPTable));
@@ -24,7 +32,7 @@ public class TCPSM{
 		}
 	}
 
-	protected Vector getClientIPTable() {
+	public Vector getClientIPTable() {
 		return this.clientIPTable;
 	}
 } 
