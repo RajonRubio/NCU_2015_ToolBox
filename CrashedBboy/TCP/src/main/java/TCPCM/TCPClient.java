@@ -13,7 +13,7 @@ public class TCPClient {
     this.sock = null;
   }
 
-  public static TCPClient getClient() {
+  public static TCPClient getInstance() {
     if (client == null) {
       client = new TCPClient();
     }   

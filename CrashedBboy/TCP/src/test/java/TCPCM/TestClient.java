@@ -45,7 +45,7 @@ public class TestClient {
 
 	@Before
 	public void beforeEach() {
-		client = TCPClient.getClient();
+		client = TCPClient.getInstance();
 	}
 
 	@After
