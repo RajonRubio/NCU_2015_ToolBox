@@ -14,6 +14,7 @@ public class TestServer {
 	private static TCPServer server;
 	private Socket client;
 	private PrintStream writer;
+	private ServerSocket sc;
 
 	@Before
 	public void init() throws Exception {
@@ -31,6 +32,17 @@ public class TestServer {
 	}
 
 	@Test
+	public void testInitServerFailed() throws Exception {
+		try {
+			sc = new ServerSocket(8000);
+			server.initTCPServer();
+		} catch (Exception e) {
+			assertNotNull(e);
+			sc.close();
+		}
+	}
+
+	@Test
 	public void testStartUpdate() throws Exception {
 		server.connectionComplete();
 		assertEquals(true, server.cdc.start);
@@ -39,10 +51,12 @@ public class TestServer {
 	@Test
 	public void testIPTable() throws Exception{
 		server.initTCPServer();
+		Vector<String> v1 = server.getClientIPTable();
+		assertEquals(0, v1.size());
 		clientConnect();
 		Thread.sleep(100);
-		Vector<String> v = server.getClientIPTable();
-		assertEquals(1, v.size());
+		Vector<String> v2 = server.getClientIPTable();
+		assertEquals(1, v2.size());
 		cleanClient();
 		cleanServer();
 	} 

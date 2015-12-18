@@ -48,19 +48,24 @@ public class TestClient {
 		client = TCPClient.getInstance();
 	}
 
-	@After
-	public void resetClient() {
-		client.clean();
-	}
-
 	@Test
 	public void testConnect() throws Exception {
 		boolean status = false;
 		try {
 			status = client.connectServer(InetAddress.getLocalHost());
 			assertEquals(true, status);
+			client.clean();
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
+			throw e;
+		}
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testConnectFailed() throws Exception {
+		try {
+			client.connectServer(null);
+		} catch (Exception e) {
 			throw e;
 		}
 	}
