@@ -13,7 +13,7 @@ public class TCPClient {
     this.sock = null;
   }
 
-  public static TCPClient getClient() {
+  public static TCPClient getInstance() {
     if (client == null) {
       client = new TCPClient();
     }   
@@ -21,7 +21,6 @@ public class TCPClient {
   }
 
   public boolean connectServer(InetAddress serverIP) throws Exception{
-		System.out.println("IP parameter:" + serverIP.getHostAddress());
     try {
       this.sock = new Socket(serverIP, this.TCPPORT);
       InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());  

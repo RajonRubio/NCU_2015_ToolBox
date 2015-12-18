@@ -45,12 +45,7 @@ public class TestClient {
 
 	@Before
 	public void beforeEach() {
-		client = TCPClient.getClient();
-	}
-
-	@After
-	public void resetClient() {
-		client.clean();
+		client = TCPClient.getInstance();
 	}
 
 	@Test
@@ -59,8 +54,18 @@ public class TestClient {
 		try {
 			status = client.connectServer(InetAddress.getLocalHost());
 			assertEquals(true, status);
+			client.clean();
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
+			throw e;
+		}
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testConnectFailed() throws Exception {
+		try {
+			client.connectServer(null);
+		} catch (Exception e) {
 			throw e;
 		}
 	}
