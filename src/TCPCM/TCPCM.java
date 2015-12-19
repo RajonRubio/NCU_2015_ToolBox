@@ -19,6 +19,9 @@ public class TCPCM {
 			Socket socket = new Socket(serverIP, TCP.PORT);
 			writer = new ObjectOutputStream(socket.getOutputStream());
 			reader = new ObjectInputStream(socket.getInputStream());
+			writer.writeObject(Protocols.Action.CH_NAME);
+			writer.writeObject(nickname);
+			writer.flush();
 			new Handler(socket).start();
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -27,25 +30,36 @@ public class TCPCM {
 		return true;
 	}
 	
-	public void inputMoves() {
+	/*
+	 * move attack
+	 */
+	public void keyChange(Protocols.Action action) {
 		try {
-			writer.writeInt(1);
+			writer.writeObject(action);
 			writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void keyShootPressed() {
-		
+	public void chooseTeam(Protocols.Team team) {
+		try {
+			writer.writeObject(Protocols.Action.CH_TEAM);
+			writer.writeObject(team);
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public void giveTeam() {
-		
-	}
-	
-	public void giveJob() {
-		
+	public void chooseRole(Protocols.Role role) {
+		try {
+			writer.writeObject(Protocols.Action.CH_ROLE);
+			writer.writeObject(role);
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private class Handler extends Thread {
