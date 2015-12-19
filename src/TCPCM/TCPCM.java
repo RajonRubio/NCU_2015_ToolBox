@@ -2,7 +2,8 @@ package TCPCM;
 
 import java.io.*;
 import java.net.*;
-import Protocols.Action;
+import Protocols.ServerAction;
+import Protocols.ClientAction;
 import Protocols.TeamState;
 
 import SETTINGS.TCP; 
@@ -21,7 +22,7 @@ public class TCPCM {
 			Socket socket = new Socket(serverIP, TCP.PORT);
 			writer = new ObjectOutputStream(socket.getOutputStream());
 			reader = new ObjectInputStream(socket.getInputStream());
-			writer.writeObject(Protocols.Action.CH_NAME);
+			writer.writeObject(Protocols.ServerAction.CH_NAME);
 			writer.writeObject(nickname);
 			writer.flush();
 			new Handler(socket).start();
@@ -35,7 +36,7 @@ public class TCPCM {
 	/*
 	 * move attack
 	 */
-	public void keyChange(Protocols.Action action) {
+	public void keyChange(ServerAction action) {
 		try {
 			writer.writeObject(action);
 			writer.flush();
@@ -46,7 +47,7 @@ public class TCPCM {
 	
 	public void chooseTeam(Protocols.Team team) {
 		try {
-			writer.writeObject(Protocols.Action.CH_TEAM);
+			writer.writeObject(Protocols.ServerAction.CH_TEAM);
 			writer.writeObject(team);
 			writer.flush();
 		} catch (IOException e) {
@@ -56,7 +57,7 @@ public class TCPCM {
 	
 	public void chooseRole(Protocols.Role role) {
 		try {
-			writer.writeObject(Action.CH_ROLE);
+			writer.writeObject(ServerAction.CH_ROLE);
 			writer.writeObject(role);
 			writer.flush();
 		} catch (IOException e) {
@@ -73,16 +74,20 @@ public class TCPCM {
 		
 		@Override
 		public void run() {
-			Action action;
+			ClientAction action;
 			while(true) {
 				try {
-					action = (Action)reader.readObject();
+					action = (ClientAction)reader.readObject();
 					switch(action) {
 					case NAME_OK:
 						// ask first scene to go next
+						int clientno = reader.readInt();
 						break;
 					case NAME_FAIL:
 						// ask first scene to pick another name
+						break;
+					case SERVER_FULL:
+						// ask first scene to say that server is full
 						break;
 					case TEAM_STAT:
 						TeamState teamState = (TeamState)reader.readObject();
