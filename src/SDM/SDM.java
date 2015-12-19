@@ -1,6 +1,8 @@
 package SDM;
 
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,7 +17,7 @@ import com.sun.javafx.geom.AreaOp.AddOp;
 public class SDM {
 	public BasicBlock[][] scene = new BasicBlock[40][100]; //scene is a BasicBlock type array
 	public double mapdata[][] = new double[40][100];  
-	public ArrayList<WoodBox> woodbox = new ArrayList<WoodBox>(); //用一個ArrayList拿來存取木箱的資料
+//	public ArrayList<WoodBox> woodbox = new ArrayList<WoodBox>(); //用一個ArrayList拿來存取木箱的資料 但是不用了
 	public Image[] tileImages = new Image[5];
 	public SDM() {
 		BasicBlock[][] scene;
@@ -86,13 +88,10 @@ public class SDM {
 				if(content[k][0] == 1){
 					scene[(int)content[k][2]][(int)content[k][1]].type= BasicBlock.woodbox;
 					scene[(int)content[k][2]][(int)content[k][1]].touchable = false;
-					
-					woodbox.add(new WoodBox((int)content[k][1], (int)content[k][2]) );
 				}	
 				if(content[k][0] == 2){
 					scene[(int)content[k][2]][(int)content[k][1]].type= BasicBlock.rockbox;	
 					scene[(int)content[k][2]][(int)content[k][1]].touchable = false;
-					
 				}
 			}
 		}
@@ -108,9 +107,6 @@ public class SDM {
 				if(x==99)
 					System.out.print('\n');
 			}
-		}
-		for(int i=0;i<woodbox.size();i++){
-				System.out.print((int)woodbox.get(i).location_x+" "+(int)woodbox.get(i).location_y + '\n');  //顯示方變 還是先轉型
 		}
 		return mapdata;
 	}
@@ -128,6 +124,5 @@ public class SDM {
 	}
 	/* 從UDP那邊讀來 哪些木牆被撞到了 然後要更新他們的type*/
 	public void updateBoxes() {
-		
 	}
 }
