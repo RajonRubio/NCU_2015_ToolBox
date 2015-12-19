@@ -2,6 +2,8 @@ package TCPCM;
 
 import java.io.*;
 import java.net.*;
+import java.util.Timer;
+
 import Protocols.ServerAction;
 import Protocols.ClientAction;
 import Protocols.TeamState;
@@ -65,26 +67,49 @@ public class TCPCM {
 		}
 	}
 	
-	private class Handler extends Thread {
+	public class Handler extends Thread {
 		private Socket socket = null;
+		private Timer timer;
+		private int timeout;
 		
 		Handler(Socket socket) {
 			this.socket = socket;
+			this.timeout = 10;
+			this.timer = new Timer();
+			this.timer.schedule(new HeartBeatTask(this), 0, 1000);
+		}
+		
+		public int getTimeout() {
+			return this.timeout;
+		}
+		
+		public void countDown() {
+			this.timeout -= 1;
+		}
+		
+		public void disConnected() {
+			this.timer.cancel();
+			// disconnected
 		}
 		
 		@Override
 		public void run() {
 			ClientAction action;
-			while(true) {
+			boolean running = true;
+			while(running) {
 				try {
 					action = (ClientAction)reader.readObject();
 					switch(action) {
+					case HEART_BEAT:
+						this.timeout = 10;
+						break;
 					case NAME_OK:
 						// ask first scene to go next
 						int clientno = reader.readInt();
 						break;
 					case NAME_FAIL:
 						// ask first scene to pick another name
+						running = false;
 						break;
 					case SERVER_FULL:
 						// ask first scene to say that server is full
@@ -106,6 +131,13 @@ public class TCPCM {
 					e.printStackTrace();
 				}
 			}
+			// disconnect
+			try {
+				this.socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			this.socket = null;
 		}
 	}
 }
