@@ -1,16 +1,35 @@
 package TCPCM;
 
+import java.io.*;
+import java.net.*;
+
+import SETTINGS.TCP; 
+
 public class TCPCM {
+	private ObjectOutputStream writer = null;
 	public TCPCM() {
 		
 	}
 	
-	public void connectServer() {
-		
+	public boolean connectServer(String serverIP, String nickname) {
+		try {
+			Socket socket = new Socket(serverIP, TCP.PORT);
+			writer = new ObjectOutputStream(socket.getOutputStream());
+			new Handler(socket).start();
+		} catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 	
 	public void inputMoves() {
-		
+		try {
+			writer.writeInt(1);
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void keyShootPressed() {
@@ -23,5 +42,19 @@ public class TCPCM {
 	
 	public void giveJob() {
 		
+	}
+	
+	private class Handler extends Thread {
+		private PrintStream writer;
+		private InputStreamReader reader;
+		private Socket socket = null;
+		
+		Handler(Socket socket) {
+			this.socket = socket;
+		}
+		
+		@Override
+		public void run() {
+		}
 	}
 }
