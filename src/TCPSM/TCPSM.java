@@ -10,7 +10,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
 
-import Protocols.Action;
+import javax.management.relation.Role;
+
+import Protocols.ClientAction;
+import Protocols.ServerAction;
+import Protocols.Team;
 import SETTINGS.TCP;
 
 import CDC.CDC;
@@ -23,6 +27,7 @@ public class TCPSM {
 	private Vector<Thread> clientThreads;
 	private int connectNum;
 	private Thread listenThread;
+	private boolean serverStart;
 	
 	public TCPSM(CDC cdc) {
 		this.clientIPTable = new Vector<String>();
@@ -30,9 +35,11 @@ public class TCPSM {
 		this.clientThreads = new Vector<Thread>();
 		this.connectNum = 0;
 		this.cdc = cdc;
+		this.serverStart = false;
 	}
 	
 	public void initServer() throws Exception {
+		this.serverStart = true;
 		this.serverSock = new ServerSocket(TCP.PORT);
 		this.listenThread = new Thread(new ConnectionHandler());
 		this.listenThread.start();
@@ -45,7 +52,7 @@ public class TCPSM {
 	public void gameOver() throws Exception {
 		for(Socket s : this.clientConnections) {
 			ObjectOutputStream writer = new ObjectOutputStream(s.getOutputStream());
-			writer.writeObject(Action.GAME_OVER);
+			writer.writeObject(ClientAction.GAME_OVER);
 			writer.flush();
 		}
 	}
@@ -53,17 +60,26 @@ public class TCPSM {
 	public void gameStart() throws Exception {
 		for(Socket s : this.clientConnections) {
 			ObjectOutputStream writer = new ObjectOutputStream(s.getOutputStream());
-			writer.writeObject(Action.GAME_START);
+			writer.writeObject(ClientAction.GAME_START);
 			writer.flush();
 		}
 	}
 	
+	public void stopServer() throws Exception {
+		this.serverStart = false;
+		for(Socket s : this.clientConnections) {
+			s.close();
+		}
+		clientIPTable.clear();
+		clientConnections.clear();
+		clientThreads.clear();
+	}
+	
 	private class ConnectionHandler implements Runnable {
-		
 		@Override
 		public void run() {
 			try {
-				while (true) {
+				while (serverStart) {
 					Socket s = serverSock.accept();    
 					addConnection(s);
 				}   
@@ -101,21 +117,50 @@ public class TCPSM {
 		
 		@Override
 		public void run() {
+			ServerAction code;
 			try {
-				while (((Action)reader.readObject()) != null){   
-					//switchCode(something);
+				while (serverStart){
+					if ((code = (ServerAction)reader.readObject()) != null)
+					switchCode(code);
 				}
 			} catch (Exception e){
 				e.printStackTrace(System.out);
 			}
 		}
 		
-		private void switchCode(int code) {
-			if (code >= 1 && code <= 4) {
-				//cdc.updateDirection(this.id, code);
-			} else if(code == 5) {
-				//cdc.getItem(this.id);
-			}   
+		private void switchCode(ServerAction code) throws Exception{
+			switch(code) {
+				case UP_PRESS:
+				case DOWN_PRESS:
+				case RIGHT_PRESS:
+				case LEFT_PRESS:
+					// call cdc move
+					break;
+				case UP_RELEASE:
+				case DOWN_RELEASE:
+				case RIGHT_RELEASE:
+				case LEFT_RELEASE:
+					// call cdc stop move
+					break;
+				case ATTACK:
+					// call cdc attack
+					break;
+				case CH_NAME:
+					String name;
+					name = (String)this.reader.readObject();
+					// call cdc set name
+					break;
+				case CH_TEAM:
+					Team team;
+					team = (Team)this.reader.readObject();
+					// call cdc select team
+					break;
+				case CH_ROLE:
+					Role role;
+					role = (Role)this.reader.readObject();
+					// call cdc select role
+					break;
+			}
 		}
 	}
 }
