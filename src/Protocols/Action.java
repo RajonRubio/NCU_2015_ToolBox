@@ -1,6 +1,6 @@
-package SETTINGS;
+package Protocols;
 
-public enum MoveCode {
+public enum Action {
 	UP_PRESS, DOWN_PRESS, RIGHT_PRESS, LEFT_PRESS,
 	UP_RELEASE, DOWN_RELEASE, RIGHT_RELEASE, LEFT_RELEASE,
 	ATTACK,
@@ -10,8 +10,7 @@ public enum MoveCode {
 	JOIN,
 	READY,
 	TEAM_STAT,
-	GAME_START,GAME_OVER,
-	
+	GAME_START,GAME_OVER
 }
 
 /* server side
