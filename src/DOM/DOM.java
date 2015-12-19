@@ -3,9 +3,13 @@ package DOM;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import org.newdawn.slick.Animation;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
+
 public class DOM {
-	public DOM(int clientno) {
-		this.clientno = clientno;
+	public DOM() {
+		
 	}
 	
 	int clientno;
@@ -13,8 +17,19 @@ public class DOM {
 	ArrayList<Character> player = new ArrayList<Character>();
 	ArrayList<Bullet> bullet = new ArrayList<Bullet>();
 	
-	public synchronized void addVirtualCharacter(int clientno, String name, int team, int job) {
-		Character temp = new Character(clientno, name, team, job);
+	public SpriteSheet[][] charSheet = new SpriteSheet[4][8];
+	public Animation[][] charAnimation = new Animation[4][8];
+	
+	public void setClientno(int clientno) {
+		this.clientno = clientno;
+	}
+	
+	public void gameStart() {
+		
+	}
+	
+	public synchronized void addVirtualCharacter(int clientno, String name, int team, int role) throws SlickException {
+		Character temp = new Character(clientno, name, team, role, charSheet[role], charAnimation[role]);
 		if(clientno == this.clientno) {
 			me = temp;
 		}
