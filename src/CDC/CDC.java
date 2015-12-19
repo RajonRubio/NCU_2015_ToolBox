@@ -1,16 +1,74 @@
 package CDC;
 
+import java.util.ArrayList;
+
+import TCPSM.TCPSM;
+
 public class CDC {
-	public CDC() {
-		
+	private Character [] character = new Character [4];
+	private int characternumber = 0;
+	private ArrayList<Bullet> bullets = new ArrayList<>();
+	private boolean full = false;
+	private TCPSM tcpsm;
+	
+	public CDC(TCPSM tcpsm) {
+		this.tcpsm = tcpsm;
 	}
 	
-	public void addVirtualCharacter() {
-		
+	public boolean checkName(String name) {
+		for(int i=0;i<=characternumber;i++)
+		{
+			if(character[i].getName() == name)
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 	
-	public void removeVirtualCharacter() {
-		
+	public void addVirtualCharacter(int clientnumber, String name) {
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber不再範圍裡";
+		character[characternumber] = new Character(clientnumber, name);
+	}
+	
+	public void removeVirtualCharacter(int clientnumber) {
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber不再範圍裡";
+		character[characternumber] = null;
+	}
+	
+	public void setTeam(int clientnumber, int team) {
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber不再範圍裡";
+		character[characternumber].setTeam(team);
+	}
+	
+	public void setJob(int clientnumber, int job) {
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber不再範圍裡";
+		character[characternumber].setJob(job);
+		character[characternumber].setJobConstant();
+	}
+	
+	public void setReady(int clientnumber, Boolean ready) {
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber不再範圍裡";
+		character[characternumber].setReady(ready);
+		if(checkReady())
+		{
+			GameStart();
+		}
+	}
+	
+	public boolean checkReady() {
+		for(int i=0;i<=characternumber;i++)
+		{
+			if(character[i].getReady() == false)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public void GameStart() {
+		tcpsm.gamestart();
 	}
 	
 	public void addBullet() {
