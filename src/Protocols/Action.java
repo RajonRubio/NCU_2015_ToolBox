@@ -7,8 +7,8 @@ public enum Action {
 	CH_NAME,
 	NAME_OK,
 	NAME_FAIL,
-	JOIN,
-	READY,
+	CH_TEAM,
+	CH_ROLE,
 	TEAM_STAT,
 	GAME_START,GAME_OVER
 }
