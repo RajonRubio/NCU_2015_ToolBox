@@ -1,8 +1,9 @@
 package Protocols;
 
 public enum Role {
-	A,
-	B,
-	C,
+	NULL,
+	A, 
+	B, 
+	C, 
 	D
 }

@@ -16,7 +16,7 @@ public enum Action {
 /* server side
  * (CH_NAME, String )
  * (JOIN, ENUM TEAM)
- * (READY, ENUM ROLE)
+ * (READY, ENUM JOB)
  * 
  */
 
