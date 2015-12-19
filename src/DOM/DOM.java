@@ -7,6 +7,10 @@ import org.newdawn.slick.Animation;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
+import Protocols.CharacterState;
+import Protocols.Role;
+import Protocols.Team;
+
 public class DOM {
 	public DOM() {
 		
@@ -16,20 +20,38 @@ public class DOM {
 	Character me;
 	ArrayList<Character> player = new ArrayList<Character>();
 	ArrayList<Bullet> bullet = new ArrayList<Bullet>();
+	boolean checkRole[] = {false, false, false, false};
 	
 	public SpriteSheet[][] charSheet = new SpriteSheet[4][8];
 	public Animation[][] charAnimation = new Animation[4][8];
+	public SpriteSheet[] bulletSheet = new SpriteSheet[4];
+	public Animation[] bulletAnimation = new Animation[4];
 	
 	public void setClientno(int clientno) {
 		this.clientno = clientno;
 	}
 	
-	public void gameStart() {
-		
+	public void gameStart(CharacterState state) throws SlickException {
+		int role;
+		for(int i = 0; i < 4; i++) {
+			role = state.player.get(i).role.ordinal();
+			if(checkRole[role] == false) {
+				checkRole[role] = true;
+				for(int j = 0; j < 8; j++) {
+					String src = "img/char/" + (role+1) + "-" + (j+1) + ".png";
+					charSheet[role][j] = new SpriteSheet(src, 32, 32);
+					charAnimation[role][j] = new Animation(charSheet[role][j], 200);
+				}
+				String src = "img/bullet/" + (role+1) + ".png";
+				bulletSheet[role] = new SpriteSheet(src, 32, 32);
+				bulletAnimation[role] = new Animation(bulletSheet[role], 200);
+			}
+			addVirtualCharacter(state.player.get(i).clientno, state.player.get(i).name, state.player.get(i).team, state.player.get(i).role);
+		}
 	}
 	
-	public synchronized void addVirtualCharacter(int clientno, String name, int team, int role) throws SlickException {
-		Character temp = new Character(clientno, name, team, role, charSheet[role], charAnimation[role]);
+	public synchronized void addVirtualCharacter(int clientno, String name, Team team, Role role) throws SlickException {
+		Character temp = new Character(clientno, name, team, role, charSheet[role.ordinal()], charAnimation[role.ordinal()]);
 		if(clientno == this.clientno) {
 			me = temp;
 		}
@@ -84,7 +106,7 @@ public class DOM {
 		return object;
 	}
 	
-	public Point2D.Double getVirtualCharacterXY() throws Exception {
+	public Point2D.Double getVirtualCharacterXY() {
 		return me.location;
 	}
 }

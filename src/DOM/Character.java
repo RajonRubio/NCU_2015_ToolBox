@@ -7,11 +7,14 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
+import Protocols.Role;
+import Protocols.Team;
+
 public class Character extends DynamicObject {
 	public int clientno;
 	public String name;
-	public int team = -1;
-	public int role = -1; 
+	public Team team = Team.NULL;
+	public Role role = Role.NULL; 
 	public int status = 0;
 	public Point2D.Double location;
 	public int currentHP = 100;
@@ -24,7 +27,7 @@ public class Character extends DynamicObject {
 	public SpriteSheet[] charSheet = new SpriteSheet[8];
 	public Animation[] charAnimation = new Animation[8];
 	
-	Character(int clientno, String name, int team, int role, SpriteSheet[] charSheet, Animation[] charAnimation) throws SlickException {
+	Character(int clientno, String name, Team team, Role role, SpriteSheet[] charSheet, Animation[] charAnimation) throws SlickException {
 		this.clientno = clientno;
 		this.name = name;
 		this.team = team;
