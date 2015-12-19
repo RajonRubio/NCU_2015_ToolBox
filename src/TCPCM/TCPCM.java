@@ -2,19 +2,20 @@ package TCPCM;
 
 import java.io.*;
 import java.net.*;
-import java.util.*; 
+
+import SETTINGS.TCP; 
 
 public class TCPCM {
-	private final int TCPPORT = 8000;
-	private Socket socket;
-	
+	private ObjectOutputStream writer = null;
 	public TCPCM() {
-		this.socket = null;
+		
 	}
 	
-	public boolean connectServer(String serverIP) {
+	public boolean connectServer(String serverIP, String nickname) {
 		try {
-			this.socket = new Socket(serverIP, this.TCPPORT);
+			Socket socket = new Socket(serverIP, TCP.PORT);
+			writer = new ObjectOutputStream(socket.getOutputStream());
+			new Handler(socket).start();
 		} catch(Exception e) {
 			e.printStackTrace();
 			return false;
@@ -23,7 +24,12 @@ public class TCPCM {
 	}
 	
 	public void inputMoves() {
-		
+		try {
+			writer.writeInt(1);
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void keyShootPressed() {
@@ -36,5 +42,19 @@ public class TCPCM {
 	
 	public void giveJob() {
 		
+	}
+	
+	private class Handler extends Thread {
+		private PrintStream writer;
+		private InputStreamReader reader;
+		private Socket socket = null;
+		
+		Handler(Socket socket) {
+			this.socket = socket;
+		}
+		
+		@Override
+		public void run() {
+		}
 	}
 }
