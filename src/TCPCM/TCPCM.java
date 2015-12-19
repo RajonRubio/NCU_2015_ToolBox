@@ -11,10 +11,6 @@ import Protocols.TeamState;
 import SETTINGS.TCP; 
 
 public class TCPCM {
-	
-	private ObjectOutputStream writer = null;
-	private ObjectInputStream reader = null;
-	
 	public TCPCM() {
 		
 	}
@@ -139,5 +135,25 @@ public class TCPCM {
 			}
 			this.socket = null;
 		}
+=======
+	public void connectServer() {
+		
+	}
+	
+	public void inputMoves() {
+		
+	}
+	
+	public void keyShootPressed() {
+		
+	}
+	
+	public void giveTeam() {
+		
+	}
+	
+	public void giveJob() {
+		
+>>>>>>> SDM
 	}
 }
