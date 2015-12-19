@@ -6,7 +6,10 @@ import java.net.*;
 import SETTINGS.TCP; 
 
 public class TCPCM {
+	
 	private ObjectOutputStream writer = null;
+	private ObjectInputStream reader = null;
+	
 	public TCPCM() {
 		
 	}
@@ -15,6 +18,7 @@ public class TCPCM {
 		try {
 			Socket socket = new Socket(serverIP, TCP.PORT);
 			writer = new ObjectOutputStream(socket.getOutputStream());
+			reader = new ObjectInputStream(socket.getInputStream());
 			new Handler(socket).start();
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -45,8 +49,6 @@ public class TCPCM {
 	}
 	
 	private class Handler extends Thread {
-		private PrintStream writer;
-		private InputStreamReader reader;
 		private Socket socket = null;
 		
 		Handler(Socket socket) {
