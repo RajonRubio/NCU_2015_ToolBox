@@ -2,6 +2,8 @@ package TCPCM;
 
 import java.io.*;
 import java.net.*;
+import Protocols.Action;
+import Protocols.TeamState;
 
 import SETTINGS.TCP; 
 
@@ -54,7 +56,7 @@ public class TCPCM {
 	
 	public void chooseRole(Protocols.Role role) {
 		try {
-			writer.writeObject(Protocols.Action.CH_ROLE);
+			writer.writeObject(Action.CH_ROLE);
 			writer.writeObject(role);
 			writer.flush();
 		} catch (IOException e) {
@@ -71,6 +73,34 @@ public class TCPCM {
 		
 		@Override
 		public void run() {
+			Action action;
+			while(true) {
+				try {
+					action = (Action)reader.readObject();
+					switch(action) {
+					case NAME_OK:
+						// ask first scene to go next
+						break;
+					case NAME_FAIL:
+						// ask first scene to pick another name
+						break;
+					case TEAM_STAT:
+						TeamState teamState = (TeamState)reader.readObject();
+						// give second scene
+						break;
+					case GAME_START:
+						// ask second scene to go next
+						break;
+					case GAME_OVER:
+						// ask game scene to over
+						break;
+					}
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 }
