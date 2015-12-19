@@ -1,12 +1,17 @@
 package TCPSM;
 
-import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
+
+import Protocols.Action;
+import SETTINGS.TCP;
 
 import CDC.CDC;
 
@@ -19,30 +24,38 @@ public class TCPSM {
 	private int connectNum;
 	private Thread listenThread;
 	
-	public TCPSM() {
-		clientIPTable = new Vector<String>();
-		clientIPTable.clear();
-		clientConnections = new Vector<Socket>();
-		clientConnections.clear();
-		clientThreads = new Vector<Thread>();
-		clientThreads.clear();
-		connectNum = 0;
+	public TCPSM(CDC cdc) {
+		this.clientIPTable = new Vector<String>();
+		this.clientConnections = new Vector<Socket>();
+		this.clientThreads = new Vector<Thread>();
+		this.connectNum = 0;
+		this.cdc = cdc;
 	}
 	
-	public void initServer() {
-		
+	public void initServer() throws Exception {
+		this.serverSock = new ServerSocket(TCP.PORT);
+		this.listenThread = new Thread(new ConnectionHandler());
+		this.listenThread.start();
 	}
 	
-	public void getClientIPTable() {
-		
+	public Vector getClientIPTable() {
+		return this.clientIPTable;
 	}
 	
-	public void gameOver() {
-		
+	public void gameOver() throws Exception {
+		for(Socket s : this.clientConnections) {
+			ObjectOutputStream writer = new ObjectOutputStream(s.getOutputStream());
+			writer.writeObject(Action.GAME_OVER);
+			writer.flush();
+		}
 	}
 	
-	public void gameStart() {
-		
+	public void gameStart() throws Exception {
+		for(Socket s : this.clientConnections) {
+			ObjectOutputStream writer = new ObjectOutputStream(s.getOutputStream());
+			writer.writeObject(Action.GAME_START);
+			writer.flush();
+		}
 	}
 	
 	private class ConnectionHandler implements Runnable {
@@ -71,16 +84,16 @@ public class TCPSM {
 	
 	private class ClientHandler implements Runnable {
 		private Socket sock;
-		private BufferedReader reader;
-		private PrintStream writer;
+		private ObjectInputStream reader;
+		private ObjectOutputStream writer;
 		private int id;
 		
-		public ClientHandler(int id, Socket s) {
+		public ClientHandler (int id, Socket s) {
 			try {
 				this.sock = s;
 				this.id = id;
-				this.reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-				this.writer = new PrintStream(sock.getOutputStream());
+				this.reader = new ObjectInputStream(sock.getInputStream());
+				this.writer = new ObjectOutputStream(sock.getOutputStream());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -88,10 +101,9 @@ public class TCPSM {
 		
 		@Override
 		public void run() {
-			String message;
 			try {
-				while ((message = reader.readLine()) != null){   
-					switchCode(Integer.valueOf(message));
+				while (((Action)reader.readObject()) != null){   
+					//switchCode(something);
 				}
 			} catch (Exception e){
 				e.printStackTrace(System.out);
