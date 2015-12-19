@@ -10,6 +10,6 @@ public class UIM {
 	}
 	
 	public static void main(String[] args) {
-		
+		System.out.println("Hello CDC");
 	}
 }
