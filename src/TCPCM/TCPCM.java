@@ -8,13 +8,13 @@ import Protocols.ServerAction;
 import Protocols.ClientAction;
 import Protocols.TeamState;
 
-import SETTINGS.TCP; 
+import SETTINGS.TCP;
 
 public class TCPCM {
 	public TCPCM() {
-		
+
 	}
-	
+
 	public boolean connectServer(String serverIP, String nickname) {
 		try {
 			Socket socket = new Socket(serverIP, TCP.PORT);
@@ -30,7 +30,7 @@ public class TCPCM {
 		}
 		return true;
 	}
-	
+
 	/*
 	 * move attack
 	 */
@@ -42,7 +42,7 @@ public class TCPCM {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void chooseTeam(Protocols.Team team) {
 		try {
 			writer.writeObject(Protocols.ServerAction.CH_TEAM);
@@ -52,7 +52,7 @@ public class TCPCM {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void chooseRole(Protocols.Role role) {
 		try {
 			writer.writeObject(ServerAction.CH_ROLE);
@@ -62,32 +62,32 @@ public class TCPCM {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public class Handler extends Thread {
 		private Socket socket = null;
 		private Timer timer;
 		private int timeout;
-		
+
 		Handler(Socket socket) {
 			this.socket = socket;
 			this.timeout = 10;
 			this.timer = new Timer();
 			this.timer.schedule(new HeartBeatTask(this), 0, 1000);
 		}
-		
+
 		public int getTimeout() {
 			return this.timeout;
 		}
-		
+
 		public void countDown() {
 			this.timeout -= 1;
 		}
-		
+
 		public void disConnected() {
 			this.timer.cancel();
 			// disconnected
 		}
-		
+
 		@Override
 		public void run() {
 			ClientAction action;
@@ -126,7 +126,7 @@ public class TCPCM {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}
+			} // while
 			// disconnect
 			try {
 				this.socket.close();
@@ -134,26 +134,6 @@ public class TCPCM {
 				e.printStackTrace();
 			}
 			this.socket = null;
-		}
-=======
-	public void connectServer() {
-		
-	}
-	
-	public void inputMoves() {
-		
-	}
-	
-	public void keyShootPressed() {
-		
-	}
-	
-	public void giveTeam() {
-		
-	}
-	
-	public void giveJob() {
-		
->>>>>>> SDM
+		} // void run()
 	}
 }
