@@ -1,16 +1,13 @@
 package TCPSM;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintStream;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
 
-import Protocols.Action;
+import Protocols.ClientAction;
+import Protocols.ServerAction;
 import SETTINGS.TCP;
 
 import CDC.CDC;
@@ -45,7 +42,7 @@ public class TCPSM {
 	public void gameOver() throws Exception {
 		for(Socket s : this.clientConnections) {
 			ObjectOutputStream writer = new ObjectOutputStream(s.getOutputStream());
-			writer.writeObject(Action.GAME_OVER);
+			writer.writeObject(ClientAction.GAME_OVER);
 			writer.flush();
 		}
 	}
@@ -53,7 +50,7 @@ public class TCPSM {
 	public void gameStart() throws Exception {
 		for(Socket s : this.clientConnections) {
 			ObjectOutputStream writer = new ObjectOutputStream(s.getOutputStream());
-			writer.writeObject(Action.GAME_START);
+			writer.writeObject(ClientAction.GAME_START);
 			writer.flush();
 		}
 	}
@@ -102,7 +99,7 @@ public class TCPSM {
 		@Override
 		public void run() {
 			try {
-				while (((Action)reader.readObject()) != null){   
+				while (((ServerAction)reader.readObject()) != null){   
 					//switchCode(something);
 				}
 			} catch (Exception e){
