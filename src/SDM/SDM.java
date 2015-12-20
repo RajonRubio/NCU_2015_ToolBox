@@ -10,7 +10,6 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import com.sun.javafx.geom.AreaOp.AddOp;
 
 public class SDM {
 	public BasicBlock[][] scene = new BasicBlock[40][100]; //scene is a BasicBlock type array

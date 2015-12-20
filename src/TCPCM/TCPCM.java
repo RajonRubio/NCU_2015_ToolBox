@@ -11,6 +11,9 @@ import Protocols.TeamState;
 import SETTINGS.TCP;
 
 public class TCPCM {
+	
+	private ObjectOutputStream writer = null;
+	private ObjectInputStream reader = null;
 	public TCPCM() {
 
 	}
