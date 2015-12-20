@@ -120,6 +120,8 @@ public class TCPCM {
 						break;
 					case GAME_START:
 						// ask second scene to go next
+						// make dom know everything
+						
 						break;
 					case GAME_OVER:
 						// ask game scene to over
