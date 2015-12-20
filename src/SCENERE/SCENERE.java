@@ -1,19 +1,14 @@
 package SCENERE;
 
+import org.newdawn.slick.Graphics;
+
 public class SCENERE {
-	public SCENERE() {
-		
-	}
+//	public SCENERE(SDM sdm) {
+//		Map = sdm.getmap
+//	}
 	
-	public void getMap() {
+	public void renderScene(Graphics g) {
 		
 	}
-	
-	public void getBG() {
-		
-	}
-	
-	public void renderScene() {
-		
-	}
+   
 }
