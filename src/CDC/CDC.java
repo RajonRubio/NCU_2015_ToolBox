@@ -68,7 +68,7 @@ public class CDC {
 	}
 	
 	public void GameStart() {
-		tcpsm.gamestart();
+		//tcpsm.gamestart();
 	}
 	
 	public void addBullet() {
