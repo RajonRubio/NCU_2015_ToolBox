@@ -143,6 +143,7 @@ public class CDC {
 	}
 	
 	public void GameStart() {
+<<<<<<< HEAD
 		for(int i=0;i<=characternumber;i++)
 		{
 			RandomLocation(i);
@@ -150,6 +151,9 @@ public class CDC {
 		tcpsm.gameStart();
 		Timer timer = new Timer();
 		timer.schedule(new GameOver(), 2*60*1000);
+=======
+		//tcpsm.gamestart();
+>>>>>>> 719c64a004ede139fb1b42756603afb965415ac3
 	}
 	
 	public void RandomLocation(int number) {
