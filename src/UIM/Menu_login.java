@@ -96,6 +96,7 @@ public class Menu_login extends BasicGameState{
 		CantConnet = false;
 		TryStart = false;
 		NoSeat = false;
+		
 	}
 
 	@Override

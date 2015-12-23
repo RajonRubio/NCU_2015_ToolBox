@@ -27,9 +27,9 @@ public class RT extends BasicGameState{
 	
 	@Override
 	public void init(GameContainer gc, StateBasedGame arg1) throws SlickException {
-		background = new Image("BLACK.png");
+		background = new Image("img/BLACK.png");
 		eventlistener = new EventListener();
-		Mouse = new Image("mouse.png");
+		Mouse = new Image("img/mouse.png");
 	}
 
 	@Override

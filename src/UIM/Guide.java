@@ -19,10 +19,10 @@ public class Guide extends BasicGameState{
 	
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
-		Background = new Image("Guide/GuideList.png");
-		Back = new Image("AuthorList/BACK.png");
-		BackOn = new Image("AuthorList/OnBACK.png");
-		Mouse = new Image("mouse.png");
+		Background = new Image("img/UIMpic/Guide/GuideList.png");
+		Back = new Image("img/UIMpic/AuthorList/BACK.png");
+		BackOn = new Image("img/UIMpic/AuthorList/OnBACK.png");
+		Mouse = new Image("img/mouse.png");
 	}
 
 	@Override

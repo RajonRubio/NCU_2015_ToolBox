@@ -38,10 +38,10 @@ public class MAIN extends StateBasedGame{
 		RT r = new RT(tcpcm , gameOver);
 		//this.addState(new Menu_login(app, tcpcm));
 		//this.addState(r);
-		this.addState(gameOver);
+		//this.addState(gameOver);
 		//this.addState(new ChooseTeam(tcpcm));	
 		//this.addState(new AuthorList());
-		//this.addState(new Guide());
+		this.addState(new Guide());
 		
 	}
 

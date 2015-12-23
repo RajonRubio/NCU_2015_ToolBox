@@ -106,26 +106,26 @@ public class ChooseTeam extends BasicGameState{
 	
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
-		Background = new Image("ChooseTeam/Choose.png");
-		Leftteamlight = new Image("ChooseTeam/Leftteamlight.png");
-		Rightteamlight = new Image("ChooseTeam/Rightteamlight.png");
+		Background = new Image("img/UIMpic/ChooseTeam/Choose.png");
+		Leftteamlight = new Image("img/UIMpic/ChooseTeam/Leftteamlight.png");
+		Rightteamlight = new Image("img/UIMpic/ChooseTeam/Rightteamlight.png");
 		
-		Mouse = new Image("mouse.png");
+		Mouse = new Image("img/mouse.png");
 		   
-		Archerlight = new Image("Hero/OnArcher.png");  
-		Wizardlight = new Image("Hero/OnWizard.png");  
-		Marineslight = new Image("Hero/OnMarines.png");    
-		Cannonlight = new Image("Hero/OnCannon.png"); 
+		Archerlight = new Image("img/UIMpic/Hero/OnArcher.png");  
+		Wizardlight = new Image("img/UIMpic/Hero/OnWizard.png");  
+		Marineslight = new Image("img/UIMpic/Hero/OnMarines.png");    
+		Cannonlight = new Image("img/UIMpic/Hero/OnCannon.png"); 
 		
-		Choose = new Image("ChooseTeam/Title.png");
-		Go = new Image("ChooseTeam/GO.png");
-		OnGo = new Image("ChooseTeam/OnGO.png");
+		Choose = new Image("img/UIMpic/ChooseTeam/Title.png");
+		Go = new Image("img/UIMpic/ChooseTeam/GO.png");
+		OnGo = new Image("img/UIMpic/ChooseTeam/OnGO.png");
 		
 		waiting = new Image[4];
-		waiting[0] = new Image("ChooseTeam/waiting0.png");
-		waiting[1] = new Image("ChooseTeam/waiting1.png");
-		waiting[2] = new Image("ChooseTeam/waiting2.png");
-		waiting[3] = new Image("ChooseTeam/waiting3.png");
+		waiting[0] = new Image("img/UIMpic/ChooseTeam/waiting0.png");
+		waiting[1] = new Image("img/UIMpic/ChooseTeam/waiting1.png");
+		waiting[2] = new Image("img/UIMpic/ChooseTeam/waiting2.png");
+		waiting[3] = new Image("img/UIMpic/ChooseTeam/waiting3.png");
 		
 		MouseOnLeftLong = false;
 		MouseOnRightLong = false;
