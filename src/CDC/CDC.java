@@ -7,7 +7,7 @@ import TCPSM.TCPSM;
 public class CDC {
 	private Character [] character = new Character [4];
 	private int characternumber = 0;
-	private ArrayList<Bullet> bullets = new ArrayList<>();
+	private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 	private boolean full = false;
 	private TCPSM tcpsm;
 	
@@ -27,28 +27,28 @@ public class CDC {
 	}
 	
 	public void addVirtualCharacter(int clientnumber, String name) {
-		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber¤£¦A½d³ò¸Ì";
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumberï¿½ï¿½ï¿½Aï¿½dï¿½ï¿½ï¿½";
 		character[characternumber] = new Character(clientnumber, name);
 	}
 	
 	public void removeVirtualCharacter(int clientnumber) {
-		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber¤£¦A½d³ò¸Ì";
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumberï¿½ï¿½ï¿½Aï¿½dï¿½ï¿½ï¿½";
 		character[characternumber] = null;
 	}
 	
 	public void setTeam(int clientnumber, int team) {
-		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber¤£¦A½d³ò¸Ì";
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumberï¿½ï¿½ï¿½Aï¿½dï¿½ï¿½ï¿½";
 		character[characternumber].setTeam(team);
 	}
 	
 	public void setJob(int clientnumber, int job) {
-		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber¤£¦A½d³ò¸Ì";
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumberï¿½ï¿½ï¿½Aï¿½dï¿½ï¿½ï¿½";
 		character[characternumber].setJob(job);
 		character[characternumber].setJobConstant();
 	}
 	
 	public void setReady(int clientnumber, Boolean ready) {
-		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber¤£¦A½d³ò¸Ì";
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumberï¿½ï¿½ï¿½Aï¿½dï¿½ï¿½ï¿½";
 		character[characternumber].setReady(ready);
 		if(checkReady())
 		{
