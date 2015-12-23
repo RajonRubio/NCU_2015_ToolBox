@@ -19,6 +19,7 @@ import TCPCM.TCPCM;
 
 public class Menu_login extends BasicGameState{
 	Image Background ;
+	Image Mouse;
 	
 	Image Author;
 	Image OnAuthor;
@@ -69,7 +70,7 @@ public class Menu_login extends BasicGameState{
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
 		this.sbg = arg1;
 		Background = new Image("Menu/noinput.png");
-		
+		Mouse = new Image("mouse.png");
 		Author = new Image("Menu/author.png");
 		OnAuthor = new Image("Menu/authorpressed.png");
 		Guide = new Image("Menu/guide.png");
@@ -139,6 +140,8 @@ public class Menu_login extends BasicGameState{
 		if(NoSeat){
 			g.drawImage(serverfull, 720,0 );
 		}
+		
+		g.drawImage(Mouse, x-15, y-15);
 	}
 
 	@Override
