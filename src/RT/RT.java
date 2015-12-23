@@ -88,7 +88,9 @@ public class RT extends BasicGameState{
 			src = "img/bullet/" + 2 + "-" + 1 + ".png";
 			dom.bulletSheet[1][0] = new SpriteSheet(src, 32, 32);
 			dom.bulletAnimation[1][0] = new Animation(dom.bulletSheet[1][0], 200);
-			dom.bullet.add(new Bullet(Team.RED, Role.Archer, new Point2D.Double(400, 700), dom.bulletAnimation[1][0]));
+			Bullet b = new Bullet(Team.RED, Role.Archer, new Point2D.Double(400, 700));
+			b.setAnimation(dom.bulletAnimation[1][0]);
+			dom.bullet.add(b);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -131,7 +133,9 @@ public class RT extends BasicGameState{
 		try {
 			dom.updateVirtualCharacter(3, 1, new Point2D.Double(x, 700), 50, 0, debuff, 100, 100);
 			dom.bullet.clear();
-			dom.bullet.add(new Bullet(Team.RED, Role.Archer, new Point2D.Double(400, y), dom.bulletAnimation[1][0]));
+			Bullet b = new Bullet(Team.RED, Role.Archer, new Point2D.Double(400, y));
+			b.setAnimation(dom.bulletAnimation[1][0]);
+			dom.bullet.add(b);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

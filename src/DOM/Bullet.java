@@ -15,10 +15,13 @@ public class Bullet extends DynamicObject {
 	
 	public Animation bulletAnimation;
 	
-	public Bullet(Team team, Role role, Point2D.Double location, Animation bulletAnimation) {
+	public Bullet(Team team, Role role, Point2D.Double location) {
 		this.team = team;
 		this.role = role;
 		this.location = location;
+	}
+	
+	public void setAnimation(Animation bulletAnimation) {
 		this.bulletAnimation = bulletAnimation;
 	}
 	

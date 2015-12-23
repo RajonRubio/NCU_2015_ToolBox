@@ -73,7 +73,7 @@ public class DOM {
 		player.remove(tempIndex);
 	}
 	
-	public synchronized void updateVirtualCharacter(int clientno, int status, Point2D.Double location, int currentHP, int reviveTime, boolean[] debuff, int kill, int dead) throws Exception {
+	public synchronized void updateVirtualCharacter(int clientno, int status, Point2D.Double location, int currentHP, int reviveTime, boolean[] debuff, int kill, int dead) {
 		Character temp = null;
 		int tempIndex = 0;
 		for(int i = 0; i < player.size(); i++) {
@@ -94,13 +94,12 @@ public class DOM {
 		player.set(tempIndex, temp);
 	}
 	
-	public synchronized void updateBullet(BulletState state) {
-		ArrayList<Bullet> temp = new ArrayList<Bullet>();
+	public synchronized void updateBullet(ArrayList<Bullet> temp) {
 		int team, role;
-		for(int i = 0; i < state.bullets.size(); i++) {
-			team = state.bullets.get(i).team.ordinal();
-			role = state.bullets.get(i).role.ordinal();
-			temp.add(new Bullet(state.bullets.get(i).team, state.bullets.get(i).role, state.bullets.get(i).location, bulletAnimation[team][role]));
+		for(int i = 0; i < temp.size(); i++) {
+			team = temp.get(i).team.ordinal();
+			role = temp.get(i).role.ordinal();
+			temp.get(i).setAnimation(bulletAnimation[team][role]);
 		}
 		this.bullet = temp;
 	}
