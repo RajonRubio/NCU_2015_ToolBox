@@ -33,10 +33,12 @@ public class MAIN extends StateBasedGame{
 
 	@Override
 	public void initStatesList(GameContainer arg0) throws SlickException {
-		RT r = new RT(tcpcm);
+		
+		GameOver gameOver = new GameOver(tcpcm);
+		RT r = new RT(tcpcm , gameOver);
 		//this.addState(new Menu_login(app, tcpcm));
 		//this.addState(r);
-		this.addState(new GameOver(tcpcm, r));
+		this.addState(gameOver);
 		//this.addState(new ChooseTeam(tcpcm));	
 		//this.addState(new AuthorList());
 		//this.addState(new Guide());

@@ -15,11 +15,13 @@ public class RT extends BasicGameState{
 	EventListener eventlistener;
 	Image background;
 	TCPCM tcpcm;
+	GameOver gameOver;
 	Image Mouse;
 	int x,y;
 	
-	public RT(TCPCM tcpcm) {
+	public RT(TCPCM tcpcm,GameOver gameOver) {
 		this.tcpcm = tcpcm;
+		this.gameOver = gameOver;
 	}
 	
 	
@@ -48,9 +50,7 @@ public class RT extends BasicGameState{
 		
 		eventlistener.listent(gc,delta);
 	}
-	public void goNext(){
-		
-	}
+	
 
 	@Override
 	public int getID() {

@@ -77,6 +77,8 @@ public class ChooseTeam extends BasicGameState{
 	boolean IsLockTeam;
 	boolean IsLockHero;
 	
+	boolean IsWaiting;
+	
 	int TeamImageY = 0;
 	int HeroImageY = 450;
 	
@@ -140,7 +142,7 @@ public class ChooseTeam extends BasicGameState{
 		LockHero = false;
 		
 		playagain = false;
-		
+		IsWaiting = false;
 		IsReady = false;
 		this.sbg = arg1;
 
@@ -478,7 +480,7 @@ public class ChooseTeam extends BasicGameState{
 		
 		
 		//Lock 
-		if(gc.getInput().isMouseButtonDown((Input.MOUSE_LEFT_BUTTON))){
+		if(gc.getInput().isMouseButtonDown((Input.MOUSE_LEFT_BUTTON))&&!IsWaiting){
 			//team
 			if(x>0&&x<480 && y>65&&y<400){
 				LockTeam = true;
@@ -522,6 +524,7 @@ public class ChooseTeam extends BasicGameState{
 			if(LockHero&&LockTeam){
 				if(x>410&&x<543 && y>364&&y<428){
 					//TCP ³s½u
+					IsWaiting = true;
 					IsReady = true ;
 					tcpcm.IAmReady();
 					
