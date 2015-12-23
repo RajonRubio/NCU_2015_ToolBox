@@ -1,7 +1,5 @@
 package UIM;
 
-import java.util.ArrayList;
-
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -12,8 +10,6 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.HorizontalSplitTransition;
 
-import com.sun.org.apache.regexp.internal.recompile;
-
 import Protocols.TeamState;
 import Protocols.TeamState.Member;
 import TCPCM.TCPCM;
@@ -21,39 +17,52 @@ import TCPCM.TCPCM;
 public class ChooseTeam extends BasicGameState{
 	int x,y;
 	TeamState teamState;
-	
+	Image Mouse;
 	
 	Image Background;
-	Image Leftteam;
 	Image Leftteamlight;
-	Image Rightteam;
 	Image Rightteamlight;
-	
-	Image Archer;
 	Image Archerlight;
-	Image Wizard;
 	Image Wizardlight;
-	Image Marines;
 	Image Marineslight;
-	Image Cannon;
 	Image Cannonlight;
 	
 	Image Choose;
 	Image Go;
 	Image OnGo;
 	
+	Image[] waiting;
+	int time;
+	
+	int MouseOnLeftTime;
+	int MouseOnRightTime;
+	int MouseOnArcherTime;
+	int MouseOnWizardTime;
+	int MouseOnMarinesTime;
+	int MouseOnCannonTime;
+	
+	
 	boolean MouseOnLeft;
 	boolean MouseOnRight;
+	boolean MouseOnLeftLong;
+	boolean MouseOnRightLong;
+	
+	int whichready;
 	
 	boolean MouseOnArcher;
 	boolean MouseOnWizard;
 	boolean MouseOnMarines;
 	boolean MouseOnCannon;
+	boolean MouseOnArcherLong;
+	boolean MouseOnWizardLong;
+	boolean MouseOnMarinesLong;
+	boolean MouseOnCannonLong;
+	
+	
 	boolean MouseOnGo;
 	
 	boolean LockLeft;
 	boolean LockRight;
-	
 	boolean LockArcher;
 	boolean LockWizard;
 	boolean LockMarines;
@@ -65,13 +74,29 @@ public class ChooseTeam extends BasicGameState{
 	boolean playagain;	
 	boolean IsReady;
 	
+	boolean IsLockTeam;
+	boolean IsLockHero;
+	
 	int TeamImageY = 0;
 	int HeroImageY = 450;
 	
 	int PlayerYstart = 368;
 	
+	
 	TCPCM tcpcm;
 	StateBasedGame sbg;
+	
+	Color BBlack;
+	Color LeftTeam;
+	Color RightTeam;
+	Color ArcherColor;
+	Color WizardColor;
+	Color MarinesColor;
+	Color CannonColor;
+	
+	
+	
+	
 
 	public ChooseTeam(TCPCM tcpcm) {
 		this.tcpcm = tcpcm;
@@ -80,23 +105,28 @@ public class ChooseTeam extends BasicGameState{
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
 		Background = new Image("ChooseTeam/Choose.png");
-		Leftteam = new Image("ChooseTeam/Leftteam.png");
 		Leftteamlight = new Image("ChooseTeam/Leftteamlight.png");
-		Rightteam = new Image("ChooseTeam/Rightteam.png");
 		Rightteamlight = new Image("ChooseTeam/Rightteamlight.png");
 		
-		Archer = new Image("Hero/Archer.png");       
+		Mouse = new Image("mouse.png");
+		   
 		Archerlight = new Image("Hero/OnArcher.png");  
-		Wizard = new Image("Hero/Wizard.png");      
 		Wizardlight = new Image("Hero/OnWizard.png");  
-		Marines = new Image("Hero/Marines.png");      
-		Marineslight = new Image("Hero/OnMarines.png"); 
-		Cannon = new Image("Hero/Cannon.png");       
+		Marineslight = new Image("Hero/OnMarines.png");    
 		Cannonlight = new Image("Hero/OnCannon.png"); 
 		
 		Choose = new Image("ChooseTeam/Title.png");
 		Go = new Image("ChooseTeam/GO.png");
 		OnGo = new Image("ChooseTeam/OnGO.png");
+		
+		waiting = new Image[4];
+		waiting[0] = new Image("ChooseTeam/waiting0.png");
+		waiting[1] = new Image("ChooseTeam/waiting1.png");
+		waiting[2] = new Image("ChooseTeam/waiting2.png");
+		waiting[3] = new Image("ChooseTeam/waiting3.png");
+		
+		MouseOnLeftLong = false;
+		MouseOnRightLong = false;
 		
 		LockLeft = false;
 		LockRight = false;
@@ -114,6 +144,20 @@ public class ChooseTeam extends BasicGameState{
 		IsReady = false;
 		this.sbg = arg1;
 
+		RightTeam = new Color(0,0,0,0.7f);
+		LeftTeam = new Color(0,0,0,0.7f);
+		ArcherColor = new Color(0,0,0,0.7f);
+		WizardColor = new Color(0,0,0,0.7f);
+		MarinesColor = new Color(0,0,0,0.7f);
+		CannonColor = new Color(0,0,0,0.7f);
+		
+		BBlack = new Color(0,0,0,0.7f);
+		
+		IsLockTeam = false;
+		IsLockHero = false;
+		
+		MouseOnLeftTime = 0;
+		MouseOnRightTime = 0;
 		teamState = new TeamState();
 		
 		//teamState.blue.add(teamState.new Member("jxcode", "192.168.0.0", "Archer"));
@@ -127,81 +171,80 @@ public class ChooseTeam extends BasicGameState{
 	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
 		g.drawImage( Background , 0 , 0 ); //µe­I´º
 		
+		g.drawImage(Leftteamlight , 0 , TeamImageY ); 
+		g.drawImage(Rightteamlight , 480 , TeamImageY ); 
+		
+		if(!LockLeft&&!LockRight){
+			g.setColor(LeftTeam);
+			g.fillRect(0  , 0 , 480, 400);
+			g.setColor(RightTeam);
+			g.fillRect(480  , 0 , 480, 400);
+		}
 		if(LockLeft){
-			g.drawImage(Leftteamlight , 0 , TeamImageY ); 
-			g.drawImage(Rightteam , 480 , TeamImageY ); 
-		}else if(LockRight){
-			g.drawImage(Rightteamlight , 480 , TeamImageY ); 
-			g.drawImage(Leftteam , 0 , TeamImageY ); 
-		}else{
-			if(!MouseOnLeft){
-				g.drawImage(Leftteam , 0 , TeamImageY ); 
-			}else {
-				g.drawImage(Leftteamlight , 0 , TeamImageY ); 
-			}
-			if(!MouseOnRight){
-				g.drawImage(Rightteam , 480 , TeamImageY ); 
-			}else {
-				g.drawImage(Rightteamlight , 480 , TeamImageY ); 
-			}
+			g.setColor(new Color(0,0,0,0.7f));
+			g.fillRect(480  , 0 , 480, 400);
 		}
-	
-		
-		if(LockArcher){
-			g.drawImage(Archerlight , 0 , HeroImageY ); 
-			g.drawImage(Wizard , 240 , HeroImageY ); 
-			g.drawImage(Marines , 480 , HeroImageY );
-			g.drawImage(Cannon , 720 , HeroImageY );  
-		}else if(LockWizard){
-			g.drawImage(Wizardlight , 240 , HeroImageY ); 
-			g.drawImage(Archer , 0 , HeroImageY ); 
-			g.drawImage(Marines , 480 , HeroImageY );
-			g.drawImage(Cannon , 720 ,HeroImageY );
-		}else if (LockMarines) {
-			g.drawImage(Marineslight , 480 , HeroImageY ); 
-			g.drawImage(Archer , 0 , HeroImageY ); 
-			g.drawImage(Wizard , 240 , HeroImageY ); 
-			g.drawImage(Cannon , 720 , HeroImageY );
-		}else if (LockCannon) {
-			g.drawImage(Cannonlight , 720 , HeroImageY ); 
-			g.drawImage(Archer , 0 , HeroImageY ); 
-			g.drawImage(Wizard , 240 , HeroImageY ); 
-			g.drawImage(Marines , 480 , HeroImageY );
-		}else {
-			if(!MouseOnArcher){
-				g.drawImage(Archer , 0 , HeroImageY ); 
-			}else {
-				g.drawImage(Archerlight , 0 ,HeroImageY ); 
-			}
-			
-			if(!MouseOnWizard){
-				g.drawImage(Wizard , 240 , HeroImageY ); 
-			}else {
-				g.drawImage(Wizardlight , 240 , HeroImageY); 
-			}
-			
-			if(!MouseOnMarines){
-				g.drawImage(Marines , 480 ,HeroImageY ); 
-			}else {
-				g.drawImage(Marineslight , 480 ,HeroImageY ); 
-			}
-			
-			if(!MouseOnCannon){
-				g.drawImage(Cannon , 720 , HeroImageY ); 
-			}else {
-				g.drawImage(Cannonlight , 720 , HeroImageY); 
-			}
+		if(LockRight){
+			g.setColor(new Color(0,0,0,0.7f));
+			g.fillRect(0  , 0 , 480, 400);
 		}
-		
+
 		if(LockHero&&LockTeam){
-			if(MouseOnGo){
-				g.drawImage(OnGo, 400, 350);
-			} else{
-				g.drawImage(Go, 400, 350);
+			if(IsReady){
+				g.drawImage(waiting[whichready], 298, 350);
 			}
+			else {
+				if(MouseOnGo){
+					g.drawImage(OnGo, 400, 350);
+				} else{
+					g.drawImage(Go, 400, 350);
+				}
+			}
+			
 		} else {
 			g.drawImage(Choose, 290, 350);
 		}
+
+		g.drawImage(Archerlight , 0 , HeroImageY ); 
+		g.drawImage(Wizardlight , 240 , HeroImageY ); 
+		g.drawImage(Marineslight , 480 , HeroImageY );
+		g.drawImage(Cannonlight , 720 , HeroImageY ); 
+		
+		if(!LockArcher&&!LockWizard&&!LockMarines&&!LockCannon){
+			g.setColor(ArcherColor);
+			g.fillRect(0   , HeroImageY , 240, 300);
+			g.setColor(WizardColor);
+			g.fillRect(240 , HeroImageY , 240, 300);
+			g.setColor(MarinesColor);
+			g.fillRect(480 , HeroImageY , 240, 300);
+			g.setColor(CannonColor);
+			g.fillRect(720 , HeroImageY , 240, 300);
+		}
+		if(LockArcher){
+			g.setColor(new Color(0,0,0,0.7f));
+			g.fillRect(240 , HeroImageY , 240, 300);
+			g.fillRect(480 , HeroImageY , 240, 300);
+			g.fillRect(720 , HeroImageY , 240, 300);
+		}
+		if(LockWizard){
+			g.setColor(new Color(0,0,0,0.7f));
+			g.fillRect(0   , HeroImageY , 240, 300);
+			g.fillRect(480 , HeroImageY , 240, 300);
+			g.fillRect(720 , HeroImageY , 240, 300);
+		}
+		if(LockMarines){
+			g.setColor(new Color(0,0,0,0.7f));
+			g.fillRect(0   , HeroImageY , 240, 300);
+			g.fillRect(240 , HeroImageY , 240, 300);
+			g.fillRect(720 , HeroImageY , 240, 300);
+		}
+		if(LockCannon){
+			g.setColor(new Color(0,0,0,0.7f));
+			g.fillRect(0   , HeroImageY , 240, 300);
+			g.fillRect(240 , HeroImageY , 240, 300);
+			g.fillRect(480 , HeroImageY , 240, 300);
+		}
+		
 		
 		for(int i=0;i<teamState.red.size();i++){
 			g.setColor(Color.white);
@@ -217,24 +260,83 @@ public class ChooseTeam extends BasicGameState{
 			g.drawString("["+teamState.blue.get(i).job+"]", 694, PlayerYstart + i*40);
 		}
 		
+		g.setColor(Color.white);
 		g.drawString("( "+ x +" , "+ y +")", 0, 0);
+		g.drawImage(Mouse, x-15, y-15); 
 	}
 
 	@Override
-	public void update(GameContainer gc, StateBasedGame sbg, int arg2) throws SlickException {
-
+	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
 		x = gc.getInput().getMouseX();
 		y = gc.getInput().getMouseY();
+		time += delta;
 		
-		MouseOnLeft = false;
-		MouseOnRight = false;
-		if(x>0&&x<480 && y>TeamImageY&&y<TeamImageY+335){
-			MouseOnLeft = true;
+		if(time%1000<250){
+			whichready = 0;
+		}else if (time%1000<500&&time%1000>=250) {
+			whichready = 1;
+		}else if (time%1000<750&&time%1000>=500) {
+			whichready = 2;
+		}else {
+			whichready = 3;
 		}
+
+		IsLockTeam = LockHero;
+		IsLockHero = LockHero;
+			
+		
+	
+		MouseOnRight = false;
 		if(x>480&&x<960 && y>TeamImageY&&y<TeamImageY+335){
 			MouseOnRight = true;
 		}
+		if(MouseOnRight&&!MouseOnRightLong){
+			MouseOnRightTime += delta;
+			RightTeam = new Color(0,0,0,0.7f-(float)MouseOnRightTime%1050/1500);
+			if(MouseOnRightTime>=1050){
+				MouseOnRightLong = true;
+			}
+		}
+		if(MouseOnRight&&MouseOnRightLong){
+			RightTeam = new Color(0,0,0,0.0f);
+			if(MouseOnRightTime>=1050){
+				MouseOnRightLong = true;
+			}
+		}
+		if(!MouseOnRight){
+			MouseOnRightLong = false;
+			if(MouseOnRightTime>=10){
+				MouseOnRightTime -= delta;
+				RightTeam = new Color(0,0,0,0.7f-(float)MouseOnRightTime%1050/1500);
+			}
+		}
 		
+		
+		
+		MouseOnLeft = false;
+		if(x>0&&x<480 && y>TeamImageY&&y<TeamImageY+335){
+			MouseOnLeft = true;
+		}
+		if(MouseOnLeft&&!MouseOnLeftLong){
+			MouseOnLeftTime += delta;
+			LeftTeam = new Color(0,0,0,0.7f-(float)MouseOnLeftTime%1050/1500);
+			if(MouseOnLeftTime>=1050){
+				MouseOnLeftLong = true;
+			}
+		}
+		if(MouseOnLeft&&MouseOnLeftLong){
+			LeftTeam = new Color(0,0,0,0.0f);
+			if(MouseOnLeftTime>=1050){
+				MouseOnLeftLong = true;
+			}
+		}
+		if(!MouseOnLeft){
+			MouseOnLeftLong = false;
+			if(MouseOnLeftTime>=10){
+				MouseOnLeftTime -= delta;
+				LeftTeam = new Color(0,0,0,0.7f-(float)MouseOnLeftTime%1050/1500);
+			}
+		}
 		
 		MouseOnArcher = false;    
 		MouseOnWizard = false;   
@@ -253,6 +355,104 @@ public class ChooseTeam extends BasicGameState{
 		if(x>762&&x<917 && y>HeroImageY&&y<HeroImageY+260){
 			MouseOnCannon = true;
 		}
+		
+		if(MouseOnArcher&&!MouseOnArcherLong){
+			MouseOnArcherTime += delta;
+			ArcherColor = new Color(0,0,0,0.7f-(float)MouseOnArcherTime%1050/1500);
+			if(MouseOnArcherTime>=1050){
+				MouseOnArcherLong = true;
+			}
+		}
+		if(MouseOnArcher&&MouseOnArcherLong){
+			ArcherColor = new Color(0,0,0,0.0f);
+			if(MouseOnArcherTime>=1050){
+				MouseOnArcherLong = true;
+			}
+		}
+		if(!MouseOnArcher){
+			MouseOnArcherLong = false;
+			if(MouseOnArcherTime>=10){
+				MouseOnArcherTime -= delta;
+				ArcherColor = new Color(0,0,0,0.7f-(float)MouseOnArcherTime%1050/1500);
+			}
+		}
+		
+		
+		
+		
+		if(MouseOnWizard&&!MouseOnWizardLong){
+			MouseOnWizardTime += delta;
+			WizardColor = new Color(0,0,0,0.7f-(float)MouseOnWizardTime%1050/1500);
+			if(MouseOnWizardTime>=1050){
+				MouseOnWizardLong = true;
+			}
+		}
+		if(MouseOnWizard&&MouseOnWizardLong){
+			WizardColor = new Color(0,0,0,0.0f);
+			if(MouseOnWizardTime>=1050){
+				MouseOnWizardLong = true;
+			}
+		}
+		if(!MouseOnWizard){
+			MouseOnWizardLong = false;
+			if(MouseOnWizardTime>=10){
+				MouseOnWizardTime -= delta;
+				WizardColor = new Color(0,0,0,0.7f-(float)MouseOnWizardTime%1050/1500);
+			}
+		}
+		
+		
+		
+		
+		if(MouseOnMarines&&!MouseOnMarinesLong){
+			MouseOnMarinesTime += delta;
+			MarinesColor = new Color(0,0,0,0.7f-(float)MouseOnMarinesTime%1050/1500);
+			if(MouseOnMarinesTime>=1050){
+				MouseOnMarinesLong = true;
+			}
+		}
+		if(MouseOnMarines&&MouseOnMarinesLong){
+			MarinesColor = new Color(0,0,0,0.0f);
+			if(MouseOnMarinesTime>=1050){
+				MouseOnMarinesLong = true;
+			}
+		}
+		if(!MouseOnMarines){
+			MouseOnMarinesLong = false;
+			if(MouseOnMarinesTime>=10){
+				MouseOnMarinesTime -= delta;
+				MarinesColor = new Color(0,0,0,0.7f-(float)MouseOnMarinesTime%1050/1500);
+			}
+		}
+		
+		
+		
+		
+		
+		
+		if(MouseOnCannon&&!MouseOnCannonLong){
+			MouseOnCannonTime += delta;
+			CannonColor = new Color(0,0,0,0.7f-(float)MouseOnCannonTime%1050/1500);
+			if(MouseOnCannonTime>=1050){
+				MouseOnCannonLong = true;
+			}
+		}
+		if(MouseOnCannon&&MouseOnCannonLong){
+			CannonColor = new Color(0,0,0,0.0f);
+			if(MouseOnCannonTime>=1050){
+				MouseOnCannonLong = true;
+			}
+		}
+		if(!MouseOnCannon){
+			MouseOnCannonLong = false;
+			if(MouseOnCannonTime>=10){
+				MouseOnCannonTime -= delta;
+				CannonColor = new Color(0,0,0,0.7f-(float)MouseOnCannonTime%1050/1500);
+			}
+		}
+		
+		
+		
 		
 		MouseOnGo = false;
 		if(x>410&&x<543 && y>364&&y<428){
@@ -275,6 +475,9 @@ public class ChooseTeam extends BasicGameState{
 			}
 		}
 		
+		
+		
+		//Lock 
 		if(gc.getInput().isMouseButtonDown((Input.MOUSE_LEFT_BUTTON))){
 			//team
 			if(x>0&&x<480 && y>65&&y<400){
@@ -319,8 +522,9 @@ public class ChooseTeam extends BasicGameState{
 			if(LockHero&&LockTeam){
 				if(x>410&&x<543 && y>364&&y<428){
 					//TCP ³s½u
+					IsReady = true ;
 					tcpcm.IAmReady();
-						
+					
 				}
 			} 
 		}

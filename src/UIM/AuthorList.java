@@ -11,6 +11,7 @@ import org.newdawn.slick.state.transition.BlobbyTransition;
 
 public class AuthorList extends BasicGameState{
 	int x,y;
+	Image Mouse;
 	Image Background;
 	Image BackOn;
 	Image Back;
@@ -21,6 +22,7 @@ public class AuthorList extends BasicGameState{
 		Background = new Image("AuthorList/AuthorList.png");
 		Back = new Image("AuthorList/BACK.png");
 		BackOn = new Image("AuthorList/OnBACK.png");
+		Mouse = new Image("mouse.png");
 	}
 
 	@Override
@@ -32,7 +34,7 @@ public class AuthorList extends BasicGameState{
 			g.drawImage(BackOn , 340 , 560 ); 
 		}
 		
-		
+		g.drawImage(Mouse, x-15, y-15);
 		g.drawString("( "+ x +" , "+ y +")", 0, 0);
 	}
 

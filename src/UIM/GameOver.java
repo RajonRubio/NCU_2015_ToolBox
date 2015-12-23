@@ -1,10 +1,13 @@
 package UIM;
 
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.BlobbyTransition;
@@ -17,14 +20,20 @@ public class GameOver extends BasicGameState{
 	Image Onplayagain;
 	Image quit;
 	Image Onquit;
+	Image Mouse;
+	java.awt.Font f;
+	Font font;
+	
+	RT r;
 	boolean MouseOnPlayAgain;
 	boolean MouseOnQuit;
 	int x,y;
 	
 	TCPCM tcpcm;
 	
-	public GameOver(TCPCM tcpcm) {
+	public GameOver(TCPCM tcpcm,RT r) {
 		this.tcpcm = tcpcm;
+		this.r = r;
 	}
 	
 	
@@ -37,12 +46,21 @@ public class GameOver extends BasicGameState{
 		Onplayagain = new Image("GameOver/OnPlayAgain.png");
 		quit = new Image("GameOver/Quit.png");
 		Onquit = new Image("GameOver/OnQuit.png");
+		Mouse = new Image("mouse.png");
+		f = new java.awt.Font("Sans", java.awt.Font.PLAIN,  60);
+		font = new TrueTypeFont(f, true);
 
 	}
 
 	@Override
 	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
 		g.drawImage(background[0], 0, 0);
+		
+		font.drawString(50, 200, "FUCK" ,Color.red);
+		font.drawString(50, 300, "FUCK" ,Color.red);
+		font.drawString(500, 200, "FUCK" ,Color.cyan);
+		font.drawString(500, 300, "FUCK" ,Color.cyan);
+		
 		if(!MouseOnPlayAgain){
 			g.drawImage(playagain, 337, 550);
 		}else {
@@ -53,7 +71,7 @@ public class GameOver extends BasicGameState{
 		}else {
 			g.drawImage(Onquit, 408, 630);
 		}
-		
+		g.drawImage(Mouse, x-15, y-15);
 		g.drawString("( "+ x +" , "+ y +")", 0, 0);
 	}
 

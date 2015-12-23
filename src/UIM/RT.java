@@ -15,6 +15,8 @@ public class RT extends BasicGameState{
 	EventListener eventlistener;
 	Image background;
 	TCPCM tcpcm;
+	Image Mouse;
+	int x,y;
 	
 	public RT(TCPCM tcpcm) {
 		this.tcpcm = tcpcm;
@@ -25,17 +27,23 @@ public class RT extends BasicGameState{
 	public void init(GameContainer gc, StateBasedGame arg1) throws SlickException {
 		background = new Image("BLACK.png");
 		eventlistener = new EventListener();
+		Mouse = new Image("mouse.png");
 	}
 
 	@Override
 	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
 		g.drawImage(background, 0, 0);
+		g.drawImage(Mouse, x-15, y-15);
 	}
 
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
+		x = gc.getInput().getMouseX();
+		y = gc.getInput().getMouseY();
+		
 		if (gc.getInput().isKeyDown(Input.KEY_P)){
 			sbg.enterState(5,null,new HorizontalSplitTransition());
+			
 		}
 		
 		eventlistener.listent(gc,delta);
