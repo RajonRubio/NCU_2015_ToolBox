@@ -7,7 +7,6 @@ import org.newdawn.slick.Animation;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
-import Protocols.BulletState;
 import Protocols.CharacterState;
 import Protocols.ResultInfo;
 import Protocols.ResultInfo.Result;
