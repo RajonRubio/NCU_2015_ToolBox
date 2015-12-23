@@ -14,6 +14,7 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.state.transition.HorizontalSplitTransition;
 
 import DOM.Bullet;
 import DOM.DOM;
@@ -23,6 +24,7 @@ import Protocols.Team;
 import SPRITERE.SPRITERE;
 import TCPCM.TCPCM;
 import UDPSM.UDPSM;
+import UIM.GameOver;
 
 public class RT extends BasicGameState{
 	EventListener eventlistener;
@@ -30,6 +32,7 @@ public class RT extends BasicGameState{
 	DOM dom;
 	SPRITERE spritere;
 	UDPSM udpsm;
+	GameOver gameover;
 	double x = 700;
 	double y = 700;
 	boolean debuff[] = {true, true};
@@ -41,6 +44,7 @@ public class RT extends BasicGameState{
 	TrueTypeFont timeTtf;
 	double time = 120;
 	boolean openTab = false;
+	boolean isover = false;
 
 	
 	public RT() {
@@ -51,8 +55,9 @@ public class RT extends BasicGameState{
 
 	}
 	
-	public RT(TCPCM tcpcm) {
+	public RT(TCPCM tcpcm, GameOver gameover) {
 		this.tcpcm = tcpcm;
+		this.gameover = gameover;
 		dom = new DOM();
 		spritere = new SPRITERE(dom);
 		//udpsm = new UDPSM(dom);
@@ -131,15 +136,19 @@ public class RT extends BasicGameState{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		if(isover == true) {
+			sbg.enterState(5, null, new HorizontalSplitTransition());
+		}
 	}
 
 	@Override
 	public int getID() {
-		return 2;
+		return 4;
 	}
 	
-	public ResultInfo getFinalResult() {
-		return dom.getFinalResult();
+	public void goNext() {
+		//gameover.goNext(dom.getFinalResult());
+		isover = true;
 	}
 }
 
