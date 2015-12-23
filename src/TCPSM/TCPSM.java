@@ -5,11 +5,12 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
+
 import Protocols.ClientAction;
+import Protocols.Role;
 import Protocols.ServerAction;
 import Protocols.Team;
 import SETTINGS.TCP;
-
 import CDC.CDC;
 
 public class TCPSM {
