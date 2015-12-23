@@ -4,9 +4,9 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class CharacterState {
-	public ArrayList<person> player = new ArrayList<person>();
-	
-	public class person {
+	public ArrayList<Person> player = new ArrayList<Person>();
+
+	public class Person {
 		public int clientno;
 		public String name;
 		public Team team;
