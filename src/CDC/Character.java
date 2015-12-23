@@ -1,21 +1,29 @@
 package CDC;
 
 import java.awt.geom.Point2D;
+import java.util.Timer;
+import java.util.TimerTask;
+import Protocols.*;
+import SETTINGS.*;
+
 
 public class Character {
 	private int clientnumber;
 	private String name;
-	private int team = -1;
-	private int job = -1;
+	private Team team = Team.NULL;
+	private Role role = Role.NULL;
 	private Point2D location;
 	private int maxHP = 100;
 	private int nowHP = maxHP;
+	private Status status = Status.UP_STOP;
 	private double movespeed;
 	private double attackspeed;
 	private boolean canattack = true;
 	private boolean [] debuff = {false, false};
 	private int kill = 0;
 	private int dead = 0;
+	private boolean candraw = true;
+	private boolean havedead = false;
 	private boolean ready = false;
 	
 	public Character(int clientnumber, String name) {
@@ -23,12 +31,12 @@ public class Character {
 		this.name = name;
 	}
 	
-	public void setTeam(int team) {
+	public void setTeam(Team team) {
 		this.team = team;
 	}
 	
-	public void setJob(int job) {
-		this.job = job;
+	public void setRole(Role role) {
+		this.role = role;
 	}
 	
 	public void setLocation(Point2D location) {
@@ -41,34 +49,51 @@ public class Character {
 	
 	public void setCanAttack(boolean canattack) {
 		this.canattack = canattack;
+		Timer timer = new Timer();
+		timer.schedule(new ReadyAttack(), (long)attackspeed * 1000);
 	}
 	
 	public void setDeBuff(boolean [] debuff) {
 		this.debuff = debuff;
 	}
 	
-	public void setKill(int kill) {
-		this.kill = kill;
+	public void addKill() {
+		kill++;
 	}
 	
-	public void setDead(int dead) {
-		this.dead = dead;
+	public void addDead() {
+		dead++;
+		havedead = true;
+		candraw = false;
+		Timer timer = new Timer();
+		timer.schedule(new RadyDraw(), 57000);
+		timer.schedule(new Resurrection(), 60000);
 	}
 	
 	public void setReady(boolean ready) {
 		this.ready = ready;
 	}
 	
-	public void setJobConstant() {
-		switch(job)
+	public void setRoleConstant() {
+		switch(role)
 		{
-			case 0:
+			case A:
+				movespeed = 1;
+				attackspeed = 2.5;
 				break;
-			case 1:
+			case B:
+				movespeed = 1.5;
+				attackspeed = 2;
 				break;
-			case 2:
+			case C:
+				movespeed = 2;
+				attackspeed = 1.5;
 				break;
-			case 3:
+			case D:
+				movespeed = 2.5;
+				attackspeed = 1;
+				break;
+			default:
 				break;
 		}
 	}
@@ -81,12 +106,12 @@ public class Character {
 		return name;
 	}
 	
-	public int getTeam() {
+	public Team getTeam() {
 		return team;
 	}
 	
-	public int getJob() {
-		return job;
+	public Role getRole() {
+		return role;
 	}
 	
 	public Point2D getLocation() {
@@ -124,5 +149,23 @@ public class Character {
 	public boolean getReady() {
 		return ready;
 		
+	}
+	
+	public class RadyDraw extends TimerTask {
+		public void run () {
+			candraw = true;
+		}
+	}
+	
+	public class Resurrection extends TimerTask {
+		public void run() {
+			havedead = false;
+		}
+	}
+	
+	public class ReadyAttack extends TimerTask {
+		public void run() {
+			canattack = true;
+		}
 	}
 }
