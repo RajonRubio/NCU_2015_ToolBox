@@ -48,6 +48,9 @@ public class RT extends BasicGameState{
 		
 		eventlistener.listent(gc,delta);
 	}
+	public void goNext(){
+		
+	}
 
 	@Override
 	public int getID() {
