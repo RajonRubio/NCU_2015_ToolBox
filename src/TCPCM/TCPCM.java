@@ -71,9 +71,14 @@ public class TCPCM {
 			e.printStackTrace();
 		}
 	}
+	
 	public void IAmReady(){
-		
-		
+		try {
+			writer.writeObject(ServerAction.READY);
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -138,6 +143,7 @@ public class TCPCM {
 					case SERVER_FULL:
 						// ask first scene to say that server is full
 						((Menu_login)this.main.getCurrentState()).ServerFull();
+						running = false;
 						break;
 					case TEAM_STAT:
 						TeamState teamState = (TeamState)reader.readObject();
