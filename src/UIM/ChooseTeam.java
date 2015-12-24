@@ -171,7 +171,7 @@ public class ChooseTeam extends BasicGameState{
 
 	@Override
 	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
-		g.drawImage( Background , 0 , 0 ); //µe­I´º
+		g.drawImage( Background , 0 , 0 ); //ï¿½eï¿½Iï¿½ï¿½
 		
 		g.drawImage(Leftteamlight , 0 , TeamImageY ); 
 		g.drawImage(Rightteamlight , 480 , TeamImageY ); 
@@ -523,7 +523,6 @@ public class ChooseTeam extends BasicGameState{
 			}
 			if(LockHero&&LockTeam){
 				if(x>410&&x<543 && y>364&&y<428){
-					//TCP ³s½u
 					IsWaiting = true;
 					IsReady = true ;
 					tcpcm.IAmReady();

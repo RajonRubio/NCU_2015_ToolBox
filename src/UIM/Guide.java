@@ -27,7 +27,7 @@ public class Guide extends BasicGameState{
 
 	@Override
 	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
-		g.drawImage( Background , 0 , 0 ); //µe­I´º
+		g.drawImage( Background , 0 , 0 ); 
 		if(!MouseOnBack){
 			g.drawImage(Back , 340 , 560 ); 
 		}else {

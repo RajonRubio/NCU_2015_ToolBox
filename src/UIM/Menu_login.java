@@ -69,19 +69,19 @@ public class Menu_login extends BasicGameState{
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
 		this.sbg = arg1;
-		Background = new Image("Menu/noinput.png");
-		Mouse = new Image("mouse.png");
-		Author = new Image("Menu/author.png");
-		OnAuthor = new Image("Menu/authorpressed.png");
-		Guide = new Image("Menu/guide.png");
-		OnGuide = new Image("Menu/guidepressed.png");
-		Gamestart = new Image("Menu/gamestart.png");
-		OnGamestart = new Image("Menu/gamestartpressed.png");
-		IPWrong = new Image("Menu/IPWrong.png");
-		IDWrong = new Image("Menu/IDWrong.png");
-		unconnect = new Image("Menu/CantConnect.png");
-		DupName = new Image("Menu/DupID.png");
-		serverfull = new Image("Menu/peoplefull.png");
+		Background = new Image("img/UIMpic/Menu/noinput.png");
+		Mouse = new Image("img/UIMpic/mouse.png");
+		Author = new Image("img/UIMpic/Menu/author.png");
+		OnAuthor = new Image("img/UIMpic/Menu/authorpressed.png");
+		Guide = new Image("img/UIMpic/Menu/guide.png");
+		OnGuide = new Image("img/UIMpic/Menu/guidepressed.png");
+		Gamestart = new Image("img/UIMpic/Menu/gamestart.png");
+		OnGamestart = new Image("img/UIMpic/Menu/gamestartpressed.png");
+		IPWrong = new Image("img/UIMpic/Menu/IPWrong.png");
+		IDWrong = new Image("img/UIMpic/Menu/IDWrong.png");
+		unconnect = new Image("img/UIMpic/Menu/CantConnect.png");
+		DupName = new Image("img/UIMpic/Menu/DupID.png");
+		serverfull = new Image("img/UIMpic/Menu/peoplefull.png");
 
 		f = new java.awt.Font("Sans", java.awt.Font.PLAIN,  20);
 		font = new TrueTypeFont(f, false); 
