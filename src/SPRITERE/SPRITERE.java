@@ -1,7 +1,8 @@
 package SPRITERE;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
+
+import org.newdawn.slick.Graphics;
 
 import DOM.DOM;
 import DOM.DynamicObject;
@@ -22,11 +23,11 @@ public class SPRITERE {
 		}
 	}
 	
-	public void renderSprite(Point2D clientLocation) {
+	public void renderSprite(Graphics g) {
 		ArrayList<DynamicObject> object = new ArrayList<DynamicObject>();
 		object = dom.getAllDynamicObjects();
 		for(DynamicObject o: object) {
-			o.render(dom.getVirtualCharacterXY());
+			o.render(g, dom.getVirtualCharacterXY());
 		}
 	}
 }

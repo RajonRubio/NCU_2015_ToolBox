@@ -101,11 +101,11 @@ public class Menu_login extends BasicGameState{
 
 	@Override
 	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
-		g.drawImage( Background , 0 , 0 ); //畫背景
+		g.drawImage( Background , 0 , 0 ); 
 		g.drawString("( "+ x +" , "+ y +")", 0, 0);
 		g.setColor(Color.black);
-		g.drawRect(377, 288, 275, 35); //IP框框
-		g.drawRect(377, 340, 275, 35); //ID框框
+		g.drawRect(377, 288, 275, 35); 
+		g.drawRect(377, 340, 275, 35); 
 		g.setColor(Color.white);
 		IPInput.render(app, g);
 		IDInput.render(app, g);
@@ -186,11 +186,9 @@ public class Menu_login extends BasicGameState{
 				TryStart = true;
 				if(IPInput.getText().matches("^(?:[0-9]{1,3}.){3}[0-9]{1,3}$")) {
 					IPFormatOK = true;
-					System.out.println("格式正確"); 
 				}    
 		        else {
 		        	IPFormatOK = false;
-		        	System.out.println("格式錯誤");
 		        }
 				if(IDInput.getText().length()==0){
 					IDFormatOK = false;
