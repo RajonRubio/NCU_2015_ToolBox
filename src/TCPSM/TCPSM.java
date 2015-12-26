@@ -1,10 +1,13 @@
 package TCPSM;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import Protocols.ClientAction;
@@ -20,9 +23,10 @@ public class TCPSM {
 	private ArrayList<String> clientIPTable;
 	private ArrayList<Socket> clientConnections;
 	private ArrayList<Thread> clientThreads;
+	private ArrayList<Boolean> clientEnable;
 	private int connectNum;
 	private Thread listenThread;
-	private Thread pingThread;
+	private Timer pingTimer;
 	private boolean serverStart;
 	
 	/** @Constructor */
@@ -32,11 +36,12 @@ public class TCPSM {
 		this.clientThreads = new ArrayList<Thread>();
 		this.connectNum = 0;
 		this.serverStart = false;
+		this.pingTimer = new Timer();
 	}
 	
 	/*
 	 * Set cdc property to call while getting action code from clinet
-	 * @Param cdc 	CDC instance
+	 * @Param cdc CDC instance
 	 */
 	public void setDataCenter(CDC cdc) {
 		this.cdc = cdc;
@@ -48,20 +53,45 @@ public class TCPSM {
 		this.serverSock = new ServerSocket(TCP.PORT);
 		this.listenThread = new Thread(new ConnectionHandler());
 		this.listenThread.start();
+		this.pingTimer.schedule(new PingTask(), 5000);
+	}
+	
+	/** Stop listening and close all connection */
+	public void stopServer() throws Exception {
+		this.serverStart = false;
+		for(Socket s : this.clientConnections) {
+			s.close();
+		}
+		this.clientIPTable.clear();
+		this.clientConnections.clear();
+		this.clientThreads.clear();
+		this.clientEnable.clear();
+		this.pingTimer.cancel();
 	}
 	
 	/*
-	 * Remove client from ArrayList if heartbit failed.
+	 * Remove client from ArrayList if heart beat failed.
 	 * @Param id disconnected client's connection id
 	 */
-	private void removeClient(int id) throws Exception {
-		
+	private void removeClient(int id){
+		try {
+			clientConnections.get(id-1).close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		clientEnable.set(id, false);
+		clientThreads.get(id).interrupt();
+		clientIPTable.remove(id);
+		clientConnections.remove(id);
+		clientThreads.remove(id);
+		clientEnable.remove(id);
+		connectNum -= 1;
 	}
 	
 	/*
 	 * Called by UDPBC
 	 * Get all client's address who is connecting to the server
-	 * @return 		the set of addresses 
+	 * @return 	the set of addresses 
 	 */
 	public ArrayList getClientIPTable() {
 		return this.clientIPTable;
@@ -91,16 +121,6 @@ public class TCPSM {
 		}
 	}
 	
-	/** Stop listening and close all connection */
-	public void stopServer() throws Exception {
-		this.serverStart = false;
-		for(Socket s : this.clientConnections) {
-			s.close();
-		}
-		clientIPTable.clear();
-		clientConnections.clear();
-		clientThreads.clear();
-	}
 	
 	/*
 	 * Class implement Runnable
@@ -210,5 +230,24 @@ public class TCPSM {
 					break;
 			}
 		}
+	}
+	
+	private class PingTask extends TimerTask{
+
+		@Override
+		public void run() {
+			int counter = 0;
+			for(Socket s : clientConnections) {
+				try {
+					ObjectOutputStream writer = new ObjectOutputStream(s.getOutputStream());
+					writer.writeObject(ClientAction.GAME_OVER);
+					writer.flush();
+					counter += 1;
+				} catch (IOException e) {
+					removeClient(counter);
+				}
+			}
+		}
+		
 	}
 }
