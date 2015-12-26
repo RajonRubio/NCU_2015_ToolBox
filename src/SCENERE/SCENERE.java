@@ -14,20 +14,17 @@ import Protocols.Team;
 import SDM.SDM;
 
 public class SCENERE {
-//	public SCENERE(){
-//		
-//	}
 	public SCENERE(DOM dom) {
 		this.dom = dom;
 	}
 	DOM dom;
 	public SDM sdm = new SDM();
-	private double origin_x;
+	private double origin_x;  //viewport最左上角要畫的圖
 	private double origin_y;
-	double offset_x;
+	double offset_x;  //偏移量 
 	double offset_y;
 	public Point2D.Double charactor_location ;//拿來接DOM.getvirtualcharactorXY
-	double viewport[][] = new double[17][22];//單一玩家的視窗畫面[y][x]
+	double viewport[][] = new double[17][22]; //單一玩家的視窗畫面[y][x]
 	public Image[] tileImages = new Image[5]; //宣告成slick2D的image格式
 	public void renderScene(Graphics g) {
 
@@ -40,16 +37,14 @@ public class SCENERE {
 		}
 		if(charactor_location.y<360 && charactor_location.y >60){
 			origin_y = origin_y -1;
-		}  //y軸還有bug
+		}  
 		
 		int i=0,j=0;//畫圖的左上角
 		for(int y=(int)origin_y;y<origin_y+17;y++,j++){     //這裏要來控制人物所在位置的
 			i=0;
 			for(int x=(int)origin_x;x<origin_x+22;x++,i++){
-				//超出邊界的情況  目前430 480 會出現一樣的位置 orix都是0
 				if(origin_x+i<0||origin_y+j<0||origin_x+i>=100||origin_y+j>=40){
 					g.drawImage(tileImages[2],(float)( (i-1)*50-( (charactor_location.x-80) %50) ),(float)( (j-1)*50-( (charactor_location.y-60) %50) ) );
-					//碰到邊界會閃爍
 				}
 				else{
 				g.drawImage(tileImages[ (int) sdm.mapdata[y][x] ],(float)( (i-1)*50-( (charactor_location.x-80) %50) ),(float)( (j-1)*50-( (charactor_location.y-60) %50) ) );
@@ -72,7 +67,6 @@ public class SCENERE {
 			tileImages[3] = new Image("img/map/woodbox_1.png");
 			tileImages[4] = new Image("img/map/woodbox_2.png");
 		} catch (SlickException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -6,8 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import Protocols.WoodBox.WoodBoxState;
 
-import javafx.scene.shape.Box;
 
 public class SDM {
 	public BasicBlock[][] scene = new BasicBlock[40][100]; //scene is a BasicBlock type array
@@ -56,7 +56,6 @@ public class SDM {
 					 content[x][y]=Double.parseDouble((String) myList.get(count));
 			         count++; //一個index來決定myList讀取值的位置
 			         //System.out.println("x:"+ x + " y:"+y+" "+content[x][y]);
-			         //所以要處理的就是content
 			     }
 			 }
 			 constructMap(content);
@@ -116,13 +115,14 @@ public class SDM {
 	}
 	/*所以別人想要地圖資訊
 	 *就是要先 new SDM()
+	 *then getMap()
 	 *然後直接拿 mapdata[][]
 	 */
 
 	/* 從UDP那邊讀來 哪些木牆被撞到了 然後要更新他們的type*/
-	public void updateBoxes(ArrayList updateboxes) {
-		for(int i=0;i<updateboxes.size();i++){
-			mapdata[updateboxes.indexOf(1)][updateboxes.indexOf(2)] = updateboxes.indexOf(3); //這一種感覺
+	public void updateBoxes(ArrayList<WoodBoxState> updatedboxes) {
+		for(int i=0;i<updatedboxes.size();i++){
+			mapdata[updatedboxes.get(i).y][updatedboxes.get(i).x] = updatedboxes.get(i).type; //這一種感覺
 		}
 	}
 }
