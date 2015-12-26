@@ -114,47 +114,47 @@ public class CDC {
 	}
 	
 	public void addVirtualCharacter(int clientnumber, String name) {
-		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber¤£¦A½d³ò¸Ì";
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumberï¿½ï¿½ï¿½Aï¿½dï¿½ï¿½ï¿½ï¿½";
 		if(characters.size() == maximum)
 		{
-			System.out.println("ª±®a¤wº¡");
+			System.out.println("ï¿½ï¿½ï¿½aï¿½wï¿½ï¿½");
 			return;
 		}
 		characters.add(new Character(clientnumber, name));
-		System.out.println("·s¼W¤@¦ìª±®a" + name);
+		System.out.println("ï¿½sï¿½Wï¿½@ï¿½ìª±ï¿½a" + name);
 	}
 	
 	public void removeVirtualCharacter(int clientnumber) {
-		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber¤£¦A½d³ò¸Ì";
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumberï¿½ï¿½ï¿½Aï¿½dï¿½ï¿½ï¿½ï¿½";
 		if(characters.size() == 0)
 		{
-			System.out.println("¨S¦³ª±®a¥i¥H§R°£");
+			System.out.println("ï¿½Sï¿½ï¿½ï¿½ï¿½ï¿½aï¿½iï¿½Hï¿½Rï¿½ï¿½");
 			return;
 		}
 		else if(searchClientNumber(clientnumber) == -1)
 		{
-			System.out.println("§ä¤£¨ì¦¹ª±®a");
+			System.out.println("ï¿½ä¤£ï¿½ì¦¹ï¿½ï¿½ï¿½a");
 			return;
 		}
 		characters.remove(searchClientNumber(clientnumber));
-		System.out.println("§R°£¤@¦ìª±®a");
+		System.out.println("ï¿½Rï¿½ï¿½ï¿½@ï¿½ìª±ï¿½a");
 	}
 	
 	public void setTeam(int clientnumber, Team team) {
-		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber¤£¦A½d³ò¸Ì";
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumberï¿½ï¿½ï¿½Aï¿½dï¿½ï¿½ï¿½ï¿½";
 		if(searchClientNumber(clientnumber) == -1)
 		{
-			System.out.println("§ä¤£¨ì¦¹ª±®a");
+			System.out.println("ï¿½ä¤£ï¿½ì¦¹ï¿½ï¿½ï¿½a");
 			return;
 		}
 		characters.get(searchClientNumber(clientnumber)).setTeam(team);
 	}
 	
 	public void setRole(int clientnumber, Role role) {
-		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber¤£¦A½d³ò¸Ì";
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumberï¿½ï¿½ï¿½Aï¿½dï¿½ï¿½ï¿½ï¿½";
 		if(searchClientNumber(clientnumber) == -1)
 		{
-			System.out.println("§ä¤£¨ì¦¹ª±®a");
+			System.out.println("ï¿½ä¤£ï¿½ì¦¹ï¿½ï¿½ï¿½a");
 			return;
 		}
 		characters.get(searchClientNumber(clientnumber)).setRole(role);
@@ -162,24 +162,24 @@ public class CDC {
 	}
 	
 	public void setReady(int clientnumber) {
-		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber¤£¦A½d³ò¸Ì";
+		assert clientnumber >= 0 && clientnumber <= 3: "clientnumberï¿½ï¿½ï¿½Aï¿½dï¿½ï¿½ï¿½ï¿½";
 		if(searchClientNumber(clientnumber) == -1)
 		{
-			System.out.println("§ä¤£¨ì¦¹ª±®a");
+			System.out.println("ï¿½ä¤£ï¿½ì¦¹ï¿½ï¿½ï¿½a");
 			return;
 		}
 		characters.get(searchClientNumber(clientnumber)).setReady(true);
 		if(checkReady())
 		{
 			GameStart();
-			System.out.println("¹CÀ¸¶}©l");
+			System.out.println("ï¿½Cï¿½ï¿½ï¿½}ï¿½l");
 		}
 	}
 	
 	public boolean checkReady() {
 		if(characters.size() != maximum)
 		{
-			System.out.println("¤H¼Æ¤£°÷");
+			System.out.println("ï¿½Hï¿½Æ¤ï¿½ï¿½ï¿½");
 			return false;
 		}
 		else
