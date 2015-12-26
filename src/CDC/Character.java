@@ -77,19 +77,19 @@ public class Character {
 	public void setRoleConstant() {
 		switch(role)
 		{
-			case A:
+			case Archer:
 				movespeed = 1;
 				attackspeed = 2.5;
 				break;
-			case B:
+			case Marines:
 				movespeed = 1.5;
 				attackspeed = 2;
 				break;
-			case C:
+			case Cannon:
 				movespeed = 2;
 				attackspeed = 1.5;
 				break;
-			case D:
+			case Wizard:
 				movespeed = 2.5;
 				attackspeed = 1;
 				break;

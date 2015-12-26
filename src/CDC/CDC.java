@@ -6,21 +6,20 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import CDC.Character.Resurrection;
 import Protocols.*;
 import SETTINGS.*;
 import TCPSM.TCPSM;
 
 public class CDC {
-	private Character [] character = new Character [4];
-	private int characternumber = 0;
-	private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 	private TCPSM tcpsm;
-	private BasicBlock [][] map; 
+	private int maximum = 4;
+	private BasicBlock [][] map = new BasicBlock [40][100];
+	private ArrayList<Character> characters = new ArrayList<Character>();
+	private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+	private ArrayList<WoodBox> changebox = new ArrayList<WoodBox>();
 	
 	public CDC() {
-		tcpsm = new TCPSM();
+		tcpsm = new TCPSM(this);
 		loadmap();
 	}
 	
@@ -61,7 +60,7 @@ public class CDC {
 		}
 	}
 	
-	void constructMap(double content[][]) {
+	public void constructMap(double content[][]) {
 		boolean istype=true;
 		for(int y=0;y<40;y++)
 		{
@@ -88,10 +87,25 @@ public class CDC {
 		}
 	}
 	
-	public boolean checkName(String name) {
-		for(int i=0;i<=characternumber;i++)
+	public int searchClientNumber(int clientnumber) {
+		for(int i=0;i<characters.size();i++)
 		{
-			if(character[i].getName() == name)
+			if(characters.get(i).getClientNumber() == clientnumber)
+			{
+				return characters.get(i).getClientNumber();
+			}
+		}
+		return -1;
+	}
+	
+	public boolean checkName(String name) {
+		if(characters.size() == 0)
+		{
+			return true;
+		}
+		for(int i=0;i<characters.size();i++)
+		{
+			if(characters.get(i).getName() == name)
 			{
 				return false;
 			}
@@ -101,143 +115,256 @@ public class CDC {
 	
 	public void addVirtualCharacter(int clientnumber, String name) {
 		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber不再範圍裡";
-		character[clientnumber] = new Character(clientnumber, name);
-		characternumber++;
+		if(characters.size() == maximum)
+		{
+			System.out.println("玩家已滿");
+			return;
+		}
+		characters.add(new Character(clientnumber, name));
+		System.out.println("新增一位玩家" + name);
 	}
 	
 	public void removeVirtualCharacter(int clientnumber) {
 		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber不再範圍裡";
-		character[clientnumber] = null;
-		characternumber--;
+		if(characters.size() == 0)
+		{
+			System.out.println("沒有玩家可以刪除");
+			return;
+		}
+		else if(searchClientNumber(clientnumber) == -1)
+		{
+			System.out.println("找不到此玩家");
+			return;
+		}
+		characters.remove(searchClientNumber(clientnumber));
+		System.out.println("刪除一位玩家");
 	}
 	
 	public void setTeam(int clientnumber, Team team) {
 		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber不再範圍裡";
-		character[clientnumber].setTeam(team);
+		if(searchClientNumber(clientnumber) == -1)
+		{
+			System.out.println("找不到此玩家");
+			return;
+		}
+		characters.get(searchClientNumber(clientnumber)).setTeam(team);
 	}
 	
 	public void setRole(int clientnumber, Role role) {
 		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber不再範圍裡";
-		character[clientnumber].setRole(role);
-		character[clientnumber].setRoleConstant();
+		if(searchClientNumber(clientnumber) == -1)
+		{
+			System.out.println("找不到此玩家");
+			return;
+		}
+		characters.get(searchClientNumber(clientnumber)).setRole(role);
+		characters.get(searchClientNumber(clientnumber)).setRoleConstant();
 	}
 	
-	public void setReady(int clientnumber, Boolean ready) {
+	public void setReady(int clientnumber) {
 		assert clientnumber >= 0 && clientnumber <= 3: "clientnumber不再範圍裡";
-		character[clientnumber].setReady(ready);
+		if(searchClientNumber(clientnumber) == -1)
+		{
+			System.out.println("找不到此玩家");
+			return;
+		}
+		characters.get(searchClientNumber(clientnumber)).setReady(true);
 		if(checkReady())
 		{
 			GameStart();
+			System.out.println("遊戲開始");
 		}
 	}
 	
 	public boolean checkReady() {
-		for(int i=0;i<=characternumber;i++)
+		if(characters.size() != maximum)
 		{
-			if(character[i].getReady() == false)
+			System.out.println("人數不夠");
+			return false;
+		}
+		else
+		{
+			for(int i=0;i<maximum;i++)
 			{
-				return false;
+				if(characters.get(i).getReady() == false)
+				{
+					return false;
+				}
 			}
 		}
 		return true;
 	}
 	
 	public void GameStart() {
-<<<<<<< HEAD
-		for(int i=0;i<=characternumber;i++)
+		for(int i=0;i<maximum;i++)
 		{
 			RandomLocation(i);
 		}
-		tcpsm.gameStart();
 		Timer timer = new Timer();
 		timer.schedule(new GameOver(), 2*60*1000);
-=======
-		//tcpsm.gamestart();
->>>>>>> 719c64a004ede139fb1b42756603afb965415ac3
+		try {
+			tcpsm.gameStart();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void RandomLocation(int number) {
 		Point2D location = null;
-		location.setLocation(Random()*5000, Random()*2000);
 		boolean check = true;
 		while(check)
 		{
-			for(int i=0;i<=characternumber;i++)
+			location.setLocation(Random()*5000, Random()*2000);
+			for(int i=0;i<characters.size();i++)
 			{
-				if(location != character[i].getLocation()) {
+				if(location != characters.get(i).getLocation()) {
 					check = false;
 				}	
 			}
-			if(map[(int)location.getY()][(int)location.getX()].getType() == 0) {
+			if(map[(int)location.getY()/50][(int)location.getX()/50].getType() == 0) {
 				check = false;
 			}
 		}
-		character[number].setLocation(location);
+		characters.get(searchClientNumber(number)).setLocation(location);
 	}
 	
-	public void Move(int clientnumber) {
-		
-	}
-	
-	public void addBullet(int clientnumber, Point2D angle) {
-		if(character[characternumber].getCanAttack())
+	public void CharacterMove(int clientnumber, ServerAction action) {
+		Point2D location = characters.get(searchClientNumber(clientnumber)).getLocation();
+		double x = location.getX(), y = location.getX();
+		double movespeed = characters.get(searchClientNumber(clientnumber)).getMoveSpeed();
+		switch(action)
 		{
-			Role role = character[characternumber].getRole();
-			Team team = character[characternumber].getTeam();
-			Point2D location = character[characternumber].getLocation();
-			Skill skill = Skill.NULL;
-			switch(role)
-			{
-				case A:
-					bullets.add(new Bullet(team, location, 2, skill.DISPERSION, angle, 1, 15));
-					break;
-				case B:
-					bullets.add(new Bullet(team, location, 1.5, skill.NULL, angle, 3, 20));
-					break;
-				case C:
-					bullets.add(new Bullet(team, location, 1, skill.CHAOS, angle, 3, 5));
-					break;
-				case D:
-					bullets.add(new Bullet(team, location, 2.5, skill.FIRE, angle, 3, 10));
-					break;
-			}
-			character[characternumber].setCanAttack(false);
+			case UP_PRESS:
+				location.setLocation(x-movespeed,y);
+				characters.get(searchClientNumber(clientnumber)).setLocation(location);
+				break;
+			case DOWN_PRESS:
+				location.setLocation(x+movespeed,y);
+				characters.get(searchClientNumber(clientnumber)).setLocation(location);
+				break;
+			case RIGHT_PRESS:
+				location.setLocation(x,y+movespeed);
+				characters.get(searchClientNumber(clientnumber)).setLocation(location);
+				break;
+			case LEFT_PRESS:
+				location.setLocation(x,y-movespeed);
+				characters.get(searchClientNumber(clientnumber)).setLocation(location);
+				break;
+			default:
+				break;
 		}
 	}
+	
+	public void BulletsMove() {
+		Point2D location;
+		double bulletspeed;
+		Point2D angle;
+		for(int i=0;i<bullets.size();i++)
+		{
+			location = bullets.get(i).getLocation();
+			bulletspeed = bullets.get(i).getBulletspeed();
+			angle = bullets.get(i).getAngle();
+			location.setLocation(bulletspeed * angle.getX(), bulletspeed * angle.getY());
+			bullets.get(i).setLocation(location);
+		}
+	}
+	
 	public void checkCollision() {
 		
 	}
 	
-	public void getUpdateInfo() { //傳所有要更新的物件資訊給UDP
-		
+	public void addBullet(int clientnumber, Point2D angle) {
+		if(characters.get(searchClientNumber(clientnumber)).getCanAttack())
+		{
+			String name = characters.get(clientnumber).getName();
+			Role role = characters.get(clientnumber).getRole();
+			Team team = characters.get(clientnumber).getTeam();
+			Point2D location = characters.get(clientnumber).getLocation();
+			Skill skill = Skill.NULL;
+			switch(role)
+			{
+				case Archer:
+					bullets.add(new Bullet(name, team, location, 2, skill.DISPERSION, angle, 1, 15));
+					break;
+				case Marines:
+					bullets.add(new Bullet(name, team, location, 1.5, skill, angle, 3, 20));
+					break;
+				case Cannon:
+					bullets.add(new Bullet(name, team, location, 1, skill.CHAOS, angle, 3, 5));
+					break;
+				case Wizard:
+					bullets.add(new Bullet(name, team, location, 2.5, skill, angle, 3, 10));
+					break;
+			}
+			characters.get(searchClientNumber(clientnumber)).setCanAttack(false);
+		}
 	}
 	
-	public void KillAndDead(int characternumber1, int characternumber2) {
-		character[characternumber1].addKill();
-		character[characternumber2].addDead();
+	public void Attack(int clientnumber1, int clientnumber2, int attack, Skill skill) {
+		boolean debuff[] = {false,false};
+		int HP = characters.get(searchClientNumber(clientnumber2)).getNowHP();
+		characters.get(searchClientNumber(clientnumber2)).setNowHP(HP - attack);
+		switch(skill)
+		{
+			case CHAOS:
+				debuff[1] = true;
+				characters.get(searchClientNumber(clientnumber2)).setDeBuff(debuff);
+				break;
+			case FIRE:
+				debuff[2] = true;
+				characters.get(searchClientNumber(clientnumber2)).setDeBuff(debuff);
+				break;
+			default:
+				break;
+		}
+		if(HP == 0)
+		{
+			KillAndDead(clientnumber1, clientnumber2);
+		}
+	}
+	
+	public void KillAndDead(int clientnumber1, int clientnumber2) {
+		characters.get(searchClientNumber(clientnumber1)).addKill();
+		characters.get(searchClientNumber(clientnumber2)).addDead();
 		Timer timer = new Timer();
-		timer.schedule(new ResurrectionRandomLoction(characternumber2), 60000);
+		timer.schedule(new ResurrectionRandomLoction(clientnumber2), 60000);
 	}
 	
 	public class ResurrectionRandomLoction extends TimerTask {
-		int characternumber;
+		int clientnumber;
 		public ResurrectionRandomLoction(int i) {
-			characternumber = i;
+			clientnumber = i;
 		}
 		
 		public void run()  {
-			RandomLocation(characternumber);
+			RandomLocation(clientnumber);
 		}
 	}
 	
 	public class GameOver extends TimerTask {
 		public void run() {
-			tcpsm.gameOver();
+			try {
+				tcpsm.gameOver();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
 	public double Random() {
 		Random random = new Random();
 		return random.nextDouble();
+	}
+	
+	public ArrayList<Character> getCharacter() {
+		return characters;
+	}
+	
+	public ArrayList<Bullet> getBullets() {
+		return bullets;
+	}
+	
+	public ArrayList<WoodBox> getWoodBox() {
+		return changebox;
 	}
 }
