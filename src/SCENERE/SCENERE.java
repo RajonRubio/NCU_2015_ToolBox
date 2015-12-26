@@ -17,16 +17,16 @@ public class SCENERE {
 	public SCENERE(){
 		
 	}
-//	public SCENERE(DOM dom) {
-//		this.dom = dom;
-//	}
-//	DOM dom;
+	public SCENERE(DOM dom) {
+		this.dom = dom;
+	}
+	DOM dom;
 	public SDM sdm = new SDM();
 	private double origin_x;
 	private double origin_y;
 	double offset_x;
 	double offset_y;
-	public Point2D.Double charactor_location = new Point2D.Double(130,60);
+	public Point2D.Double charactor_location = new Point2D.Double(480,360);
 	double viewport[][] = new double[17][22];//單一玩家的視窗畫面[y][x]
 	public Image[] tileImages = new Image[5]; //宣告成slick2D的image格式
 	public void renderScene(Graphics g) {
@@ -41,8 +41,6 @@ public class SCENERE {
 			origin_y = origin_y -1;
 		}  //y軸還有bug
 		
-//		offset_x = (charactor_location.x)%50;  //這兩個好像用不到
-//		offset_y = (charactor_location.y)%50;
 		int i=0,j=0;//畫圖的左上角
 		for(int y=(int)origin_y;y<origin_y+17;y++,j++){     //這裏要來控制人物所在位置的
 			i=0;
@@ -58,7 +56,6 @@ public class SCENERE {
 				 * -80是因為調整 讓原點的480  
 				 * sdm.mapdata會是一個數字 代表地圖型別
 				 */
-//				viewport[j][i]= sdm.mapdata[y][x];//這個好像用不到
 				}
 			}
 		}

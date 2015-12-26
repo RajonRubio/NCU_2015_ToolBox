@@ -7,11 +7,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javafx.scene.shape.Box;
+
 public class SDM {
 	public BasicBlock[][] scene = new BasicBlock[40][100]; //scene is a BasicBlock type array
 	public double mapdata[][] = new double[40][100];  
 //	public ArrayList<WoodBox> woodbox = new ArrayList<WoodBox>(); //用一個ArrayList拿來存取木箱的資料 但是不用了
-
+	
 	public SDM() {
 		BasicBlock[][] scene;
 		loadMap();
@@ -118,7 +120,11 @@ public class SDM {
 	 */
 
 	/* 從UDP那邊讀來 哪些木牆被撞到了 然後要更新他們的type*/
-	public void updateBoxes(ArrayList update_boxes) {
+	public void updateBoxes(ArrayList updateboxes) {
+		for(int i=0;i<updateboxes.size();i++){
+			mapdata[updateboxes.indexOf(1)][updateboxes.indexOf(2)] = updateboxes.indexOf(3); //這一種感覺
+		}
+		
 		
 	}
 }

@@ -48,20 +48,20 @@ public class Main extends BasicGame{
 	public void update(GameContainer gc, int arg1) throws SlickException {
 		// TODO Auto-generated method stub
 		if(gc.getInput().isKeyDown(org.newdawn.slick.Input.KEY_S)){
-			sre.charactor_location.y += 20;
+			sre.charactor_location.y += 10;
 			
 		}
 		if(gc.getInput().isKeyDown(org.newdawn.slick.Input.KEY_W)){
-			sre.charactor_location.y -= 20;
+			sre.charactor_location.y -= 10;
 		}
 		if(gc.getInput().isKeyDown(org.newdawn.slick.Input.KEY_A)){
-			sre.charactor_location.x -= 20;
+			sre.charactor_location.x -= 10;
 			System.out.print((int)sre.charactor_location.x+" ");
 //			System.out.print((int)(sre.charactor_location.x-80) %50+" ");
 			
 		}
 		if(gc.getInput().isKeyDown(org.newdawn.slick.Input.KEY_D)){
-			sre.charactor_location.x += 20;
+			sre.charactor_location.x += 10;
 			System.out.print((int)sre.charactor_location.x+" ");
 //			System.out.print((int)(sre.charactor_location.x-80) %50+" ");
 		}
