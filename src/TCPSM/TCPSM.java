@@ -22,6 +22,7 @@ public class TCPSM {
 	private ArrayList<Thread> clientThreads;
 	private int connectNum;
 	private Thread listenThread;
+	private Thread pingThread;
 	private boolean serverStart;
 	
 	/** @Constructor */
@@ -47,6 +48,14 @@ public class TCPSM {
 		this.serverSock = new ServerSocket(TCP.PORT);
 		this.listenThread = new Thread(new ConnectionHandler());
 		this.listenThread.start();
+	}
+	
+	/*
+	 * Remove client from ArrayList if heartbit failed.
+	 * @Param id disconnected client's connection id
+	 */
+	private void removeClient(int id) throws Exception {
+		
 	}
 	
 	/*
@@ -102,8 +111,10 @@ public class TCPSM {
 		public void run() {
 			try {
 				while (serverStart) {
-					Socket s = serverSock.accept();    
-					addConnection(s);
+					if(connectNum < 4) {
+						Socket s = serverSock.accept();    
+						addConnection(s);
+					}
 				}   
 			} catch (Exception e){ 
 				e.printStackTrace(System.out);
@@ -152,8 +163,9 @@ public class TCPSM {
 			ServerAction code;
 			try {
 				while (serverStart){
-					if ((code = (ServerAction)reader.readObject()) != null)
-					switchCode(code);
+					if ((code = (ServerAction)reader.readObject()) != null){
+						switchCode(code);
+					}
 				}
 			} catch (Exception e){
 				e.printStackTrace(System.out);
