@@ -27,7 +27,7 @@ public class SCENERE {
 	double viewport[][] = new double[17][22]; //單一玩家的視窗畫面[y][x]
 	public Image[] tileImages = new Image[5]; //宣告成slick2D的image格式
 	public void renderScene(Graphics g) {
-
+		this.getBG();
 		charactor_location = dom.getVirtualCharacterXY(); //這樣就接到從DOM來的point了
 		
 		origin_x = (charactor_location.x-480)/50;   //BUG (479-480)/50 = 0

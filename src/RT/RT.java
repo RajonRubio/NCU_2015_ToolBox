@@ -21,6 +21,7 @@ import DOM.DOM;
 import Protocols.ResultInfo;
 import Protocols.Role;
 import Protocols.Team;
+import SCENERE.SCENERE;
 import SPRITERE.SPRITERE;
 import TCPCM.TCPCM;
 import UDPSM.UDPSM;
@@ -31,6 +32,7 @@ public class RT extends BasicGameState{
 	TCPCM tcpcm;
 	DOM dom;
 	SPRITERE spritere;
+	SCENERE scenere;
 	UDPSM udpsm;
 	GameOver gameover;
 	double x = 700;
@@ -51,6 +53,7 @@ public class RT extends BasicGameState{
 		//this.tcpcm = tcpcm;
 		dom = new DOM();
 		spritere = new SPRITERE(dom);
+		scenere = new SCENERE(dom);
 		//udpsm = new UDPSM(dom);
 
 	}
@@ -99,6 +102,7 @@ public class RT extends BasicGameState{
 
 	@Override
 	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
+		scenere.renderScene(g);
 		spritere.renderSprite(g);
 		if(openTab == true) {
 			g.drawImage(gameStatus, 204, 0);
