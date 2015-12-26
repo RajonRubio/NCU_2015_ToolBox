@@ -10,6 +10,8 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.HorizontalSplitTransition;
 
+import Protocols.Role;
+import Protocols.Team;
 import Protocols.TeamState;
 import Protocols.TeamState.Member;
 import TCPCM.TCPCM;
@@ -106,26 +108,26 @@ public class ChooseTeam extends BasicGameState{
 	
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
-		Background = new Image("img/UIMpic/ChooseTeam/Choose.png");
-		Leftteamlight = new Image("img/UIMpic/ChooseTeam/Leftteamlight.png");
-		Rightteamlight = new Image("img/UIMpic/ChooseTeam/Rightteamlight.png");
+		Background = new Image("img/UIM/ChooseTeam/Choose.png");
+		Leftteamlight = new Image("img/UIM/ChooseTeam/Leftteamlight.png");
+		Rightteamlight = new Image("img/UIM/ChooseTeam/Rightteamlight.png");
 		
 		Mouse = new Image("img/mouse.png");
 		   
-		Archerlight = new Image("img/UIMpic/Hero/OnArcher.png");  
-		Wizardlight = new Image("img/UIMpic/Hero/OnWizard.png");  
-		Marineslight = new Image("img/UIMpic/Hero/OnMarines.png");    
-		Cannonlight = new Image("img/UIMpic/Hero/OnCannon.png"); 
+		Archerlight = new Image("img/UIM/Hero/OnArcher.png");  
+		Wizardlight = new Image("img/UIM/Hero/OnWizard.png");  
+		Marineslight = new Image("img/UIM/Hero/OnMarines.png");    
+		Cannonlight = new Image("img/UIM/Hero/OnCannon.png"); 
 		
-		Choose = new Image("img/UIMpic/ChooseTeam/Title.png");
-		Go = new Image("img/UIMpic/ChooseTeam/GO.png");
-		OnGo = new Image("img/UIMpic/ChooseTeam/OnGO.png");
+		Choose = new Image("img/UIM/ChooseTeam/Title.png");
+		Go = new Image("img/UIM/ChooseTeam/GO.png");
+		OnGo = new Image("img/UIM/ChooseTeam/OnGO.png");
 		
 		waiting = new Image[4];
-		waiting[0] = new Image("img/UIMpic/ChooseTeam/waiting0.png");
-		waiting[1] = new Image("img/UIMpic/ChooseTeam/waiting1.png");
-		waiting[2] = new Image("img/UIMpic/ChooseTeam/waiting2.png");
-		waiting[3] = new Image("img/UIMpic/ChooseTeam/waiting3.png");
+		waiting[0] = new Image("img/UIM/ChooseTeam/waiting0.png");
+		waiting[1] = new Image("img/UIM/ChooseTeam/waiting1.png");
+		waiting[2] = new Image("img/UIM/ChooseTeam/waiting2.png");
+		waiting[3] = new Image("img/UIM/ChooseTeam/waiting3.png");
 		
 		MouseOnLeftLong = false;
 		MouseOnRightLong = false;
@@ -482,15 +484,17 @@ public class ChooseTeam extends BasicGameState{
 		//Lock 
 		if(gc.getInput().isMouseButtonDown((Input.MOUSE_LEFT_BUTTON))&&!IsWaiting){
 			//team
-			if(x>0&&x<480 && y>65&&y<400){
+			if(x>0&&x<480 && y>65&&y<330){
 				LockTeam = true;
 				LockRight = false;
 				LockLeft = true;
+				tcpcm.chooseTeam(Team.RED);
 			}
-			if(x>480&&x<960 && y>65&&y<400){
+			if(x>480&&x<960 && y>65&&y<330){
 				LockTeam = true;
 				LockLeft = false;
 				LockRight = true;
+				tcpcm.chooseTeam(Team.BLUE);
 			}
 			//hero
 			if(x>56&&x<202 && y>HeroImageY&&y<HeroImageY+260){
@@ -499,6 +503,7 @@ public class ChooseTeam extends BasicGameState{
 				LockWizard = false;
 				LockMarines = false;  
 				LockCannon = false; 
+				tcpcm.chooseRole(Role.Archer);
 			}
 			if(x>287&&x<429 && y>HeroImageY&&y<HeroImageY+260){
 				LockHero = true;
@@ -506,6 +511,7 @@ public class ChooseTeam extends BasicGameState{
 				LockWizard = true;
 				LockMarines = false;  
 				LockCannon = false; 
+				tcpcm.chooseRole(Role.Wizard);
 			}
 			if(x>520&&x<674 && y>HeroImageY&&y<HeroImageY+260){
 				LockHero = true;
@@ -513,6 +519,7 @@ public class ChooseTeam extends BasicGameState{
 				LockWizard = false;
 				LockMarines = true;  
 				LockCannon = false; 
+				tcpcm.chooseRole(Role.Marines);
 			}
 			if(x>762&&x<917 && y>HeroImageY&&y<HeroImageY+260){
 				LockHero = true;
@@ -520,13 +527,13 @@ public class ChooseTeam extends BasicGameState{
 				LockWizard = false;
 				LockMarines = false;  
 				LockCannon = true; 
+				tcpcm.chooseRole(Role.Cannon);
 			}
 			if(LockHero&&LockTeam){
 				if(x>410&&x<543 && y>364&&y<428){
 					IsWaiting = true;
 					IsReady = true ;
 					tcpcm.IAmReady();
-					
 				}
 			} 
 		}

@@ -19,15 +19,15 @@ public class AuthorList extends BasicGameState{
 	
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
-		Background = new Image("img/UIMpic/AuthorList/AuthorList.png");
-		Back = new Image("img/UIMpic/AuthorList/BACK.png");
-		BackOn = new Image("img/UIMpic/AuthorList/OnBACK.png");
+		Background = new Image("img/UIM/AuthorList/AuthorList.png");
+		Back = new Image("img/UIM/AuthorList/BACK.png");
+		BackOn = new Image("img/UIM/AuthorList/OnBACK.png");
 		Mouse = new Image("img/mouse.png");
 	}
 
 	@Override
 	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
-		g.drawImage( Background , 0 , 0 ); //µe­I´º
+		g.drawImage( Background , 0 , 0 ); //ï¿½eï¿½Iï¿½ï¿½
 		if(!MouseOnBack){
 			g.drawImage(Back , 340 , 560 ); 
 		}else {
