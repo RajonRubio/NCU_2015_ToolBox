@@ -60,6 +60,8 @@ public class Menu_login extends BasicGameState{
 	boolean CantConnet;
 	boolean NameisDup;
 	boolean NoSeat;
+	boolean inputFocus;
+	boolean mouseGrabbed;
 	
 	public Menu_login(AppGameContainer app,TCPCM tcpcm) {
 		this.app = app;
@@ -68,6 +70,8 @@ public class Menu_login extends BasicGameState{
 	
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
+		this.inputFocus = false;
+		this.mouseGrabbed = true;
 		this.sbg = arg1;
 		Background = new Image("img/UIM/Menu/noinput.png");
 		Mouse = new Image("img/mouse.png");
@@ -87,7 +91,7 @@ public class Menu_login extends BasicGameState{
 		font = new TrueTypeFont(f, false); 
 		
 		IPInput = new TextField(app, font, 377, 288, 275, 35, null);
-		
+		IPInput.setFocus(true);
 		IDInput = new TextField(app, font, 377, 340, 275, 35, null);
 		
 		IPFormatOK = false;
@@ -148,9 +152,11 @@ public class Menu_login extends BasicGameState{
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int arg2) throws SlickException {
 		
+		if (this.mouseGrabbed) {
+			x = gc.getInput().getMouseX();
+			y = gc.getInput().getMouseY();
+		}
 		
-		x = gc.getInput().getMouseX();
-		y = gc.getInput().getMouseY();
 		
 		MouseOnAuthor = false;
 		MouseOnGamestart = false;
@@ -177,11 +183,24 @@ public class Menu_login extends BasicGameState{
 			}
 		}
 		
-		if(gc.getInput().isKeyDown(Input.KEY_Q)){
-			System.out.println(IPInput.getText());
+		if (gc.getInput().isKeyPressed(Input.KEY_TAB)) {
+			inputFocus = !inputFocus;
+			IDInput.setFocus(inputFocus);
+			IPInput.setFocus(!inputFocus);
+		}
+		
+		if (gc.getInput().isKeyPressed(Input.KEY_Q) && gc.getInput().isKeyDown(Input.KEY_LSHIFT)){
+			System.exit(0);
+		}
+		
+		if (gc.getInput().isKeyPressed(Input.KEY_ESCAPE)) {
+			this.mouseGrabbed = false;
+			gc.setMouseGrabbed(this.mouseGrabbed);
 		}
 		
 		if(gc.getInput().isMouseButtonDown((Input.MOUSE_LEFT_BUTTON))){
+			this.mouseGrabbed = true;
+			gc.setMouseGrabbed(this.mouseGrabbed);
 			if(x>364&&x<594 && y>430&&y<484){
 				TryStart = true;
 				if(IPInput.getText().matches("^(?:[0-9]{1,3}.){3}[0-9]{1,3}$")) {
