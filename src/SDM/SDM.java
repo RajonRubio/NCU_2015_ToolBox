@@ -124,7 +124,5 @@ public class SDM {
 		for(int i=0;i<updateboxes.size();i++){
 			mapdata[updateboxes.indexOf(1)][updateboxes.indexOf(2)] = updateboxes.indexOf(3); //這一種感覺
 		}
-		
-		
 	}
 }

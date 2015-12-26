@@ -14,9 +14,9 @@ import Protocols.Team;
 import SDM.SDM;
 
 public class SCENERE {
-	public SCENERE(){
-		
-	}
+//	public SCENERE(){
+//		
+//	}
 	public SCENERE(DOM dom) {
 		this.dom = dom;
 	}
@@ -26,12 +26,13 @@ public class SCENERE {
 	private double origin_y;
 	double offset_x;
 	double offset_y;
-	public Point2D.Double charactor_location = new Point2D.Double(480,360);
+	public Point2D.Double charactor_location ;//拿來接DOM.getvirtualcharactorXY
 	double viewport[][] = new double[17][22];//單一玩家的視窗畫面[y][x]
 	public Image[] tileImages = new Image[5]; //宣告成slick2D的image格式
 	public void renderScene(Graphics g) {
-//		dom.getVirtualCharacterXY();
-//		charactor_location = dom.getVirtualCharacterXY();
+
+		charactor_location = dom.getVirtualCharacterXY(); //這樣就接到從DOM來的point了
+		
 		origin_x = (charactor_location.x-480)/50;   //BUG (479-480)/50 = 0
 		origin_y = (charactor_location.y-360)/50;
 		if(charactor_location.x<480 && charactor_location.x >80){
