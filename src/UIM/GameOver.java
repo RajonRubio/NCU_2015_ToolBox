@@ -51,13 +51,13 @@ public class GameOver extends BasicGameState{
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
 		background = new Image[3];
-		background[0] = new Image("img/UIMpic/GameOver/RedWin.png");
-		background[1] = new Image("img/UIMpic/GameOver/BlueWin.png");
-		background[2] = new Image("img/UIMpic/GameOver/Draw.png");
-		playagain = new Image("img/UIMpic/GameOver/PlayAgain.png");
-		Onplayagain = new Image("img/UIMpic/GameOver/OnPlayAgain.png");
-		quit = new Image("img/UIMpic/GameOver/Quit.png");
-		Onquit = new Image("img/UIMpic/GameOver/OnQuit.png");
+		background[0] = new Image("img/UIM/GameOver/RedWin.png");
+		background[1] = new Image("img/UIM/GameOver/BlueWin.png");
+		background[2] = new Image("img/UIM/GameOver/Draw.png");
+		playagain = new Image("img/UIM/GameOver/PlayAgain.png");
+		Onplayagain = new Image("img/UIM/GameOver/OnPlayAgain.png");
+		quit = new Image("img/UIM/GameOver/Quit.png");
+		Onquit = new Image("img/UIM/GameOver/OnQuit.png");
 		Mouse = new Image("img/mouse.png");
 		
 		f0 = new java.awt.Font("Script MT Bold", java.awt.Font.BOLD ,  60);
