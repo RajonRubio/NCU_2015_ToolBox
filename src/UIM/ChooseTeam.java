@@ -70,6 +70,9 @@ public class ChooseTeam extends BasicGameState{
 	boolean LockMarines;
 	boolean LockCannon;
 	
+	boolean pressed;
+	boolean ispressed;
+	
 	boolean LockTeam;
 	boolean LockHero;
 	
@@ -134,11 +137,10 @@ public class ChooseTeam extends BasicGameState{
 		
 		LockLeft = false;
 		LockRight = false;
-		
 		LockArcher = false; 
 		LockWizard = false;
 		LockMarines = false;  
-		LockCannon = false;  
+		LockCannon = false;
 		
 		LockTeam = false;
 		LockHero = false;
@@ -159,6 +161,8 @@ public class ChooseTeam extends BasicGameState{
 		
 		IsLockTeam = false;
 		IsLockHero = false;
+		pressed = false;
+		ispressed = false;
 		
 		MouseOnLeftTime = 0;
 		MouseOnRightTime = 0;
@@ -177,6 +181,7 @@ public class ChooseTeam extends BasicGameState{
 		
 		g.drawImage(Leftteamlight , 0 , TeamImageY ); 
 		g.drawImage(Rightteamlight , 480 , TeamImageY ); 
+		
 		
 		if(!LockLeft&&!LockRight){
 			g.setColor(LeftTeam);
@@ -288,7 +293,8 @@ public class ChooseTeam extends BasicGameState{
 		IsLockTeam = LockHero;
 		IsLockHero = LockHero;
 			
-		
+		ispressed = pressed;
+		pressed = false;
 	
 		MouseOnRight = false;
 		if(x>480&&x<960 && y>TeamImageY&&y<TeamImageY+335){
@@ -483,21 +489,27 @@ public class ChooseTeam extends BasicGameState{
 		
 		//Lock 
 		if(gc.getInput().isMouseButtonDown((Input.MOUSE_LEFT_BUTTON))&&!IsWaiting){
+			pressed = true;
+		}
+		if(!pressed&&ispressed){
 			//team
-			if(x>0&&x<480 && y>65&&y<330){
+			if(x>0&&x<480 && y>65&&y<330 &&!LockLeft){
+				System.out.println("Red");
 				LockTeam = true;
 				LockRight = false;
 				LockLeft = true;
 				tcpcm.chooseTeam(Team.RED);
 			}
-			if(x>480&&x<960 && y>65&&y<330){
+			if(x>480&&x<960 && y>65&&y<330 &&!LockRight){
+				System.out.println("Blue");
 				LockTeam = true;
 				LockLeft = false;
 				LockRight = true;
 				tcpcm.chooseTeam(Team.BLUE);
 			}
 			//hero
-			if(x>56&&x<202 && y>HeroImageY&&y<HeroImageY+260){
+			if(x>56&&x<202 && y>HeroImageY&&y<HeroImageY+260 &&!LockArcher){
+				System.out.println("Archer");
 				LockHero = true;
 				LockArcher = true; 
 				LockWizard = false;
@@ -505,7 +517,8 @@ public class ChooseTeam extends BasicGameState{
 				LockCannon = false; 
 				tcpcm.chooseRole(Role.Archer);
 			}
-			if(x>287&&x<429 && y>HeroImageY&&y<HeroImageY+260){
+			if(x>287&&x<429 && y>HeroImageY&&y<HeroImageY+260&&!LockWizard){
+				System.out.println("Wizard");
 				LockHero = true;
 				LockArcher = false; 
 				LockWizard = true;
@@ -513,7 +526,8 @@ public class ChooseTeam extends BasicGameState{
 				LockCannon = false; 
 				tcpcm.chooseRole(Role.Wizard);
 			}
-			if(x>520&&x<674 && y>HeroImageY&&y<HeroImageY+260){
+			if(x>520&&x<674 && y>HeroImageY&&y<HeroImageY+260&&!LockMarines){
+				System.out.println("Marines");
 				LockHero = true;
 				LockArcher = false; 
 				LockWizard = false;
@@ -521,7 +535,8 @@ public class ChooseTeam extends BasicGameState{
 				LockCannon = false; 
 				tcpcm.chooseRole(Role.Marines);
 			}
-			if(x>762&&x<917 && y>HeroImageY&&y<HeroImageY+260){
+			if(x>762&&x<917 && y>HeroImageY&&y<HeroImageY+260&&!LockCannon){
+				System.out.println("Cannon");
 				LockHero = true;
 				LockArcher = false; 
 				LockWizard = false;
@@ -531,6 +546,7 @@ public class ChooseTeam extends BasicGameState{
 			}
 			if(LockHero&&LockTeam){
 				if(x>410&&x<543 && y>364&&y<428){
+					System.out.println("GO");
 					IsWaiting = true;
 					IsReady = true ;
 					tcpcm.IAmReady();
