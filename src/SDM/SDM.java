@@ -1,35 +1,32 @@
 package SDM;
 
-import java.awt.Image;
+import java.awt.geom.Point2D;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import Protocols.WoodBox.WoodBoxState;
 
-import javax.imageio.ImageIO;
-
-import com.sun.javafx.geom.AreaOp.AddOp;
 
 public class SDM {
 	public BasicBlock[][] scene = new BasicBlock[40][100]; //scene is a BasicBlock type array
 	public double mapdata[][] = new double[40][100];  
-	public ArrayList<WoodBox> woodbox = new ArrayList<WoodBox>(); //用一個ArrayList拿來存取木箱的資料
-	public Image[] tileImages = new Image[5];
+//	public ArrayList<WoodBox> woodbox = new ArrayList<WoodBox>(); //用一個ArrayList拿來存取木箱的資料 但是不用了
+	
 	public SDM() {
 		BasicBlock[][] scene;
+		loadMap();
+		getMap();
 	}
 	/**********load mapfile's content******/
 	public void loadMap() {
-//		String mapfile;
 		try{
-			FileReader fr = new FileReader("map.txt"); 
+			FileReader fr = new FileReader("mapdata/map.txt"); 
 			BufferedReader br = new BufferedReader(fr);
 			String str,tempstr;
 			String[] tempArray= new String[3];
 			ArrayList myList = new ArrayList();
-			
 			int i=0;
 			while((str = br.readLine())!=null)
 			{
@@ -59,12 +56,17 @@ public class SDM {
 					 content[x][y]=Double.parseDouble((String) myList.get(count));
 			         count++; //一個index來決定myList讀取值的位置
 			         //System.out.println("x:"+ x + " y:"+y+" "+content[x][y]);
-			         //所以要處理的就是content
 			     }
 			 }
 			 constructMap(content);
 			 br.close();
-
+			 /*conclutuin:
+			  *after calling loadmap()
+			  *would get double[][] content
+			  *content[][0]:map type
+			  *content[][1]:map's x location
+			  *content[][2]:map's y locattion
+			  */
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -72,29 +74,29 @@ public class SDM {
 		}
 	}
 	/**********建構地圖 並存起來******/
-	void constructMap(double content[][]){
-		boolean istype=true;
-		
+	void constructMap(double content[][]){	
 		for(int y=0;y<40;y++){
 			for(int x=0;x<100;x++){
 				scene[y][x] =new BasicBlock(); //全部宣告一次 給他記憶體空間
 			}
 		}
-		
-		for(int k=0;k<content.length;k++){
-			if(istype==true){
+		try {
+			for(int k=0;k<content.length;k++){
 				if(content[k][0] == 1){
 					scene[(int)content[k][2]][(int)content[k][1]].type= BasicBlock.woodbox;
 					scene[(int)content[k][2]][(int)content[k][1]].touchable = false;
-					
-					woodbox.add(new WoodBox((int)content[k][1], (int)content[k][2]) );
 				}	
 				if(content[k][0] == 2){
 					scene[(int)content[k][2]][(int)content[k][1]].type= BasicBlock.rockbox;	
 					scene[(int)content[k][2]][(int)content[k][1]].touchable = false;
-					
+				}
+				//只要地圖格式錯了叫要throw exception
+				if(content[k][0] >2 || content[k][0] <0){
+					throw new Exception("map.txt has wrong format");
 				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	/*getMap工作就是回傳mapdata*/
@@ -104,30 +106,23 @@ public class SDM {
 			for(int x=0;x<100;x++)
 			{
 				mapdata[y][x]=scene[y][x].type;
-				System.out.print((int)mapdata[y][x] + " ");  //顯示方變 還是先轉型
-				if(x==99)
-					System.out.print('\n');
+//				System.out.print((int)mapdata[y][x] + " ");  //顯示方變 還是先轉型
+//				if(x==99)
+//					System.out.print('\n');
 			}
-		}
-		for(int i=0;i<woodbox.size();i++){
-				System.out.print((int)woodbox.get(i).location_x+" "+(int)woodbox.get(i).location_y + '\n');  //顯示方變 還是先轉型
 		}
 		return mapdata;
 	}
-	/* 這裏只負責type要放哪一種圖*/
-	public void getBG() {
-		try {
-			tileImages[0] = ImageIO.read(new File("grass.png"));
-			tileImages[1] = ImageIO.read(new File("woodbox.png"));
-			tileImages[2] = ImageIO.read(new File("rockbox.png"));
-			tileImages[3] = ImageIO.read(new File("woodbox_1.png"));
-			tileImages[4] = ImageIO.read(new File("woodbox_2.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	/*所以別人想要地圖資訊
+	 *就是要先 new SDM()
+	 *then getMap()
+	 *然後直接拿 mapdata[][]
+	 */
+
 	/* 從UDP那邊讀來 哪些木牆被撞到了 然後要更新他們的type*/
-	public void updateBoxes() {
-		
+	public void updateBoxes(ArrayList<WoodBoxState> updatedboxes) {
+		for(int i=0;i<updatedboxes.size();i++){
+			mapdata[updatedboxes.get(i).y][updatedboxes.get(i).x] = updatedboxes.get(i).type; //這一種感覺
+		}
 	}
 }
