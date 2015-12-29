@@ -1,5 +1,6 @@
 package TCPSM;
 
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -161,6 +162,7 @@ public class TCPSM {
 		private ObjectInputStream reader;
 		private ObjectOutputStream writer;
 		private int id;
+		public boolean clientStart;
 		
 		/*
 		 * @Constructor
@@ -173,6 +175,7 @@ public class TCPSM {
 				this.id = id;
 				this.reader = new ObjectInputStream(sock.getInputStream());
 				this.writer = new ObjectOutputStream(sock.getOutputStream());
+				this.clientStart = true;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -202,31 +205,36 @@ public class TCPSM {
 				case DOWN_PRESS:
 				case RIGHT_PRESS:
 				case LEFT_PRESS:
-					// call cdc move
-					break;
-				case UP_RELEASE:
-				case DOWN_RELEASE:
-				case RIGHT_RELEASE:
-				case LEFT_RELEASE:
-					// call cdc stop move
+					cdc.CharacterMove(this.id, code);
 					break;
 				case ATTACK:
-					// call cdc attack
+					Point2D angle;
+					angle = (Point2D)this.reader.readObject();
+					cdc.addBullet(id, angle);
 					break;
 				case CH_NAME:
 					String name;
 					name = (String)this.reader.readObject();
-					// call cdc set name
+					if(cdc.checkName(name)) {
+						this.writer.writeObject(ClientAction.NAME_OK);
+						cdc.addVirtualCharacter(id, name);
+					} else {
+						this.writer.writeObject(ClientAction.NAME_FAIL);
+						// close socket
+					}
 					break;
 				case CH_TEAM:
 					Team team;
 					team = (Team)this.reader.readObject();
-					// call cdc select team
+					cdc.setTeam(id, team);
 					break;
 				case CH_ROLE:
 					Role role;
 					role = (Role)this.reader.readObject();
-					// call cdc select role
+					cdc.setRole(id, role);
+					break;
+				case READY:
+					cdc.setReady(id);
 					break;
 			}
 		}
