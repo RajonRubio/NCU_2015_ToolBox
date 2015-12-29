@@ -21,21 +21,23 @@ import CDC.CDC;
 public class TCPSM {
 	private ServerSocket serverSock;
 	private CDC cdc;
-	private ArrayList<String> clientIPTable;
-	private ArrayList<Socket> clientConnections;
+	//private ArrayList<String> clientIPTable;
+	//private ArrayList<Socket> clientConnections;
 	private ArrayList<Thread> clientThreads;
-	private ArrayList<Boolean> clientEnable;
-	private int connectNum;
+	//private ArrayList<Boolean> clientEnable;
+	private ArrayList<ClientHandler> clients;
+	private int connectCount;
 	private Thread listenThread;
 	private Timer pingTimer;
 	private boolean serverStart;
 	
 	/** @Constructor */
 	public TCPSM() {
-		this.clientIPTable = new ArrayList<String>();
-		this.clientConnections = new ArrayList<Socket>();
+		//this.clientIPTable = new ArrayList<String>();
+		//this.clientConnections = new ArrayList<Socket>();
 		this.clientThreads = new ArrayList<Thread>();
-		this.connectNum = 0;
+		this.clients = new ArrayList<ClientHandler>();
+		this.connectCount = 0;
 		this.serverStart = false;
 		this.pingTimer = new Timer();
 	}
@@ -60,13 +62,12 @@ public class TCPSM {
 	/** Stop listening and close all connection */
 	public void stopServer() throws Exception {
 		this.serverStart = false;
-		for(Socket s : this.clientConnections) {
-			s.close();
+		for(ClientHandler c : this.clients) {
+			c.sock.close();
+			c.clientStart = false;
 		}
-		this.clientIPTable.clear();
-		this.clientConnections.clear();
+		this.clients.clear();
 		this.clientThreads.clear();
-		this.clientEnable.clear();
 		this.pingTimer.cancel();
 	}
 	
@@ -76,17 +77,14 @@ public class TCPSM {
 	 */
 	private void removeClient(int id){
 		try {
-			clientConnections.get(id-1).close();
+			clients.get(id).sock.close();
+			clients.get(id).clientStart = false;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		clientEnable.set(id, false);
+		clients.remove(id);
 		clientThreads.get(id).interrupt();
-		clientIPTable.remove(id);
-		clientConnections.remove(id);
 		clientThreads.remove(id);
-		clientEnable.remove(id);
-		connectNum -= 1;
 	}
 	
 	/*
@@ -95,7 +93,11 @@ public class TCPSM {
 	 * @return 	the set of addresses 
 	 */
 	public ArrayList getClientIPTable() {
-		return this.clientIPTable;
+		ArrayList<String> list = new ArrayList<String>();
+		for(ClientHandler c : this.clients) {
+			list.add(c.sock.getInetAddress().getHostAddress());
+		}
+		return list;
 	}
 	
 	/*
@@ -103,10 +105,9 @@ public class TCPSM {
 	 * Send code "GAME_OVER" to TCPCM for notifying the game has been end
 	 */
 	public void gameOver() throws Exception {
-		for(Socket s : this.clientConnections) {
-			ObjectOutputStream writer = new ObjectOutputStream(s.getOutputStream());
-			writer.writeObject(ClientAction.GAME_OVER);
-			writer.flush();
+		for(ClientHandler c : this.clients) {
+			c.writer.writeObject(ClientAction.GAME_OVER);
+			c.writer.flush();
 		}
 	}
 	
@@ -115,10 +116,9 @@ public class TCPSM {
 	 * Send code "GAME_START" to TCPCM for notifying the game has been start
 	 */
 	public void gameStart() throws Exception {
-		for(Socket s : this.clientConnections) {
-			ObjectOutputStream writer = new ObjectOutputStream(s.getOutputStream());
-			writer.writeObject(ClientAction.GAME_START);
-			writer.flush();
+		for(ClientHandler c : this.clients) {
+			c.writer.writeObject(ClientAction.GAME_START);
+			c.writer.flush();
 		}
 	}
 	
@@ -132,7 +132,7 @@ public class TCPSM {
 		public void run() {
 			try {
 				while (serverStart) {
-					if(connectNum < 4) {
+					if(clients.size() < 4) {
 						Socket s = serverSock.accept();    
 						addConnection(s);
 					}
@@ -144,10 +144,10 @@ public class TCPSM {
 		
 		/** Create a thread to handler per connection to client */
 		private void addConnection(Socket s) {
-			connectNum += 1;
-			clientIPTable.add(s.getInetAddress().getHostAddress());
-			clientConnections.add(s);
-			Thread t = new Thread(new ClientHandler(connectNum, s));
+			connectCount += 1;
+			ClientHandler ch = new ClientHandler(connectCount, s);
+			clients.add(ch);
+			Thread t = new Thread(ch);
 			clientThreads.add(t);
 			t.start();
 		}
@@ -158,10 +158,10 @@ public class TCPSM {
 	 * Handle one client's connection and parse the imcoming message.
 	 */
 	private class ClientHandler implements Runnable {
-		private Socket sock;
-		private ObjectInputStream reader;
-		private ObjectOutputStream writer;
-		private int id;
+		public Socket sock;
+		public ObjectInputStream reader;
+		public ObjectOutputStream writer;
+		public int id;
 		public boolean clientStart;
 		
 		/*
@@ -185,7 +185,7 @@ public class TCPSM {
 		public void run() {
 			ServerAction code;
 			try {
-				while (serverStart){
+				while (serverStart && this.clientStart){
 					if ((code = (ServerAction)reader.readObject()) != null){
 						switchCode(code);
 					}
@@ -196,7 +196,7 @@ public class TCPSM {
 		}
 		
 		/*
-		 * Parse action code sended from client and call correspond function in CDC
+		 * Parse action code send from client and call correspond function in CDC
 		 * @Param code action code
 		 */
 		private void switchCode(ServerAction code) throws Exception{
@@ -220,7 +220,7 @@ public class TCPSM {
 						cdc.addVirtualCharacter(id, name);
 					} else {
 						this.writer.writeObject(ClientAction.NAME_FAIL);
-						// close socket
+						removeClient(clients.indexOf(this));
 					}
 					break;
 				case CH_TEAM:
@@ -245,11 +245,10 @@ public class TCPSM {
 		@Override
 		public void run() {
 			int counter = 0;
-			for(Socket s : clientConnections) {
+			for(ClientHandler c : clients) {
 				try {
-					ObjectOutputStream writer = new ObjectOutputStream(s.getOutputStream());
-					writer.writeObject(ClientAction.GAME_OVER);
-					writer.flush();
+					c.writer.writeObject(ClientAction.GAME_OVER);
+					c.writer.flush();
 					counter += 1;
 				} catch (IOException e) {
 					removeClient(counter);
