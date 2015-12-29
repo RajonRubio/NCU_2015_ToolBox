@@ -15,19 +15,21 @@ public class RT extends BasicGameState{
 	EventListener eventlistener;
 	Image background;
 	TCPCM tcpcm;
+	GameOver gameOver;
 	Image Mouse;
 	int x,y;
 	
-	public RT(TCPCM tcpcm) {
+	public RT(TCPCM tcpcm,GameOver gameOver) {
 		this.tcpcm = tcpcm;
+		this.gameOver = gameOver;
 	}
 	
 	
 	@Override
 	public void init(GameContainer gc, StateBasedGame arg1) throws SlickException {
-		background = new Image("BLACK.png");
+		background = new Image("img/BLACK.png");
 		eventlistener = new EventListener();
-		Mouse = new Image("mouse.png");
+		Mouse = new Image("img/mouse.png");
 	}
 
 	@Override
@@ -48,6 +50,7 @@ public class RT extends BasicGameState{
 		
 		eventlistener.listent(gc,delta);
 	}
+	
 
 	@Override
 	public int getID() {
