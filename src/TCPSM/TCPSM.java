@@ -21,10 +21,7 @@ import CDC.CDC;
 public class TCPSM {
 	private ServerSocket serverSock;
 	private CDC cdc;
-	//private ArrayList<String> clientIPTable;
-	//private ArrayList<Socket> clientConnections;
 	private ArrayList<Thread> clientThreads;
-	//private ArrayList<Boolean> clientEnable;
 	private ArrayList<ClientHandler> clients;
 	private int connectCount;
 	private Thread listenThread;
@@ -33,8 +30,6 @@ public class TCPSM {
 	
 	/** @Constructor */
 	public TCPSM() {
-		//this.clientIPTable = new ArrayList<String>();
-		//this.clientConnections = new ArrayList<Socket>();
 		this.clientThreads = new ArrayList<Thread>();
 		this.clients = new ArrayList<ClientHandler>();
 		this.connectCount = 0;
@@ -79,6 +74,7 @@ public class TCPSM {
 		try {
 			clients.get(id).sock.close();
 			clients.get(id).clientStart = false;
+			cdc.removeVirtualCharacter(clients.get(id).id);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -222,6 +218,7 @@ public class TCPSM {
 						this.writer.writeObject(ClientAction.NAME_FAIL);
 						removeClient(clients.indexOf(this));
 					}
+					this.writer.flush();
 					break;
 				case CH_TEAM:
 					Team team;
