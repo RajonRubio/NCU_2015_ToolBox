@@ -40,10 +40,10 @@ public class RT extends BasicGameState{
 	boolean isover = false;
 
 	
-	public RT(TCPCM tcpcm, GameOver gameover) {
+	public RT(TCPCM tcpcm, GameOver gameover, DOM dom) {
 		this.tcpcm = tcpcm;
 		this.gameover = gameover;
-		dom = new DOM();
+		this.dom = dom;
 		spritere = new SPRITERE(dom);
 		//udpus = new UDPUS(dom);
 	}

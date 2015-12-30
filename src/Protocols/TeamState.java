@@ -12,16 +12,14 @@ public class TeamState implements Serializable {
 		blue = new ArrayList<Member>();
 	}
 	
-	public class Member {
+	public class Member implements Serializable {
 		public String name;
-		public String address;
-		public String job;
+		public Role role;
 		public boolean ready;
 		
-		public Member(String name, String address , String job , boolean ready) {
+		public Member(String name, Role role, boolean ready) {
 			this.name = name;
-			this.address = address;
-			this.job = job;
+			this.role = role;
 			this.ready = ready;
 		}
 	}
