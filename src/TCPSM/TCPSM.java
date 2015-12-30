@@ -128,6 +128,15 @@ public class TCPSM {
 		}
 	}
 	
+	public void killBroadcast(String killer, String victim) throws IOException {
+		for(ClientHandler c : this.clients) {
+			c.writer.writeObject(ClientAction.GAME_KILL);
+			c.writer.writeChars(killer);
+			c.writer.writeChars(victim);
+			c.writer.flush();
+		}
+	}
+	
 	/*
 	 * Called by CDC
 	 * Send code "GAME_OVER" to TCPCM for notifying the game has been end
