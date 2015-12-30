@@ -4,18 +4,13 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class WoodBox {
-	public ArrayList<WoodBoxState> boxes = new ArrayList<WoodBoxState>();
-	
-	public class WoodBoxState{
-		public int type;
-		public int x;
-		public int y;
-		
-		public WoodBoxState(int type, int x,int y){
-			this.type = type;
-			this.x = x;
-			this.y = y;
-		}
+	public int type;
+	public int x;
+	public int y;
+	public WoodBox(int type, int x, int y) {
+		this.type = type;
+		this.x = x;
+		this.y = y;
 	}
 }
 
