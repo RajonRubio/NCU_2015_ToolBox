@@ -106,9 +106,9 @@ public class SDM {
 			for(int x=0;x<100;x++)
 			{
 				mapdata[y][x]=scene[y][x].type;
-//				System.out.print((int)mapdata[y][x] + " ");  //顯示方變 還是先轉型
-//				if(x==99)
-//					System.out.print('\n');
+				System.out.print((int)mapdata[y][x] + " ");  //顯示方變 還是先轉型
+				if(x==99)
+					System.out.print('\n');
 			}
 		}
 		return mapdata;
