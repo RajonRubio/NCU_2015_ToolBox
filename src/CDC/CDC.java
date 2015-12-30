@@ -435,16 +435,16 @@ public class CDC {
 			switch(role)
 			{
 				case Archer:
-					bullets.add(new Bullet(clientnumber, team, location, 2, skill.DISPERSION, angle, 1, 15));
+					bullets.add(new Bullet(clientnumber, team, role, location, 2, skill.DISPERSION, angle, 1, 15));
 					break;
 				case Marines:
-					bullets.add(new Bullet(clientnumber, team, location, 1.5, skill, angle, 3, 20));
+					bullets.add(new Bullet(clientnumber, team, role, location, 1.5, skill, angle, 3, 20));
 					break;
 				case Cannon:
-					bullets.add(new Bullet(clientnumber, team, location, 1, skill.CHAOS, angle, 3, 5));
+					bullets.add(new Bullet(clientnumber, team, role, location, 1, skill.CHAOS, angle, 3, 5));
 					break;
 				case Wizard:
-					bullets.add(new Bullet(clientnumber, team, location, 2.5, skill, angle, 3, 10));
+					bullets.add(new Bullet(clientnumber, team, role, location, 2.5, skill, angle, 3, 10));
 					break;
 			}
 			characters.get(searchClientNumber(clientnumber)).setCanAttack(false);
@@ -480,6 +480,11 @@ public class CDC {
 	public void KillAndDead(int clientnumber1, int clientnumber2) {
 		characters.get(searchClientNumber(clientnumber1)).addKill();
 		characters.get(searchClientNumber(clientnumber2)).addDead();
+		try {
+			tcpsm.killBroadcast(characters.get(searchClientNumber(clientnumber1)).getName(), characters.get(searchClientNumber(clientnumber2)).getName());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		Timer timer = new Timer();
 		timer.schedule(new ResurrectionRandomLoction(clientnumber2), 60000);
 	}
@@ -550,12 +555,33 @@ public class CDC {
 		}
 	}
 	
-	public ArrayList<Character> getCharacter() {
-		return characters;
+	public ArrayList<Protocols.Character> getCharacter() {
+		ArrayList<Protocols.Character> changecharacters = new ArrayList<Protocols.Character>();
+		for(int i=0;i<characters.size();i++)
+		{
+			int clientno = characters.get(i).getClientNumber();
+			Status status = characters.get(i).getState();
+			int HP = characters.get(i).getNowHP();
+			Point2D.Double location = characters.get(i).getLocation();
+			int time;
+			boolean [] debuff = characters.get(i).getDeBuff();
+			int kill = characters.get(i).getKill();
+			int dead = characters.get(i).getDead();
+			changecharacters.add(new Protocols.Character(clientno, status, HP, location, debuff, kill, dead));
+		}
+		return changecharacters;
 	}
 	
-	public ArrayList<Bullet> getBullets() {
-		return bullets;
+	public ArrayList<Protocols.Bullet> getBullets() {
+		ArrayList<Protocols.Bullet> changebullets = new ArrayList<Protocols.Bullet>();
+		for(int i=0;i<bullets.size();i++)
+		{
+			Team team = bullets.get(i).getTeam();
+			Role role = bullets.get(i).getRole();
+			Point2D.Double location = bullets.get(i).getLocation();
+			changebullets.add(new Protocols.Bullet(team, role, location));
+		}
+		return changebullets;
 	}
 	
 	public ArrayList<WoodBox> getWoodBox() {

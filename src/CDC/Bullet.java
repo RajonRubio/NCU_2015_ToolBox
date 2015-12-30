@@ -6,6 +6,7 @@ import Protocols.*;
 public class Bullet {
 	private int clientnumber;
 	private Team team;
+	private Role role;
 	private Point2D.Double location;
 	private double bulletspeed;
 	private Skill skill;
@@ -13,9 +14,10 @@ public class Bullet {
 	private int collisiontime;
 	private int attack;
 	
-	public Bullet(int clientnumber, Team team, Point2D.Double location, double bulletspeed, Skill skill, Point2D.Double angle, int collisiontime, int attack) {
+	public Bullet(int clientnumber, Team team, Role role, Point2D.Double location, double bulletspeed, Skill skill, Point2D.Double angle, int collisiontime, int attack) {
 		this.clientnumber = clientnumber;
 		this.team = team;
+		this.role = role;
 		this.location = location;
 		this.bulletspeed = bulletspeed;
 		this.skill = skill;
@@ -40,6 +42,10 @@ public class Bullet {
 		return clientnumber;
 	}
 	
+	public Role getRole() {
+		return role;
+	}
+	
 	public Point2D.Double getLocation() {
 		return location;
 	}
@@ -50,6 +56,9 @@ public class Bullet {
 	
 	public Skill getSkill() {
 		return skill;
+	}
+	public Team getTeam() {
+		return team;
 	}
 	
 	public Point2D.Double getAngle() {

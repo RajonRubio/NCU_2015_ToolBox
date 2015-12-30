@@ -102,6 +102,10 @@ public class Character {
 		return clientnumber;
 	}
 	
+	public Status getState() {
+		return status;
+	}
+	
 	public String getName() {
 		return name;
 	}
