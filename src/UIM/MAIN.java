@@ -4,16 +4,19 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import DOM.DOM;
 import TCPCM.TCPCM;
 
 
 public class MAIN extends StateBasedGame{
 	static AppGameContainer app ;
 	private TCPCM tcpcm;
+	private DOM dom;
 	
 	public MAIN(String name) {
 		super(name);
-		tcpcm = new TCPCM(this);
+		dom = new DOM();
+		tcpcm = new TCPCM(this,dom);
 	}
 
 	public static void main(String[] args) {
@@ -33,9 +36,9 @@ public class MAIN extends StateBasedGame{
 	@Override
 	public void initStatesList(GameContainer arg0) throws SlickException {
 		GameOver gameOver = new GameOver(tcpcm);
-		RT r = new RT(tcpcm , gameOver);
+		RT rt = new RT(tcpcm , gameOver, dom);
 		//this.addState(new Menu_login(app, tcpcm));
-		//this.addState(r);
+		//this.addState(rt);
 		//this.addState(gameOver);
 		this.addState(new ChooseTeam(tcpcm));	
 		//this.addState(new AuthorList());
