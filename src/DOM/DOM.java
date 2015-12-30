@@ -39,6 +39,8 @@ public class DOM {
 		for(int i = 0; i < 4; i++) {
 			addVirtualCharacter(state.player.get(i).clientno, state.player.get(i).name, state.player.get(i).team, state.player.get(i).role, state.player.get(i).location);
 		}
+		System.out.println("X: " + me.location.getX());
+		System.out.println("Y: " + me.location.getY());
 	}
 	
 	public synchronized void addVirtualCharacter(int clientno, String name, Team team, Role role, Point2D.Double location) {
