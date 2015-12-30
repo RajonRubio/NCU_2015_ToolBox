@@ -286,7 +286,7 @@ public class CDC {
 		boolean check = true;
 		while(check)
 		{
-			location.setLocation(Random()*5000, Random()*2000);
+			location.setLocation(Random()*3850+600, Random()*950+500);
 			for(int i=0;i<characters.size();i++)
 			{
 				if(location != characters.get(i).getLocation()) {
