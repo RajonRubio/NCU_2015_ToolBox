@@ -4,7 +4,7 @@ import java.awt.geom.Point2D;
 import Protocols.*;
 
 public class Bullet {
-	private String name;
+	private int clientnumber;
 	private Team team;
 	private Point2D location;
 	private double bulletspeed;
@@ -13,8 +13,8 @@ public class Bullet {
 	private int collisiontime;
 	private int attack;
 	
-	public Bullet(String name, Team team, Point2D location, double bulletspeed, Skill skill, Point2D angle, int collisiontime, int attack) {
-		this.name = name;
+	public Bullet(int clientnumber, Team team, Point2D location, double bulletspeed, Skill skill, Point2D angle, int collisiontime, int attack) {
+		this.clientnumber = clientnumber;
 		this.team = team;
 		this.location = location;
 		this.bulletspeed = bulletspeed;
@@ -32,8 +32,12 @@ public class Bullet {
 		this.angle = angle;
 	}
 	
-	public String getName() {
-		return name;
+	public void setCollisiontime(int collisiontime) {
+		this.collisiontime = collisiontime;
+	}
+	
+	public int getClientNumber() {
+		return clientnumber;
 	}
 	
 	public Point2D getLocation() {
@@ -44,7 +48,19 @@ public class Bullet {
 		return bulletspeed;
 	}
 	
+	public Skill getSkill() {
+		return skill;
+	}
+	
 	public Point2D getAngle() {
 		return angle;
+	}
+	
+	public int getCollisiontime() {
+		return collisiontime;
+	}
+	
+	public int getAttack() {
+		return attack;
 	}
 }
