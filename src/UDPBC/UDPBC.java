@@ -62,11 +62,20 @@ public class UDPBC {
     }
 
     void update_all_info() {
-        ArrayList info = data_center.getUpdateInfo();
+        ArrayList info = get_all_info();
 
         for (Object obj : info) {
             send_all_server(obj);
         }
+    }
+
+    ArrayList get_all_info() {
+        ArrayList info = new ArrayList();
+        info.addAll(data_center.getCharacter());
+        info.addAll(data_center.getBullets());
+        info.addAll(data_center.getWoodBox());
+
+        return info;
     }
 
     void send_all_server(Object object) {
