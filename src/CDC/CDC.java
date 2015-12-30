@@ -7,8 +7,9 @@ import java.util.Date;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import Protocols.*;
+import Protocols.CharacterState.Person;
+import Protocols.TeamState.Member;
 import SETTINGS.*;
 import TCPSM.TCPSM;
 
@@ -16,13 +17,16 @@ public class CDC {
 	private TCPSM tcpsm;
 	private int maximum = 4;
 	private BasicBlock [][] map = new BasicBlock [40][100];
+	public  TeamState teamstate;
 	private ArrayList<Character> characters = new ArrayList<Character>();
 	private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 	private ArrayList<Integer> changebullet = new ArrayList<Integer>();
 	private ArrayList<WoodBox> changebox = new ArrayList<WoodBox>();
-	
+	private boolean test;
 	public CDC(TCPSM tcpsm) {
 		this.tcpsm = tcpsm;
+		this.tcpsm.initServer();
+		teamstate = new TeamState();
 		loadmap();
 	}
 	
@@ -95,7 +99,7 @@ public class CDC {
 		{
 			if(characters.get(i).getClientNumber() == clientnumber)
 			{
-				return characters.get(i).getClientNumber();
+				return i;
 			}
 		}
 		return -1;
@@ -108,7 +112,7 @@ public class CDC {
 		}
 		for(int i=0;i<characters.size();i++)
 		{
-			if(characters.get(i).getName() == name)
+			if(characters.get(i).getName().equals(name))
 			{
 				return false;
 			}
@@ -150,7 +154,50 @@ public class CDC {
 			System.out.println("do not have this clientnumber");
 			return;
 		}
-		characters.get(searchClientNumber(clientnumber)).setTeam(team);
+		switch(team)
+		{
+			case BLUE:
+				if(teamstate.blue.size() == maximum/2)
+				{
+					return;
+				}
+				else
+				{
+					characters.get(searchClientNumber(clientnumber)).setTeam(team);
+					teamstate.blue.add(teamstate.new Member(characters.get(searchClientNumber(clientnumber)).getName(), characters.get(searchClientNumber(clientnumber)).getRole(), characters.get(searchClientNumber(clientnumber)).getReady()));
+					for(int i = 0; i < teamstate.red.size(); i++)
+					{
+						Member mem = teamstate.red.get(i);
+						if(mem.name == characters.get(searchClientNumber(clientnumber)).getName())
+						{
+							teamstate.red.remove(i);
+							break;
+						}
+					}
+				}
+				break;
+			case RED:
+				if(teamstate.red.size() == maximum/2)
+				{
+					return;
+				}
+				else
+				{
+					characters.get(searchClientNumber(clientnumber)).setTeam(team);
+					teamstate.red.add(teamstate.new Member(characters.get(searchClientNumber(clientnumber)).getName(), characters.get(searchClientNumber(clientnumber)).getRole(), characters.get(searchClientNumber(clientnumber)).getReady()));
+					for(int i = 0; i < teamstate.blue.size(); i++)
+					{
+						Member mem = teamstate.blue.get(i);
+						if(mem.name == characters.get(searchClientNumber(clientnumber)).getName())
+						{
+							teamstate.blue.remove(i);
+							break;
+						}
+					}
+				}
+				break;
+		}
+		tcpsm.teamStateBroadcast(teamstate);
 	}
 	
 	public void setRole(int clientnumber, Role role) {
@@ -162,6 +209,21 @@ public class CDC {
 		}
 		characters.get(searchClientNumber(clientnumber)).setRole(role);
 		characters.get(searchClientNumber(clientnumber)).setRoleConstant();
+		for(int i=0;i<teamstate.blue.size();i++)
+		{
+			if(characters.get(searchClientNumber(clientnumber)).getName() == teamstate.blue.get(i).name)
+			{
+				teamstate.blue.get(i).role = role;
+			}
+		}
+		for(int i=0;i<teamstate.red.size();i++)
+		{
+			if(characters.get(searchClientNumber(clientnumber)).getName() == teamstate.red.get(i).name)
+			{
+				teamstate.red.get(i).role = role;
+			}
+		}
+		tcpsm.teamStateBroadcast(teamstate);
 	}
 	
 	public void setReady(int clientnumber) {
@@ -203,18 +265,24 @@ public class CDC {
 		{
 			RandomLocation(i);
 		}
+		CharacterState cs = new CharacterState();
+		for(int i=0;i<characters.size();i++)
+		{
+			Person p = cs.new Person(characters.get(i).getClientNumber(), characters.get(i).getName(), characters.get(i).getTeam(), characters.get(i).getRole(), characters.get(i).getLocation());
+			cs.player.add(p);
+		} 
 		Timer timer = new Timer();
 		timer.schedule(new GameOver(), 2*60*1000);
 		timer.schedule(new BulletsMove(), new Date(), 1000/60);
 		try {
-			tcpsm.gameStart();
+			tcpsm.gameStart(cs);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void RandomLocation(int number) {
-		Point2D location = null;
+		Point2D.Double location = new Point2D.Double();
 		boolean check = true;
 		while(check)
 		{
@@ -229,11 +297,11 @@ public class CDC {
 				check = false;
 			}
 		}
-		characters.get(searchClientNumber(number)).setLocation(location);
+		characters.get(number).setLocation(location);
 	}
 	
 	public void CharacterMove(int clientnumber, ServerAction action) {
-		Point2D location = characters.get(searchClientNumber(clientnumber)).getLocation();
+		Point2D.Double location = characters.get(searchClientNumber(clientnumber)).getLocation();
 		double x = location.getX(), y = location.getX();
 		double movespeed = characters.get(searchClientNumber(clientnumber)).getMoveSpeed();
 		boolean [] debuff = {true,false};
@@ -357,12 +425,12 @@ public class CDC {
 		}
 	}
 	
-	public void addBullet(int clientnumber, Point2D angle) {
+	public void addBullet(int clientnumber, Point2D.Double angle) {
 		if(characters.get(searchClientNumber(clientnumber)).getCanAttack())
 		{
 			Role role = characters.get(clientnumber).getRole();
 			Team team = characters.get(clientnumber).getTeam();
-			Point2D location = characters.get(clientnumber).getLocation();
+			Point2D.Double location = characters.get(clientnumber).getLocation();
 			Skill skill = Skill.NULL;
 			switch(role)
 			{
@@ -426,9 +494,9 @@ public class CDC {
 	}
 	
 	public class BulletsMove extends TimerTask{
-		Point2D location;
+		Point2D.Double location;
 		double bulletspeed;
-		Point2D angle;
+		Point2D.Double angle;
 		public void run() {
 			if(bullets.size() == 0)
 			{

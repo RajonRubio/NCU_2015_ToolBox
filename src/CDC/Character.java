@@ -12,7 +12,7 @@ public class Character {
 	private String name;
 	private Team team = Team.NULL;
 	private Role role = Role.NULL;
-	private Point2D location;
+	private Point2D.Double location;
 	private int maxHP = 100;
 	private int nowHP = maxHP;
 	private Status status = Status.UP_STOP;
@@ -39,7 +39,7 @@ public class Character {
 		this.role = role;
 	}
 	
-	public void setLocation(Point2D location) {
+	public void setLocation(Point2D.Double location) {
 		this.location = location;
 	}
 	
@@ -114,7 +114,7 @@ public class Character {
 		return role;
 	}
 	
-	public Point2D getLocation() {
+	public Point2D.Double getLocation() {
 		return location;
 	}
 	

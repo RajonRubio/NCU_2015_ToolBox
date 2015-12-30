@@ -1,12 +1,13 @@
 package Protocols;
 
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class CharacterState {
+public class CharacterState implements Serializable {
 	public ArrayList<Person> player = new ArrayList<Person>();
 
-	public class Person {
+	public class Person implements Serializable {
 		public int clientno;
 		public String name;
 		public Team team;

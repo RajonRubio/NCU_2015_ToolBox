@@ -11,10 +11,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
+import Protocols.CharacterState;
 import Protocols.ClientAction;
 import Protocols.Role;
 import Protocols.ServerAction;
 import Protocols.Team;
+import Protocols.TeamState;
 import SETTINGS.TCP;
 import CDC.CDC;
 
@@ -46,12 +48,18 @@ public class TCPSM {
 	}
 	
 	/** Start to listen and accept new connection */
-	public void initServer() throws Exception {
-		this.serverStart = true;
-		this.serverSock = new ServerSocket(TCP.PORT);
-		this.listenThread = new Thread(new ConnectionHandler());
-		this.listenThread.start();
-		this.pingTimer.schedule(new PingTask(), 5000);
+	public void initServer() {
+		try {
+			this.serverStart = true;
+			this.serverSock = new ServerSocket(TCP.PORT);
+			this.listenThread = new Thread(new ConnectionHandler());
+			this.listenThread.start();
+			this.pingTimer.schedule(new PingTask(), 5000);
+		} catch (IOException e) {
+			System.out.println("server start error");
+			e.printStackTrace();
+		}
+		
 	}
 	
 	/** Stop listening and close all connection */
@@ -98,6 +106,30 @@ public class TCPSM {
 	
 	/*
 	 * Called by CDC
+	 * broadcast Teamstate to all client
+	 */
+	public void teamStateBroadcast(TeamState t){
+		for(int i = 0; i < t.red.size(); i++) {
+			System.out.println(t.red.get(i).name);
+		}
+		System.out.println();
+		for(int i = 0; i < t.blue.size(); i++) {
+			System.out.println(t.blue.get(i).name);
+		}
+		for(ClientHandler c : this.clients) {
+			try {
+				c.writer.writeObject(ClientAction.TEAM_STAT);
+				c.writer.writeObject(t);
+//				c.writer.flush();
+				c.writer.reset();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/*
+	 * Called by CDC
 	 * Send code "GAME_OVER" to TCPCM for notifying the game has been end
 	 */
 	public void gameOver() throws Exception {
@@ -111,9 +143,10 @@ public class TCPSM {
 	 * Called by CDC
 	 * Send code "GAME_START" to TCPCM for notifying the game has been start
 	 */
-	public void gameStart() throws Exception {
+	public void gameStart(CharacterState cs) throws Exception {
 		for(ClientHandler c : this.clients) {
 			c.writer.writeObject(ClientAction.GAME_START);
+			c.writer.writeObject(cs);
 			c.writer.flush();
 		}
 	}
@@ -128,7 +161,7 @@ public class TCPSM {
 		public void run() {
 			try {
 				while (serverStart) {
-					if(clients.size() < 4) {
+					if(clients.size() < 5) {
 						Socket s = serverSock.accept();
 						System.out.println("Someone Connect: " + s.getInetAddress().getHostAddress());
 						addConnection(s);
@@ -205,15 +238,17 @@ public class TCPSM {
 					cdc.CharacterMove(this.id, code);
 					break;
 				case ATTACK:
-					Point2D angle;
-					angle = (Point2D)this.reader.readObject();
+					Point2D.Double angle;
+					angle = (Point2D.Double)this.reader.readObject();
 					cdc.addBullet(id, angle);
 					break;
 				case CH_NAME:
 					String name;
 					name = (String)this.reader.readObject();
+					System.out.println(name);
 					if(cdc.checkName(name)) {
 						this.writer.writeObject(ClientAction.NAME_OK);
+						this.writer.writeInt(this.id);
 						cdc.addVirtualCharacter(id, name);
 					} else {
 						this.writer.writeObject(ClientAction.NAME_FAIL);
@@ -224,6 +259,7 @@ public class TCPSM {
 				case CH_TEAM:
 					Team team;
 					team = (Team)this.reader.readObject();
+					System.out.println("CH_TEAM to " + team.toString());
 					cdc.setTeam(id, team);
 					break;
 				case CH_ROLE:
