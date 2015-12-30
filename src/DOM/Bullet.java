@@ -30,8 +30,8 @@ public class Bullet extends DynamicObject {
 	}
 	
 	public void render(Graphics g, Point2D.Double clientLocation) {
-		double frameX = this.location.x - clientLocation.x + 480;
-		double frameY = this.location.y - clientLocation.y + 360;
+		double frameX = this.location.x - clientLocation.x + 480 - 16;
+		double frameY = this.location.y - clientLocation.y + 360 - 16;
 		bulletAnimation.draw((int)frameX, (int)frameY);
 	}
 }

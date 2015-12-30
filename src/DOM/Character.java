@@ -45,8 +45,8 @@ public class Character extends DynamicObject {
 	}
 	
 	public void render(Graphics g, Point2D.Double clientLocation) {
-		double frameX = location.x - clientLocation.x + 480;
-		double frameY = location.y - clientLocation.y + 360;
+		double frameX = location.x - clientLocation.x + 480 - 16;
+		double frameY = location.y - clientLocation.y + 360 - 16;
 		charAnimation[status].draw((int)frameX, (int)frameY);
 		if(team == Team.RED) {
 			g.setColor(Color.red);
