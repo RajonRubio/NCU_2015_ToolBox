@@ -147,9 +147,12 @@ public class GameOver extends BasicGameState{
 	}
 	public void goNext(ResultInfo resultInfo){
 		this.resultInfo = resultInfo;
+		UpdateKillResult();
 	}
 	
 	public void UpdateKillResult() {
+		RedKill=0;
+		BlueKill=0;
 		for(Result r:resultInfo.people){
 			if(r.team==Team.RED){
 				RedKill += r.kill;

@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.Timer;
 
+import DOM.DOM;
 import Protocols.ServerAction;
 import Protocols.CharacterState;
 import Protocols.ClientAction;
@@ -18,9 +19,11 @@ public class TCPCM {
 	private MAIN main;
 	private ObjectOutputStream writer = null;
 	private ObjectInputStream reader = null;
+	private DOM dom;
 	
-	public TCPCM(MAIN main) {
+	public TCPCM(MAIN main,DOM dom) {
 		this.main = main;
+		this.dom = dom;
 	}
 
 	public boolean connectServer(String serverIP, String nickname) {

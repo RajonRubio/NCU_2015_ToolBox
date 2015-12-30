@@ -62,6 +62,8 @@ public class Menu_login extends BasicGameState{
 	boolean NoSeat;
 	boolean inputFocus;
 	boolean mouseGrabbed;
+	boolean start;
+	boolean isstart;
 	
 	public Menu_login(AppGameContainer app,TCPCM tcpcm) {
 		this.app = app;
@@ -100,16 +102,18 @@ public class Menu_login extends BasicGameState{
 		CantConnet = false;
 		TryStart = false;
 		NoSeat = false;
+		start = false;
+		isstart = false;
 		
 	}
 
 	@Override
 	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
-		g.drawImage( Background , 0 , 0 ); //µe­I´º
+		g.drawImage( Background , 0 , 0 ); //ï¿½eï¿½Iï¿½ï¿½
 		g.drawString("( "+ x +" , "+ y +")", 0, 0);
 		g.setColor(Color.black);
-		g.drawRect(377, 288, 275, 35); //IP®Ø®Ø
-		g.drawRect(377, 340, 275, 35); //ID®Ø®Ø
+		g.drawRect(377, 288, 275, 35); //IPï¿½Ø®ï¿½
+		g.drawRect(377, 340, 275, 35); //IDï¿½Ø®ï¿½
 		g.setColor(Color.white);
 		IPInput.render(app, g);
 		IDInput.render(app, g);
@@ -156,7 +160,8 @@ public class Menu_login extends BasicGameState{
 			x = gc.getInput().getMouseX();
 			y = gc.getInput().getMouseY();
 		}
-		
+		isstart = start;
+		start = false;
 		
 		MouseOnAuthor = false;
 		MouseOnGamestart = false;
@@ -200,26 +205,21 @@ public class Menu_login extends BasicGameState{
 		
 		if(gc.getInput().isMouseButtonDown((Input.MOUSE_LEFT_BUTTON))){
 			this.mouseGrabbed = true;
+			start = true;
 			gc.setMouseGrabbed(this.mouseGrabbed);
 			if(x>364&&x<594 && y>430&&y<484){
 				TryStart = true;
 				if(IPInput.getText().matches("^(?:[0-9]{1,3}.){3}[0-9]{1,3}$")) {
 					IPFormatOK = true;
-					System.out.println("®æ¦¡¥¿½T"); 
 				}    
 		        else {
 		        	IPFormatOK = false;
-		        	System.out.println("®æ¦¡¿ù»~");
 		        }
 				if(IDInput.getText().length()==0){
 					IDFormatOK = false;
 				}else {
 					IDFormatOK = true;
 				}
-				if(IDFormatOK&&IPFormatOK){
-					login(IPInput.getText(), IDInput.getText());
-				}
-				
 			}
 			if(x>364&&x<594 && y>508&&y<564){
 				sbg.enterState(2,null, new HorizontalSplitTransition());
@@ -227,6 +227,9 @@ public class Menu_login extends BasicGameState{
 			if(x>364&&x<594 && y>590&&y<646){
 				sbg.enterState(1,null, new HorizontalSplitTransition());
 			}
+		}
+		if(IDFormatOK&&IPFormatOK&&!start&&isstart){
+			login(IPInput.getText(), IDInput.getText());
 		}
 	}
 	

@@ -9,19 +9,22 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.HorizontalSplitTransition;
 
+import DOM.DOM;
 import TCPCM.TCPCM;
 
 public class RT extends BasicGameState{
 	EventListener eventlistener;
 	Image background;
 	TCPCM tcpcm;
+	DOM dom;
 	GameOver gameOver;
 	Image Mouse;
 	int x,y;
 	
-	public RT(TCPCM tcpcm,GameOver gameOver) {
+	public RT(TCPCM tcpcm,GameOver gameOver,DOM dom) {
 		this.tcpcm = tcpcm;
 		this.gameOver = gameOver;
+		this.dom = dom;
 	}
 	
 	
