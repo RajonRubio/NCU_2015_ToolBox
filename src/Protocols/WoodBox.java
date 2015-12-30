@@ -1,8 +1,5 @@
 package Protocols;
 
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-
 public class WoodBox {
 	public int type;
 	public int x;

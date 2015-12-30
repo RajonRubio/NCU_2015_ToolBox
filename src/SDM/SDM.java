@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import Protocols.WoodBox.WoodBoxState;
+import Protocols.WoodBox;
 
 
 public class SDM {
@@ -120,7 +120,7 @@ public class SDM {
 	 */
 
 	/* 從UDP那邊讀來 哪些木牆被撞到了 然後要更新他們的type*/
-	public void updateBoxes(ArrayList<WoodBoxState> updatedboxes) {
+	public void updateBoxes(ArrayList<WoodBox> updatedboxes) {
 		for(int i=0;i<updatedboxes.size();i++){
 			mapdata[updatedboxes.get(i).y][updatedboxes.get(i).x] = updatedboxes.get(i).type; //這一種感覺
 		}
