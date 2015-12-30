@@ -151,20 +151,14 @@ public class TCPCM {
 						break;
 					case TEAM_STAT:
 						TeamState teamState = (TeamState)reader.readObject();
-						// give second scene
-						for(int i=0;i<teamState.red.size();++i) {
-							System.out.println(teamState.red.get(i).name);
-						}
-						System.out.println("----------");
-						for(int i=0;i<teamState.blue.size();++i) {
-							System.out.println(teamState.blue.get(i).name);
-						}
 						((ChooseTeam)this.main.getCurrentState()).UpdateTeamState(teamState);
 						break;
 					case GAME_START:
 						// ask second scene to go next
 						CharacterState characterState = (CharacterState)reader.readObject();
+						System.out.println("gogogo");
 						dom.gameStart(characterState);
+						((ChooseTeam)this.main.getCurrentState()).GoNextState();
 						break;
 					case GAME_OVER:
 						// ask game scene to over
