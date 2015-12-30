@@ -17,7 +17,7 @@ import DOM.DOM;
 import SCENERE.SCENERE;
 import SPRITERE.SPRITERE;
 import TCPCM.TCPCM;
-import UDPSM.UDPSM;
+import UDPUS.UDPUS;
 import UIM.GameOver;
 
 public class RT extends BasicGameState{
@@ -26,7 +26,7 @@ public class RT extends BasicGameState{
 	DOM dom;
 	SPRITERE spritere;
 	SCENERE scenere;
-	UDPSM udpsm;
+	UDPUS udpus;
 	GameOver gameover;
 	boolean debuff[] = {true, true};
 	int[] kill = new int[2];
@@ -45,7 +45,7 @@ public class RT extends BasicGameState{
 		this.gameover = gameover;
 		dom = new DOM();
 		spritere = new SPRITERE(dom);
-		//udpsm = new UDPSM(dom);
+		//udpus = new UDPUS(dom);
 	}
 	
 	

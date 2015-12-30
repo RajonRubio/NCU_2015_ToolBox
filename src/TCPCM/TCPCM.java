@@ -156,6 +156,7 @@ public class TCPCM {
 					case GAME_START:
 						// ask second scene to go next
 						CharacterState characterState = (CharacterState)reader.readObject();
+						dom.gameStart(characterState);
 						break;
 					case GAME_OVER:
 						// ask game scene to over

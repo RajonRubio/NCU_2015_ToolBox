@@ -33,32 +33,40 @@ public class DOM {
 		this.clientno = clientno;
 	}
 	
-	public void gameStart(CharacterState state) throws SlickException {
-		int team, role;
-		for(int i = 0; i < 4; i++) {
-			team = state.player.get(i).team.ordinal();
-			role = state.player.get(i).role.ordinal();
-			if(checkRole[role] == false) {
-				checkRole[role] = true;
-				for(int j = 0; j < 8; j++) {
-					String src = "img/char/" + (role+1) + "-" + (j+1) + ".png";
-					charSheet[role][j] = new SpriteSheet(src, 32, 32);
-					charAnimation[role][j] = new Animation(charSheet[role][j], 200);
+	public void gameStart(CharacterState state) {
+		try {
+			int team, role;
+			for(int i = 0; i < 4; i++) {
+				team = state.player.get(i).team.ordinal();
+				role = state.player.get(i).role.ordinal();
+				if(checkRole[role] == false) {
+					checkRole[role] = true;
+					for(int j = 0; j < 8; j++) {
+						String src = "img/char/" + (role+1) + "-" + (j+1) + ".png";
+						charSheet[role][j] = new SpriteSheet(src, 32, 32);
+						charAnimation[role][j] = new Animation(charSheet[role][j], 200);
+					}
 				}
+				String src = "img/bullet/" + (team+1) + "-" + (role+1) + ".png";
+				bulletSheet[team][role] = new SpriteSheet(src, 32, 32);
+				bulletAnimation[team][role] = new Animation(bulletSheet[team][role], 200);
+				addVirtualCharacter(state.player.get(i).clientno, state.player.get(i).name, state.player.get(i).team, state.player.get(i).role, state.player.get(i).location);
 			}
-			String src = "img/bullet/" + (team+1) + "-" + (role+1) + ".png";
-			bulletSheet[team][role] = new SpriteSheet(src, 32, 32);
-			bulletAnimation[team][role] = new Animation(bulletSheet[team][role], 200);
-			addVirtualCharacter(state.player.get(i).clientno, state.player.get(i).name, state.player.get(i).team, state.player.get(i).role, state.player.get(i).location);
+		} catch (SlickException e) {
+			e.printStackTrace();
 		}
 	}
 	
-	public synchronized void addVirtualCharacter(int clientno, String name, Team team, Role role, Point2D.Double location) throws SlickException {
-		Character temp = new Character(clientno, name, team, role, location, charAnimation[role.ordinal()]);
-		if(clientno == this.clientno) {
-			me = temp;
+	public synchronized void addVirtualCharacter(int clientno, String name, Team team, Role role, Point2D.Double location) {
+		try {
+			Character temp = new Character(clientno, name, team, role, location, charAnimation[role.ordinal()]);
+			if(clientno == this.clientno) {
+				me = temp;
+			}
+			player.add(temp);
+		} catch(SlickException e) {
+			e.printStackTrace();
 		}
-		player.add(temp);
 	}
 	
 	public synchronized void removeVirtualCharacter(int clientno) {

@@ -25,7 +25,7 @@ public class MAIN extends StateBasedGame{
 			app.setMouseGrabbed(false);
 			app.setDisplayMode(960 , 720 , false);
 			app.setTargetFrameRate(60);
-			app.setMouseGrabbed(true);
+			//app.setMouseGrabbed(true);
 			app.setShowFPS(false);
 			app.start();
 		} catch (SlickException e) {
@@ -37,11 +37,11 @@ public class MAIN extends StateBasedGame{
 	public void initStatesList(GameContainer arg0) throws SlickException {
 		GameOver gameOver = new GameOver(tcpcm);
 		RT rt = new RT(tcpcm , gameOver, dom);
-		//this.addState(new Menu_login(app, tcpcm));
-		//this.addState(rt);
-		//this.addState(gameOver);
+		this.addState(new Menu_login(app, tcpcm));
+		this.addState(rt);
+		this.addState(gameOver);
 		this.addState(new ChooseTeam(tcpcm));	
-		//this.addState(new AuthorList());
-		//this.addState(new Guide());	
+		this.addState(new AuthorList());
+		this.addState(new Guide());	
 	}
 }

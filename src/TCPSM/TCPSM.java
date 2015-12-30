@@ -129,7 +129,8 @@ public class TCPSM {
 			try {
 				while (serverStart) {
 					if(clients.size() < 4) {
-						Socket s = serverSock.accept();    
+						Socket s = serverSock.accept();
+						System.out.println("Someone Connect: " + s.getInetAddress().getHostAddress());
 						addConnection(s);
 					}
 				}   

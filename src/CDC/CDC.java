@@ -8,8 +8,6 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.sun.org.apache.xml.internal.resolver.helpers.PublicId;
-
 import Protocols.*;
 import SETTINGS.*;
 import TCPSM.TCPSM;
@@ -23,14 +21,14 @@ public class CDC {
 	private ArrayList<Integer> changebullet = new ArrayList<Integer>();
 	private ArrayList<WoodBox> changebox = new ArrayList<WoodBox>();
 	
-	public CDC() {
-		tcpsm = new TCPSM(this);
+	public CDC(TCPSM tcpsm) {
+		this.tcpsm = tcpsm;
 		loadmap();
 	}
 	
 	public void loadmap() {
 		try {
-			FileReader fr = new FileReader("map.txt"); 
+			FileReader fr = new FileReader("mapdata/map.txt"); 
 			BufferedReader br = new BufferedReader(fr);
 			String str, tempstr;
 			String[] tempArray= new String[3];
