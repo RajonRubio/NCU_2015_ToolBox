@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import org.newdawn.slick.Animation;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
@@ -24,42 +25,25 @@ public class DOM {
 	public ArrayList<Bullet> bullet = new ArrayList<Bullet>();
 	boolean checkRole[] = {false, false, false, false};
 	
-	public SpriteSheet[][] charSheet = new SpriteSheet[4][8];
-	public Animation[][] charAnimation = new Animation[4][8];
-	public SpriteSheet[][] bulletSheet = new SpriteSheet[2][4];
-	public Animation[][] bulletAnimation = new Animation[2][4];
+	public static SpriteSheet[][] charSheet = new SpriteSheet[4][8];
+	public static Animation[][] charAnimation = new Animation[4][8];
+	public static SpriteSheet[][] bulletSheet = new SpriteSheet[2][4];
+	public static Animation[][] bulletAnimation = new Animation[2][4];
+	public static Image[] debuff = new Image[2];
 	
 	public void setClientno(int clientno) {
 		this.clientno = clientno;
 	}
 	
 	public void gameStart(CharacterState state) {
-		try {
-			int team, role;
-			for(int i = 0; i < 4; i++) {
-				team = state.player.get(i).team.ordinal();
-				role = state.player.get(i).role.ordinal();
-				if(checkRole[role] == false) {
-					checkRole[role] = true;
-					for(int j = 0; j < 8; j++) {
-						String src = "img/char/" + (role+1) + "-" + (j+1) + ".png";
-						charSheet[role][j] = new SpriteSheet(src, 32, 32);
-						charAnimation[role][j] = new Animation(charSheet[role][j], 200);
-					}
-				}
-				String src = "img/bullet/" + (team+1) + "-" + (role+1) + ".png";
-				bulletSheet[team][role] = new SpriteSheet(src, 32, 32);
-				bulletAnimation[team][role] = new Animation(bulletSheet[team][role], 200);
-				addVirtualCharacter(state.player.get(i).clientno, state.player.get(i).name, state.player.get(i).team, state.player.get(i).role, state.player.get(i).location);
-			}
-		} catch (SlickException e) {
-			e.printStackTrace();
+		for(int i = 0; i < 4; i++) {
+			addVirtualCharacter(state.player.get(i).clientno, state.player.get(i).name, state.player.get(i).team, state.player.get(i).role, state.player.get(i).location);
 		}
 	}
 	
 	public synchronized void addVirtualCharacter(int clientno, String name, Team team, Role role, Point2D.Double location) {
 		try {
-			Character temp = new Character(clientno, name, team, role, location, charAnimation[role.ordinal()]);
+			Character temp = new Character(clientno, name, team, role, location, charAnimation[role.ordinal()], debuff);
 			if(clientno == this.clientno) {
 				me = temp;
 			}

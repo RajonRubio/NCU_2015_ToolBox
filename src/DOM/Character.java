@@ -29,15 +29,15 @@ public class Character extends DynamicObject {
 	
 	public Animation[] charAnimation = new Animation[8];
 	
-	Character(int clientno, String name, Team team, Role role, Point2D.Double location, Animation[] charAnimation) throws SlickException {
+	Character(int clientno, String name, Team team, Role role, Point2D.Double location, Animation[] charAnimation, Image[] debuff) throws SlickException {
 		this.clientno = clientno;
 		this.name = name;
 		this.team = team;
 		this.role = role;
 		this.location = location;
 		this.charAnimation = charAnimation;
-		burn = new Image("img/game/Choas.png");
-		choas = new Image("img/game/OnFire.png");
+		burn = debuff[0];
+		choas = debuff[1];
 	}
 	
 	public void update(int delta) {
