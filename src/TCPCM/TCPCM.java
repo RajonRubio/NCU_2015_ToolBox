@@ -9,6 +9,7 @@ import Protocols.ServerAction;
 import Protocols.CharacterState;
 import Protocols.ClientAction;
 import Protocols.TeamState;
+import RT.RT;
 import SETTINGS.TCP;
 import UIM.ChooseTeam;
 import UIM.MAIN;
@@ -159,6 +160,11 @@ public class TCPCM {
 						System.out.println("gogogo");
 						dom.gameStart(characterState);
 						((ChooseTeam)this.main.getCurrentState()).GoNextState();
+						break;
+					case GAME_KILL:
+						String killer = (String)reader.readObject();
+						String victim = (String)reader.readObject();
+						((RT)this.main.getCurrentState()).claimKill(killer, victim);
 						break;
 					case GAME_OVER:
 						// ask game scene to over

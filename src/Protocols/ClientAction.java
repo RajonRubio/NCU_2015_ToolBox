@@ -6,6 +6,7 @@ public enum ClientAction {
 	SERVER_FULL,
 	TEAM_STAT,
 	GAME_START,
+	GAME_KILL,
 	GAME_OVER,
 	HEART_BEAT
 }

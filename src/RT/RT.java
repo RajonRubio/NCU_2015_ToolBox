@@ -124,5 +124,9 @@ public class RT extends BasicGameState{
 		gameover.goNext(dom.getFinalResult());
 		isover = true;
 	}
+	
+	public void claimKill(String killer, String victim) {
+		ttf.drawString(100, 200, killer + " kill " + victim + "!");
+	}
 }
 
