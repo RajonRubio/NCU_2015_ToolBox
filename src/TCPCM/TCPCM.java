@@ -9,7 +9,6 @@ import Protocols.ServerAction;
 import Protocols.CharacterState;
 import Protocols.ClientAction;
 import Protocols.TeamState;
-
 import SETTINGS.TCP;
 import UIM.ChooseTeam;
 import UIM.MAIN;
@@ -27,6 +26,7 @@ public class TCPCM {
 	}
 
 	public boolean connectServer(String serverIP, String nickname) {
+		System.out.println("Connect " + serverIP + ", " + nickname);
 		try {
 			Socket socket = new Socket(serverIP, TCP.PORT);
 			writer = new ObjectOutputStream(socket.getOutputStream());
@@ -136,6 +136,7 @@ public class TCPCM {
 					case NAME_OK:
 						// ask first scene to go next
 						int clientno = reader.readInt();
+						dom.setClientno(clientno);
 						((Menu_login)this.main.getCurrentState()).GoNextState();
 						break;
 					case NAME_FAIL:
@@ -150,13 +151,14 @@ public class TCPCM {
 						break;
 					case TEAM_STAT:
 						TeamState teamState = (TeamState)reader.readObject();
-						// give second scene
 						((ChooseTeam)this.main.getCurrentState()).UpdateTeamState(teamState);
 						break;
 					case GAME_START:
 						// ask second scene to go next
 						CharacterState characterState = (CharacterState)reader.readObject();
+						System.out.println("gogogo");
 						dom.gameStart(characterState);
+						((ChooseTeam)this.main.getCurrentState()).GoNextState();
 						break;
 					case GAME_OVER:
 						// ask game scene to over

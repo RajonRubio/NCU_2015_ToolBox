@@ -94,8 +94,9 @@ public class Menu_login extends BasicGameState{
 		
 		IPInput = new TextField(app, font, 377, 288, 275, 35, null);
 		IPInput.setFocus(true);
-		IPInput.setText("192.168.0.5");
+		IPInput.setText("192.168.0.10");
 		IDInput = new TextField(app, font, 377, 340, 275, 35, null);
+		IDInput.setText("12333");
 		
 		IPFormatOK = false;
 		IDFormatOK = false;

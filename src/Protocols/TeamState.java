@@ -17,6 +17,7 @@ public class TeamState implements Serializable {
 		public Role role;
 		public boolean ready;
 		
+
 		public Member(String name, Role role ,boolean ready) {
 			this.name = name;
 			this.role = role;

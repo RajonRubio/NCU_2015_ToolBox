@@ -2,12 +2,14 @@ package RT;
 
 import java.awt.Font;
 
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
@@ -40,11 +42,12 @@ public class RT extends BasicGameState{
 	boolean isover = false;
 
 	
-	public RT(TCPCM tcpcm, GameOver gameover) {
+	public RT(TCPCM tcpcm, GameOver gameover, DOM dom) {
 		this.tcpcm = tcpcm;
 		this.gameover = gameover;
-		dom = new DOM();
+		this.dom = dom;
 		spritere = new SPRITERE(dom);
+		scenere = new SCENERE(dom);
 		//udpus = new UDPUS(dom);
 	}
 	
@@ -57,6 +60,22 @@ public class RT extends BasicGameState{
 		timeTtf = new TrueTypeFont(timeFont, true);
 		gameStatus = new Image("img/game/GameState.png");
 		eventlistener = new EventListener();
+		for(int i = 0; i < 4; i++) {
+			for(int j = 0; j < 8; j++) {
+				String src = "img/char/" + (i+1) + "-" + (j+1) + ".png";
+				dom.charSheet[i][j] = new SpriteSheet(src, 32, 32);
+				dom.charAnimation[i][j] = new Animation(dom.charSheet[i][j], 200);
+			}
+		}
+		for(int i = 0; i < 2; i++) {
+			for(int j = 0; j < 4; j++) {
+				String src = "img/bullet/" + (i+1) + "-" + (j+1) + ".png";
+				dom.bulletSheet[i][j] = new SpriteSheet(src, 32, 32);
+				dom.bulletAnimation[i][j] = new Animation(dom.bulletSheet[i][j], 200);
+			}
+		}
+		dom.debuff[0] = new Image("img/game/Choas.png");
+		dom.debuff[1] = new Image("img/game/OnFire.png");
 	}
 
 	@Override

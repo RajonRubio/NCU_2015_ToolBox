@@ -83,6 +83,7 @@ public class ChooseTeam extends BasicGameState{
 	boolean IsLockHero;
 	
 	boolean IsWaiting;
+	boolean grabbed;
 	
 	int TeamImageY = 0;
 	int HeroImageY = 450;
@@ -111,6 +112,7 @@ public class ChooseTeam extends BasicGameState{
 	
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
+		grabbed = true;
 		Background = new Image("img/UIM/ChooseTeam/Choose.png");
 		Leftteamlight = new Image("img/UIM/ChooseTeam/Leftteamlight.png");
 		Rightteamlight = new Image("img/UIM/ChooseTeam/Rightteamlight.png");
@@ -168,11 +170,6 @@ public class ChooseTeam extends BasicGameState{
 		MouseOnRightTime = 0;
 		teamState = new TeamState();
 		
-		//teamState.blue.add(teamState.new Member("jxcode", "192.168.0.0", "Archer"));
-		teamState.blue.add(teamState.new Member("S.T.Pig", "192.168.0.0", "Wizard" , true));
-		
-		//teamState.red.add(teamState.new Member("AzureNight", "192.168.0.0", "Marines"));
-		teamState.red.add(teamState.new Member("RajonRubio", "192.168.0.0", "Cannon",true));
 	}
 
 	@Override
@@ -259,14 +256,14 @@ public class ChooseTeam extends BasicGameState{
 			g.setColor(Color.white);
 			g.drawString(teamState.red.get(i).name, 100, PlayerYstart + i*40);
 			g.setColor(Color.red);
-			g.drawString("["+teamState.red.get(i).job+"]", 10, PlayerYstart + i*40);
+			g.drawString("["+teamState.red.get(i).role.toString()+"]", 10, PlayerYstart + i*40);
 		}
 		
 		for(int i=0;i<teamState.blue.size();i++){
 			g.setColor(Color.white);
 			g.drawString(teamState.blue.get(i).name, 784, PlayerYstart + i*40);
 			g.setColor(Color.cyan);
-			g.drawString("["+teamState.blue.get(i).job+"]", 694, PlayerYstart + i*40);
+			g.drawString("["+teamState.blue.get(i).role.toString()+"]", 694, PlayerYstart + i*40);
 		}
 		
 		g.setColor(Color.white);
@@ -279,6 +276,11 @@ public class ChooseTeam extends BasicGameState{
 		x = gc.getInput().getMouseX();
 		y = gc.getInput().getMouseY();
 		time += delta;
+
+		if (gc.getInput().isKeyPressed(Input.KEY_ESCAPE)) {
+			grabbed = !grabbed;
+			gc.setMouseGrabbed(grabbed);
+		}
 		
 		if(time%1000<250){
 			whichready = 0;
@@ -469,24 +471,6 @@ public class ChooseTeam extends BasicGameState{
 			MouseOnGo = true;
 		}
 		
-		if (gc.getInput().isKeyDown(Input.KEY_W)){
-			if(teamState.blue.size()>0){
-				Member m = teamState.blue.get(0);
-				teamState.red.add(m);
-				teamState.blue.remove(m);
-			}
-		}
-		
-		if (gc.getInput().isKeyDown(Input.KEY_S)){
-			if(teamState.red.size()>1){
-				Member m = teamState.red.get(1);
-				teamState.blue.add(m);
-				teamState.red.remove(m);
-			}
-		}
-		
-		
-		
 		//Lock 
 		if(gc.getInput().isMouseButtonDown((Input.MOUSE_LEFT_BUTTON))&&!IsWaiting){
 			pressed = true;
@@ -556,6 +540,8 @@ public class ChooseTeam extends BasicGameState{
 	}
 	
 	public void UpdateTeamState(Protocols.TeamState teamstate){
+		//System.out.println(teamstate.red.size());
+		//System.out.println(teamstate.blue.size());
 		this.teamState = teamstate;
 	}
 	
