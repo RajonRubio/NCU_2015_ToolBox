@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import Protocols.WoodBox;
 
-
 public class SDM {
 	public BasicBlock[][] scene = new BasicBlock[40][100]; //scene is a BasicBlock type array
 	public double mapdata[][] = new double[40][100];  

@@ -1,9 +1,14 @@
 package TCPSM;
 
+import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import Protocols.ClientAction;
@@ -16,94 +21,157 @@ import CDC.CDC;
 public class TCPSM {
 	private ServerSocket serverSock;
 	private CDC cdc;
-	private Vector<String> clientIPTable;
-	private Vector<Socket> clientConnections;
-	private Vector<Thread> clientThreads;
-	private int connectNum;
+	private ArrayList<Thread> clientThreads;
+	private ArrayList<ClientHandler> clients;
+	private int connectCount;
 	private Thread listenThread;
+	private Timer pingTimer;
 	private boolean serverStart;
 	
-	public TCPSM(CDC cdc) {
-		this.clientIPTable = new Vector<String>();
-		this.clientConnections = new Vector<Socket>();
-		this.clientThreads = new Vector<Thread>();
-		this.connectNum = 0;
-		this.cdc = cdc;
+	/** @Constructor */
+	public TCPSM() {
+		this.clientThreads = new ArrayList<Thread>();
+		this.clients = new ArrayList<ClientHandler>();
+		this.connectCount = 0;
 		this.serverStart = false;
+		this.pingTimer = new Timer();
 	}
 	
+	/*
+	 * Set cdc property to call while getting action code from clinet
+	 * @Param cdc CDC instance
+	 */
+	public void setDataCenter(CDC cdc) {
+		this.cdc = cdc;
+	}
+	
+	/** Start to listen and accept new connection */
 	public void initServer() throws Exception {
 		this.serverStart = true;
 		this.serverSock = new ServerSocket(TCP.PORT);
 		this.listenThread = new Thread(new ConnectionHandler());
 		this.listenThread.start();
+		this.pingTimer.schedule(new PingTask(), 5000);
 	}
 	
-	public Vector getClientIPTable() {
-		return this.clientIPTable;
-	}
-	
-	public void gameOver() throws Exception {
-		for(Socket s : this.clientConnections) {
-			ObjectOutputStream writer = new ObjectOutputStream(s.getOutputStream());
-			writer.writeObject(ClientAction.GAME_OVER);
-			writer.flush();
-		}
-	}
-	
-	public void gameStart() throws Exception {
-		for(Socket s : this.clientConnections) {
-			ObjectOutputStream writer = new ObjectOutputStream(s.getOutputStream());
-			writer.writeObject(ClientAction.GAME_START);
-			writer.flush();
-		}
-	}
-	
+	/** Stop listening and close all connection */
 	public void stopServer() throws Exception {
 		this.serverStart = false;
-		for(Socket s : this.clientConnections) {
-			s.close();
+		for(ClientHandler c : this.clients) {
+			c.sock.close();
+			c.clientStart = false;
 		}
-		clientIPTable.clear();
-		clientConnections.clear();
-		clientThreads.clear();
+		this.clients.clear();
+		this.clientThreads.clear();
+		this.pingTimer.cancel();
 	}
 	
+	/*
+	 * Remove client from ArrayList if heart beat failed.
+	 * @Param id disconnected client's connection id
+	 */
+	private void removeClient(int id){
+		try {
+			clients.get(id).sock.close();
+			clients.get(id).clientStart = false;
+			cdc.removeVirtualCharacter(clients.get(id).id);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		clients.remove(id);
+		clientThreads.get(id).interrupt();
+		clientThreads.remove(id);
+	}
+	
+	/*
+	 * Called by UDPBC
+	 * Get all client's address who is connecting to the server
+	 * @return 	the set of addresses 
+	 */
+	public ArrayList getClientIPTable() {
+		ArrayList<String> list = new ArrayList<String>();
+		for(ClientHandler c : this.clients) {
+			list.add(c.sock.getInetAddress().getHostAddress());
+		}
+		return list;
+	}
+	
+	/*
+	 * Called by CDC
+	 * Send code "GAME_OVER" to TCPCM for notifying the game has been end
+	 */
+	public void gameOver() throws Exception {
+		for(ClientHandler c : this.clients) {
+			c.writer.writeObject(ClientAction.GAME_OVER);
+			c.writer.flush();
+		}
+	}
+	
+	/*
+	 * Called by CDC
+	 * Send code "GAME_START" to TCPCM for notifying the game has been start
+	 */
+	public void gameStart() throws Exception {
+		for(ClientHandler c : this.clients) {
+			c.writer.writeObject(ClientAction.GAME_START);
+			c.writer.flush();
+		}
+	}
+	
+	
+	/*
+	 * Class implement Runnable
+	 * In order to accept new connection
+	 */
 	private class ConnectionHandler implements Runnable {
 		@Override
 		public void run() {
 			try {
 				while (serverStart) {
-					Socket s = serverSock.accept();    
-					addConnection(s);
+					if(clients.size() < 4) {
+						Socket s = serverSock.accept();    
+						addConnection(s);
+					}
 				}   
 			} catch (Exception e){ 
 				e.printStackTrace(System.out);
 			}
 		}
 		
+		/** Create a thread to handler per connection to client */
 		private void addConnection(Socket s) {
-			connectNum += 1;
-			clientIPTable.add(s.getInetAddress().getHostAddress());
-			clientConnections.add(s);
-			Thread t = new Thread(new ClientHandler(connectNum, s));
+			connectCount += 1;
+			ClientHandler ch = new ClientHandler(connectCount, s);
+			clients.add(ch);
+			Thread t = new Thread(ch);
 			clientThreads.add(t);
 			t.start();
 		}
 	}
 	
+	/*
+	 * Class implements Runnable
+	 * Handle one client's connection and parse the imcoming message.
+	 */
 	private class ClientHandler implements Runnable {
-		private Socket sock;
-		private ObjectInputStream reader;
-		private ObjectOutputStream writer;
-		private int id;
+		public Socket sock;
+		public ObjectInputStream reader;
+		public ObjectOutputStream writer;
+		public int id;
+		public boolean clientStart;
 		
+		/*
+		 * @Constructor
+		 * @Param id		the id of this connection
+		 * @Param s 		socket connection
+		 */
 		public ClientHandler (int id, Socket s) {
 			try {
 				this.sock = s;
 				this.id = id;
 				this.reader = new ObjectInputStream(sock.getInputStream());
 				this.writer = new ObjectOutputStream(sock.getOutputStream());
+				this.clientStart = true;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -113,48 +181,77 @@ public class TCPSM {
 		public void run() {
 			ServerAction code;
 			try {
-				while (serverStart){
-					if ((code = (ServerAction)reader.readObject()) != null)
-					switchCode(code);
+				while (serverStart && this.clientStart){
+					if ((code = (ServerAction)reader.readObject()) != null){
+						switchCode(code);
+					}
 				}
 			} catch (Exception e){
 				e.printStackTrace(System.out);
 			}
 		}
 		
+		/*
+		 * Parse action code send from client and call correspond function in CDC
+		 * @Param code action code
+		 */
 		private void switchCode(ServerAction code) throws Exception{
 			switch(code) {
 				case UP_PRESS:
 				case DOWN_PRESS:
 				case RIGHT_PRESS:
 				case LEFT_PRESS:
-					// call cdc move
-					break;
-				case UP_RELEASE:
-				case DOWN_RELEASE:
-				case RIGHT_RELEASE:
-				case LEFT_RELEASE:
-					// call cdc stop move
+					cdc.CharacterMove(this.id, code);
 					break;
 				case ATTACK:
-					// call cdc attack
+					Point2D angle;
+					angle = (Point2D)this.reader.readObject();
+					cdc.addBullet(id, angle);
 					break;
 				case CH_NAME:
 					String name;
 					name = (String)this.reader.readObject();
-					// call cdc set name
+					if(cdc.checkName(name)) {
+						this.writer.writeObject(ClientAction.NAME_OK);
+						cdc.addVirtualCharacter(id, name);
+					} else {
+						this.writer.writeObject(ClientAction.NAME_FAIL);
+						removeClient(clients.indexOf(this));
+					}
+					this.writer.flush();
 					break;
 				case CH_TEAM:
 					Team team;
 					team = (Team)this.reader.readObject();
-					// call cdc select team
+					cdc.setTeam(id, team);
 					break;
 				case CH_ROLE:
 					Role role;
 					role = (Role)this.reader.readObject();
-					// call cdc select role
+					cdc.setRole(id, role);
+					break;
+				case READY:
+					cdc.setReady(id);
 					break;
 			}
 		}
+	}
+	
+	private class PingTask extends TimerTask{
+
+		@Override
+		public void run() {
+			int counter = 0;
+			for(ClientHandler c : clients) {
+				try {
+					c.writer.writeObject(ClientAction.GAME_OVER);
+					c.writer.flush();
+					counter += 1;
+				} catch (IOException e) {
+					removeClient(counter);
+				}
+			}
+		}
+		
 	}
 }

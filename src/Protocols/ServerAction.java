@@ -8,6 +8,7 @@ public enum ServerAction {
 	CH_NAME,
 	CH_TEAM,
 	CH_ROLE,
+	READY
 }
 
 /* server side
