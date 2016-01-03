@@ -36,7 +36,7 @@ public class EventListener {
 
 	public EventListener(TCPCM tcpcm) {
 		this.tcpcm = tcpcm;
-		move = new ArrayList<>();
+		move = new ArrayList<ServerAction>();
 		IsWPressed = false;
 		IsSPressed = false;
 		IsAPressed = false;
