@@ -50,8 +50,10 @@ public class UDPUS extends Thread {
         String type = command.get_type();
 
         if (type.equals("Bullet")) {
+	    System.out.println("receive a bullet");
             update_bullet((BulletT)command);
         } else if (type.equals("Character")) {
+            System.out.println("receive a character");
             update_character((Character)command);
         } else if (type.equals("WoodBox")) {
             //update_woodbox((WoodBox)object);
@@ -66,6 +68,7 @@ public class UDPUS extends Thread {
     }
 
     void update_character(Character character) {
+    	System.out.println("clientno: " + character.clientno + ", LocationX: " + character.location.x + ", LocationY: " + character.location.y);
         dynamic_object.updateVirtualCharacter(character.clientno,
                                               character.status.ordinal(),
                                               character.location,
@@ -87,9 +90,9 @@ public class UDPUS extends Thread {
         DatagramPacket packet = new DatagramPacket(buf, MTU);
 
         try {
-            System.out.println("update");
+            //System.out.println("update");
             socket.receive(packet);
-            System.out.println("We receive a message from " + packet.getAddress().getHostAddress());
+            //System.out.println("We receive a message from " + packet.getAddress().getHostAddress());
         } catch (IOException exception) {
             assert false;
             System.out.println("Receive data fail.");
