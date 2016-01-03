@@ -4,9 +4,10 @@ import DOM.Bullet;
 import DOM.DOM;
 import SDM.SDM;
 
+import Protocols.Command;
+import Protocols.Bullets;
 import Protocols.BulletT;
 import Protocols.Character;
-import Protocols.Command;
 import Protocols.WoodBox;
 
 import java.util.ArrayList;
@@ -49,9 +50,9 @@ public class UDPUS extends Thread {
         Command command = recieve_object();
         String type = command.get_type();
 
-        if (type.equals("Bullet")) {
-	    System.out.println("receive a bullet");
-            update_bullet((BulletT)command);
+        if (type.equals("Bullets")) {
+	        System.out.println("receive some bullets");
+            update_bullet((Bullets)command);
         } else if (type.equals("Character")) {
             System.out.println("receive a character");
             update_character((Character)command);
@@ -60,11 +61,14 @@ public class UDPUS extends Thread {
         }
     }
 
-    void update_bullet(Protocols.BulletT bullet) {
-        ArrayList<Bullet> bullets = new ArrayList<Bullet>();
-        Bullet b = new Bullet(bullet.team, bullet.role, bullet.location);
-        bullets.add(b);
-        dynamic_object.updateBullet(bullets);
+    void update_bullet(Bullets bullets) {
+        ArrayList<BulletT> list = bullets.get_list();
+        ArrayList<Bullet> bs = new ArrayList<Bullet>();
+        for (BulletT bullet : bullets) {
+            Bullet b = new Bullet(bullet.team, bullet.role, bullet.location);
+            bs.add(b);
+        }
+        dynamic_object.updateBullet(bs);
     }
 
     void update_character(Character character) {

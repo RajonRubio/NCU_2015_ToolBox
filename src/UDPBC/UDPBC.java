@@ -81,8 +81,10 @@ public class UDPBC {
 
     ArrayList get_all_info() {
         ArrayList info = new ArrayList();
+        Bullets bullets = new Bullets();
         info.addAll(data_center.getCharacter());
-        info.addAll(data_center.getBullets());
+        bullets.addAll(data_center.getBullets());
+        info.add(bullets);
         info.addAll(data_center.getWoodBox());
 
         return info;
