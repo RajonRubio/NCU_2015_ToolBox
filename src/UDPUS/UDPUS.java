@@ -84,7 +84,7 @@ public class UDPUS extends Thread {
     //}
 
     Command recieve_object() {
-        this.buf = new byte[MTU];
+        byte[] buf = new byte[MTU];
         Command command = new Command("Null");
 
         DatagramPacket packet = new DatagramPacket(buf, MTU);
@@ -99,10 +99,12 @@ public class UDPUS extends Thread {
         }
 
         try {
-            ByteArrayInputStream baos = new ByteArrayInputStream(this.buf);
+        	//System.out.println(buf);
+            ByteArrayInputStream baos = new ByteArrayInputStream(buf);
             ObjectInputStream oos = new ObjectInputStream(baos);
             command = (Command)oos.readObject();
         } catch (IOException exception) {
+        	//System.out.println(exception);
             assert false;
         } catch (ClassNotFoundException exception) {
             assert false;
