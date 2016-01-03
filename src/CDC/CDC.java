@@ -21,6 +21,7 @@ import sun.security.pkcs11.wrapper.CK_X9_42_DH1_DERIVE_PARAMS;
 public class CDC {
 	private TCPSM tcpsm;
 	private int maximum = 4;
+	private int gameTime = 120;
 	private BasicBlock [][] map = new BasicBlock [40][100];
 	public  TeamState teamstate;
 	private ArrayList<Character> characters = new ArrayList<Character>();
@@ -277,7 +278,7 @@ public class CDC {
 			cs.player.add(p);
 		} 
 		Timer timer = new Timer();
-		timer.schedule(new GameOver(), 2*60*1000);
+		timer.schedule(new GameOver(), new Date(), 1000);
 		timer.schedule(new BulletsMove(), new Date(), 1000/60);
 		try {
 			tcpsm.gameStart(cs);
@@ -516,7 +517,7 @@ public class CDC {
 						break;
 					case 1:
 						changebullet.add(i);
-						bullets.add(new Bullet(bullets.get(i).getClientNumber(), bullets.get(i).getTeam(), bullets.get(i).getRole(), bullets.get(i).getLocation(), Skill.NULL, angle, 1, bullets.get(i).getAttack()));
+						//bullets.add(new Bullet(bullets.get(i).getClientNumber(), bullets.get(i).getTeam(), bullets.get(i).getRole(), bullets.get(i).getLocation(), Skill.NULL, angle, 1, bullets.get(i).getAttack()));
 						break;
 					case 2:
 						angle.setLocation(-angle.getX(), angle.getY());
@@ -571,10 +572,18 @@ public class CDC {
 	
 	public class GameOver extends TimerTask {
 		public void run() {
-			try {
-				tcpsm.gameOver();
-			}catch (Exception e) {
-				e.printStackTrace();
+			if(gameTime != 0)
+			{
+				gameTime -= 1;
+				System.out.println(gameTime);
+			}
+			else
+			{
+				try {
+					tcpsm.gameOver();
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
