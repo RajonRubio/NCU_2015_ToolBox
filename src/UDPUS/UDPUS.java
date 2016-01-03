@@ -7,6 +7,8 @@ import Protocols.Character;
 import Protocols.Bullet;
 import Protocols.WoodBox;
 
+import java.util.ArrayList;
+
 import java.io.ObjectInputStream;
 import java.io.ByteArrayInputStream;
 
@@ -51,7 +53,7 @@ public class UDPUS {
 
     void update_bullet(Bullet bullet) {
         ArrayList<Bullet> bullets = new ArrayList<Bullet>();
-        bullets.add(bullet)
+        bullets.add(bullet);
         dynamic_object.updateBullet(bullets);
     }
 
@@ -72,7 +74,7 @@ public class UDPUS {
 
     Object recieve_object() {
         this.buf = new byte[MTU];
-        Object objct;
+        Object object;
 
         DatagramPacket packet = new DatagramPacket(buf, MTU);
 
