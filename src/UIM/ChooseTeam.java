@@ -85,6 +85,9 @@ public class ChooseTeam extends BasicGameState{
 	boolean IsWaiting;
 	boolean grabbed;
 	
+	boolean RedFull;
+	boolean BlueFull;
+	
 	int TeamImageY = 0;
 	int HeroImageY = 450;
 	
@@ -477,14 +480,14 @@ public class ChooseTeam extends BasicGameState{
 		}
 		if(!pressed&&ispressed){
 			//team
-			if(x>0&&x<480 && y>65&&y<330 &&!LockLeft){
+			if(x>0&&x<480 && y>65&&y<330 &&!LockLeft&&!RedFull){
 				System.out.println("Red");
 				LockTeam = true;
 				LockRight = false;
 				LockLeft = true;
 				tcpcm.chooseTeam(Team.RED);
 			}
-			if(x>480&&x<960 && y>65&&y<330 &&!LockRight){
+			if(x>480&&x<960 && y>65&&y<330 &&!LockRight&&!BlueFull){
 				System.out.println("Blue");
 				LockTeam = true;
 				LockLeft = false;
@@ -540,9 +543,15 @@ public class ChooseTeam extends BasicGameState{
 	}
 	
 	public void UpdateTeamState(Protocols.TeamState teamstate){
-		//System.out.println(teamstate.red.size());
-		//System.out.println(teamstate.blue.size());
+		RedFull = false;
+		BlueFull = false;
 		this.teamState = teamstate;
+		if(this.teamState.red.size()==2){
+			RedFull = true;
+		}
+		if(this.teamState.blue.size()==2){
+			BlueFull = true;
+		}
 	}
 	
 	public void GoNextState(){
