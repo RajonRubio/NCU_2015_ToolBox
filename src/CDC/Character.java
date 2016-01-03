@@ -27,7 +27,7 @@ public class Character {
 	private int dead = 0;
 	private int time = 0;
 	private boolean ready = false;
-	Timer timer = new Timer();
+	Timer timer;
 	
 	public Character(int clientnumber, String name) {
 		this.clientnumber = clientnumber;
@@ -84,7 +84,7 @@ public class Character {
 		switch(role)
 		{
 			case Archer:
-				movespeed = 1;
+				movespeed = 0.5;
 				attackspeed = 2.5;
 				break;
 			case Marines:
@@ -171,8 +171,9 @@ public class Character {
 		}
 	}
 	
-	public void TimerResume() {
-		timer.schedule(new Move(), new Date(), 1000);
+	public void TimerResume(BasicBlock map[][]) {
+		timer = new Timer();
+		timer.schedule(new Move(map), new Date(), 16);
 	}
 
 	
@@ -181,24 +182,42 @@ public class Character {
 	}
 	
 	public class Move extends TimerTask {
+		BasicBlock [][] map = new BasicBlock [40][100];
+		public Move(BasicBlock [][] map) {
+			this.map = map;
+		}
+		
 		public void run() {
 			if(debuff[1] == true)
 			{
 				switch(status)
 				{
 					case UP:
-						location.setLocation(location.getX()+movespeed,location.getY());
+						if(location.getY()+movespeed > 400 && location.getY()+movespeed < 1400)
+						{
+							location.setLocation(location.getX(),location.getY()+movespeed);
+						}
 						break;
 					case DOWN:
-						location.setLocation(location.getX()-movespeed,location.getY());
+						if(location.getY()-movespeed > 400 && location.getY()-movespeed < 1400)
+						{
+							location.setLocation(location.getX(),location.getY()-movespeed);
+						}
 						break;
 					case RIGHT:
-						location.setLocation(location.getX(),location.getY()-movespeed);
+						if(location.getX()-movespeed > 350 && location.getX()-movespeed < 4450)
+						{
+							location.setLocation(location.getX()-movespeed,location.getY());
+						}
 						break;
 					case LEFT:
-						location.setLocation(location.getX(),location.getY()+movespeed);
+						if(location.getX()+movespeed > 350 && location.getX()+movespeed < 4450)
+						{
+							location.setLocation(location.getX()+movespeed,location.getY());
+						}
 						break;
 					default:
+						System.out.println(status);
 						break;
 				}
 			}
@@ -207,22 +226,37 @@ public class Character {
 				switch(status)
 				{
 					case UP:
-						location.setLocation(location.getX()-movespeed,location.getY());
+						if(location.getY()-movespeed > 350 && location.getY()-movespeed < 1450 && map[(int)(location.getY()-movespeed+50)/50][(int)(location.getX()+50)/50].getType() == 0)
+						{
+							//System.out.println("NO."+clientnumber+"Y:"+location.getY());
+							location.setLocation(location.getX(),location.getY()-movespeed);
+						}
+						//System.out.println("NO."+clientnumber+"Y:"+location.getY());
 						break;
 					case DOWN:
-						location.setLocation(location.getX()+movespeed,location.getY());
+						if(location.getY()+movespeed > 350 && location.getY()+movespeed < 1450 && map[(int)(location.getY()+movespeed+50)/50][(int)(location.getX()+50)/50].getType() == 0)
+						{
+							location.setLocation(location.getX(),location.getY()+movespeed);
+						}
 						break;
 					case RIGHT:
-						location.setLocation(location.getX(),location.getY()+movespeed);
+						if(location.getX()+movespeed > 500 && location.getX()+movespeed < 4450 && map[(int)(location.getY()+50)/50][(int)(location.getX()+movespeed+50)/50].getType() == 0)
+						{
+							location.setLocation(location.getX()+movespeed,location.getY());
+						}
 						break;
 					case LEFT:
-						location.setLocation(location.getX(),location.getY()-movespeed);
+						if(location.getX()-movespeed > 500 && location.getX()-movespeed < 4450 && map[(int)(location.getY()+50)/50][(int)(location.getX()-movespeed+50)/50].getType() == 0)
+						{
+							location.setLocation(location.getX()-movespeed,location.getY());
+						}
 						break;
 					default:
+						//System.out.println(status);
 						break;
 				}
 			}
-			System.out.println(status + "x:" + location.getX() + "y: " + location.getY());
+			//System.out.println("NO." + clientnumber + "X:" + location.getX() + "Y:" + location.getY());
 		}
 	}
 }

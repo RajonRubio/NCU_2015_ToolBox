@@ -280,17 +280,13 @@ public class CDC {
 		} 
 		Timer timer = new Timer();
 		timer.schedule(new GameOver(), new Date(), 1000);
-		timer.schedule(new BulletsMove(), new Date(), 1000/60);
+		timer.schedule(new BulletsMove(), new Date(), 16);
 		try {
 			tcpsm.gameStart(cs);
 			udpbc.start();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public void UDPBCstart() {
-		
 	}
 	
 	public void RandomLocation(int number) {
@@ -313,24 +309,24 @@ public class CDC {
 	}
 	
 	public void CharacterMove(int clientnumber, ServerAction action) {
-		System.out.println(action);
+		System.out.println("CDC:" + action);
 		switch(action)
 		{
 			case UP_PRESS:
 				characters.get(searchClientNumber(clientnumber)).setStatus(Status.UP);
-				characters.get(searchClientNumber(clientnumber)).TimerResume();
+				characters.get(searchClientNumber(clientnumber)).TimerResume(map);
 				break;
 			case DOWN_PRESS:
 				characters.get(searchClientNumber(clientnumber)).setStatus(Status.DOWN);
-				characters.get(searchClientNumber(clientnumber)).TimerResume();
+				characters.get(searchClientNumber(clientnumber)).TimerResume(map);
 				break;
 			case RIGHT_PRESS:
 				characters.get(searchClientNumber(clientnumber)).setStatus(Status.RIGHT);
-				characters.get(searchClientNumber(clientnumber)).TimerResume();
+				characters.get(searchClientNumber(clientnumber)).TimerResume(map);
 				break;
 			case LEFT_PRESS:
 				characters.get(searchClientNumber(clientnumber)).setStatus(Status.LEFT);
-				characters.get(searchClientNumber(clientnumber)).TimerResume();
+				characters.get(searchClientNumber(clientnumber)).TimerResume(map);
 				break;
 			case STANDING:
 				Status status = characters.get(searchClientNumber(clientnumber)).getState();
@@ -381,14 +377,14 @@ public class CDC {
 				}
 			}
 		}
-		System.out.println((int)(b_x+s*a_x+30)/50 +"  "+(int)(b_y)/50);
-		int type = map[(int)(b_x+s*a_x+30)/50][(int)(b_y)/50].getType();
+		System.out.println((int)((b_x+s*a_x+30)-480)/50 +"  "+(int)((b_y)-360)/50);
+		int type = map[(int)((b_y)-360)/50][(int)((b_x+s*a_x+30)-480)/50].getType();
 		if(type == 1 || type == 2 || type ==3)
 		{
 			ChangeCollisiontime(i);
 			return 2;
 		}
-		type = map[(int)(b_x)/50][(int)(b_y+s*a_y+30)/50].getType();
+		type = map[(int)((b_y+s*a_y+30)-360)/50][(int)((b_x)-480)/50].getType();
 		if(type == 1 || type == 2 || type ==3)
 		{
 			ChangeCollisiontime(i);
@@ -410,17 +406,20 @@ public class CDC {
 	}
 	
 	public void addBullet(int clientnumber, Point2D.Double angle) {
-		System.out.println("add a bullet");
+		System.out.println("NO."+clientnumber+"add a bullet");
 		if(characters.get(searchClientNumber(clientnumber)).getCanAttack())
 		{
-			Role role = characters.get(clientnumber).getRole();
-			Team team = characters.get(clientnumber).getTeam();
-			Point2D.Double location = characters.get(clientnumber).getLocation();
+			Role role = characters.get(searchClientNumber(clientnumber)).getRole();
+			Team team = characters.get(searchClientNumber(clientnumber)).getTeam();
+			double temp = Math.sqrt(angle.getX() * angle.getX() + angle.getY() * angle.getY());
+			angle.setLocation(angle.getX()/temp, angle.getY()/temp);
+			Point2D.Double location = characters.get(searchClientNumber(clientnumber)).getLocation();
+			System.out.println("X:"+location.getX()+"Y:"+location.getY());
 			Skill skill = Skill.NULL;
 			switch(role)
 			{
 				case Archer:
-					bullets.add(new Bullet(clientnumber, team, role, location, 2, skill.DISPERSION, angle, 1, 15));
+					bullets.add(new Bullet(clientnumber, team, role, location, 0.01, skill.DISPERSION, angle, 1, 15));
 					break;
 				case Marines:
 					bullets.add(new Bullet(clientnumber, team, role, location, 1.5, skill, angle, 3, 20));
@@ -434,6 +433,7 @@ public class CDC {
 			}
 			characters.get(searchClientNumber(clientnumber)).setCanAttack(false);
 		}
+		System.out.println(bullets.size());
 	}
 	
 	public void Attack(int clientnumber1, int clientnumber2, int attack, Skill skill) {
@@ -498,38 +498,39 @@ public class CDC {
 				location = bullets.get(i).getLocation();
 				bulletspeed = bullets.get(i).getBulletspeed();
 				angle = bullets.get(i).getAngle();
-				int type = checkCollision(i);
-				switch(type)
-				{
-					case -1:
-						break;
-					case 0:
-						changebullet.add(i);
-						break;
-					case 1:
-						changebullet.add(i);
-						for(int j=0;j<=4;j++)
-						{
-							double rx = (angle.getX() * Math.cos(45)) - (angle.getY() * Math.sin(45));
-						    double ry = (angle.getX() * Math.sin(45)) + (angle.getY() * Math.cos(45));
-						    angle.setLocation(rx, ry);
-							bullets.add(new Bullet(bullets.get(i).getClientNumber(), bullets.get(i).getTeam(), bullets.get(i).getRole(), location, bulletspeed, Skill.NULL, angle, 1, bullets.get(i).getAttack()));
-						}			
-						break;
-					case 2:
-						angle.setLocation(-angle.getX(), angle.getY());
-						break;
-					case 3:
-						angle.setLocation(angle.getX(), -angle.getY());
-						break;
-				}
+//				int type = checkCollision(i);
+//				switch(type)
+//				{
+//					case -1:
+//						break;
+//					case 0:
+//						changebullet.add(i);
+//						break;
+//					case 1:
+//						changebullet.add(i);
+//						for(int j=0;j<=4;j++)
+//						{
+//							double rx = (angle.getX() * Math.cos(45)) - (angle.getY() * Math.sin(45));
+//						    double ry = (angle.getX() * Math.sin(45)) + (angle.getY() * Math.cos(45));
+//						    angle.setLocation(rx, ry);
+//							bullets.add(new Bullet(bullets.get(i).getClientNumber(), bullets.get(i).getTeam(), bullets.get(i).getRole(), location, bulletspeed, Skill.NULL, angle, 1, bullets.get(i).getAttack()));
+//						}			
+//						break;
+//					case 2:
+//						angle.setLocation(-angle.getX(), angle.getY());
+//						break;
+//					case 3:
+//						angle.setLocation(angle.getX(), -angle.getY());
+//						break;
+//				}
 				location.setLocation(location.getX()+bulletspeed*angle.getX(), location.getY()+bulletspeed*angle.getY());
+				//System.out.println("X:"+location.getX()+"Y:"+location.getY());
 				bullets.get(i).setLocation(location);
 			}
-			for(int i=0;i<changebullet.size();i++)
-			{
-				bullets.remove(changebullet.get(i));
-			}
+//			for(int i=0;i<changebullet.size();i++)
+//			{
+//				bullets.remove(changebullet.get(i));
+//			}
 		}
 	}
 	
@@ -601,10 +602,6 @@ public class CDC {
 			int dead = characters.get(i).getDead();
 			changecharacters.add(new Protocols.Character(clientno, status, HP, location, debuff, kill, dead));
 		}
-		for(int i=0;i<changecharacters.size();i++)
-		{
-			System.out.println(changecharacters.get(i).location.getX() + " " + changecharacters.get(i).location.getY());
-		}
 		return changecharacters;
 	}
 	
@@ -617,7 +614,6 @@ public class CDC {
 			Point2D.Double location = bullets.get(i).getLocation();
 			changebullets.add(new Protocols.BulletT(team, role, location));
 		}
-		System.out.println("bullet size:" + changebullets.size());
 		return changebullets;
 	}
 	
