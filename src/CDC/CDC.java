@@ -21,7 +21,7 @@ import sun.security.pkcs11.wrapper.CK_X9_42_DH1_DERIVE_PARAMS;
 public class CDC {
 	private TCPSM tcpsm;
 	private int maximum = 4;
-	private int gameTime = 120;
+	private int gameTime = 10;
 	private BasicBlock [][] map = new BasicBlock [40][100];
 	public  TeamState teamstate;
 	private ArrayList<Character> characters = new ArrayList<Character>();
@@ -580,6 +580,7 @@ public class CDC {
 			else
 			{
 				try {
+					System.out.println("GG");
 					tcpsm.gameOver();
 				}catch (Exception e) {
 					e.printStackTrace();
