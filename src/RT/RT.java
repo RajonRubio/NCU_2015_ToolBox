@@ -40,6 +40,9 @@ public class RT extends BasicGameState{
 	double time = 120;
 	boolean openTab = false;
 	boolean isover = false;
+	Image Mouse;
+	int mouseX;
+	int mouseY;
 
 	
 	public RT(TCPCM tcpcm, GameOver gameover, DOM dom) {
@@ -54,6 +57,7 @@ public class RT extends BasicGameState{
 	
 	@Override
 	public void init(GameContainer gc, StateBasedGame arg1) throws SlickException {
+		Mouse = new Image("img/mouse.png");
 		font = new Font("Time new Roman", Font.BOLD, 50);
 		ttf = new TrueTypeFont(font, true);
 		timeFont = new Font("Time new Roman", Font.BOLD, 40);
@@ -79,7 +83,7 @@ public class RT extends BasicGameState{
 	}
 
 	@Override
-	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
+	public void render(GameContainer gc, StateBasedGame arg1, Graphics g) throws SlickException {
 		scenere.renderScene(g);
 		spritere.renderSprite(g);
 		if(openTab == true) {
@@ -96,10 +100,13 @@ public class RT extends BasicGameState{
 				timeTtf.drawString(458, 55, ""+(int)time, Color.white);
 			}	
 		}
+		g.drawImage(Mouse, mouseX-15, mouseY-15);
 	}
 
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
+		mouseX = gc.getInput().getMouseX();
+		mouseY = gc.getInput().getMouseY();
 		eventlistener.listent(gc, delta);
 		openTab = false;
 		if(gc.getInput().isKeyDown(Input.KEY_SPACE)){
