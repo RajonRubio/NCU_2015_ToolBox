@@ -59,7 +59,7 @@ public class RT extends BasicGameState{
 		timeFont = new Font("Time new Roman", Font.BOLD, 40);
 		timeTtf = new TrueTypeFont(timeFont, true);
 		gameStatus = new Image("img/game/GameState.png");
-		eventlistener = new EventListener();
+		eventlistener = new EventListener(tcpcm);
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 8; j++) {
 				String src = "img/char/" + (i+1) + "-" + (j+1) + ".png";
