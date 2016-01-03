@@ -6,7 +6,6 @@ import java.util.TimerTask;
 import Protocols.*;
 import SETTINGS.*;
 
-
 public class Character {
 	private int clientnumber;
 	private String name;
@@ -22,8 +21,7 @@ public class Character {
 	private boolean [] debuff = {false, false};
 	private int kill = 0;
 	private int dead = 0;
-	private boolean candraw = true;
-	private boolean havedead = false;
+	private int time = 0;
 	private boolean ready = false;
 	
 	public Character(int clientnumber, String name) {
@@ -57,17 +55,20 @@ public class Character {
 		this.debuff = debuff;
 	}
 	
+	public void setTime(int time) {
+		this.time = time;
+	}
+	
 	public void addKill() {
 		kill++;
 	}
 	
 	public void addDead() {
 		dead++;
-		havedead = true;
-		candraw = false;
-		Timer timer = new Timer();
-		timer.schedule(new RadyDraw(), 57000);
-		timer.schedule(new Resurrection(), 60000);
+	}
+	
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 	
 	public void setReady(boolean ready) {
@@ -150,21 +151,13 @@ public class Character {
 		return dead;
 	}
 	
+	public int getTime() {
+		return time;
+	}
+	
 	public boolean getReady() {
 		return ready;
 		
-	}
-	
-	public class RadyDraw extends TimerTask {
-		public void run () {
-			candraw = true;
-		}
-	}
-	
-	public class Resurrection extends TimerTask {
-		public void run() {
-			havedead = false;
-		}
 	}
 	
 	public class ReadyAttack extends TimerTask {

@@ -1,5 +1,5 @@
 package Protocols;
 
 public enum Skill {
-	NULL, FIRE, CHAOS, DISPERSION
+	NULL, FIRE, CHAOS, DISPERSION, PENETRATE
 }
