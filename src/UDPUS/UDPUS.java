@@ -64,7 +64,7 @@ public class UDPUS extends Thread {
     void update_bullet(Bullets bullets) {
         ArrayList<BulletT> list = bullets.get_list();
         ArrayList<Bullet> bs = new ArrayList<Bullet>();
-        for (BulletT bullet : bullets) {
+        for (BulletT bullet : bullets.get_list()) {
             Bullet b = new Bullet(bullet.team, bullet.role, bullet.location);
             bs.add(b);
         }

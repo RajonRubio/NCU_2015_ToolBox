@@ -1,5 +1,7 @@
 package Protocols;
 
+import java.util.ArrayList;
+
 public class Bullets extends Command{
     ArrayList<BulletT> list;
 
