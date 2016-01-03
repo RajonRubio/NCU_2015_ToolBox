@@ -60,7 +60,7 @@ public class TCPCM {
 		try {
 			writer.writeObject(ServerAction.ATTACK);
 			writer.writeObject(v);
-			writer.flush();
+			writer.reset();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

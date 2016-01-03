@@ -51,10 +51,10 @@ public class UDPUS extends Thread {
         String type = command.get_type();
 
         if (type.equals("Bullets")) {
-	        System.out.println("receive some bullets");
+	        //System.out.println("receive some bullets");
             update_bullet((Bullets)command);
         } else if (type.equals("Character")) {
-            System.out.println("receive a character");
+            //System.out.println("receive a character");
             update_character((Character)command);
         } else if (type.equals("WoodBox")) {
             //update_woodbox((WoodBox)object);
@@ -72,7 +72,7 @@ public class UDPUS extends Thread {
     }
 
     void update_character(Character character) {
-    	System.out.println("clientno: " + character.clientno + ", LocationX: " + character.location.x + ", LocationY: " + character.location.y);
+    	//System.out.println("clientno: " + character.clientno + ", LocationX: " + character.location.x + ", LocationY: " + character.location.y);
         dynamic_object.updateVirtualCharacter(character.clientno,
                                               character.status.ordinal(),
                                               character.location,
