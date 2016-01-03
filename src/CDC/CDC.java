@@ -590,14 +590,14 @@ public class CDC {
 		return changecharacters;
 	}
 	
-	public ArrayList<Protocols.Bullet> getBullets() {
-		ArrayList<Protocols.Bullet> changebullets = new ArrayList<Protocols.Bullet>();
+	public ArrayList<Protocols.BulletT> getBullets() {
+		ArrayList<Protocols.BulletT> changebullets = new ArrayList<Protocols.BulletT>();
 		for(int i=0;i<bullets.size();i++)
 		{
 			Team team = bullets.get(i).getTeam();
 			Role role = bullets.get(i).getRole();
 			Point2D.Double location = bullets.get(i).getLocation();
-			changebullets.add(new Protocols.Bullet(team, role, location));
+			changebullets.add(new Protocols.BulletT(team, role, location));
 		}
 		return changebullets;
 	}

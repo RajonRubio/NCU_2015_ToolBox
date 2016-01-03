@@ -1,20 +1,19 @@
 package UDPUS;
 
+import DOM.Bullet;
 import DOM.DOM;
 import SDM.SDM;
-
+import Protocols.BulletT;
 import Protocols.Character;
-import Protocols.Bullet;
 import Protocols.WoodBox;
 
 import java.io.ObjectInputStream;
 import java.io.ByteArrayInputStream;
-
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
-
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.ArrayList;
 
 public class UDPUS {
     DOM dynamic_object;
@@ -40,24 +39,25 @@ public class UDPUS {
     void do_update() {
         Object object = recieve_object();
 
-        if (object instanceof Bullet) {
-            update_bullet((Bullet)object);
+        if (object instanceof BulletT) {
+            update_bullet((BulletT)object);
         } else if (object instanceof Character) {
             update_character((Character)object);
         } else if (object instanceof WoodBox) {
-            update_woodbox((WoodBox)object);
+            //update_woodbox((WoodBox)object);
         }
     }
 
-    void update_bullet(Bullet bullet) {
+    void update_bullet(Protocols.BulletT bullet) {
         ArrayList<Bullet> bullets = new ArrayList<Bullet>();
-        bullets.add(bullet)
+        Bullet b = new Bullet(bullet.team, bullet.role, bullet.location);
+        bullets.add(b);
         dynamic_object.updateBullet(bullets);
     }
 
     void update_character(Character character) {
         dynamic_object.updateVirtualCharacter(character.clientno,
-                                              character.status,
+                                              character.status.ordinal(),
                                               character.location,
                                               character.HP,
                                               character.time,
@@ -72,7 +72,7 @@ public class UDPUS {
 
     Object recieve_object() {
         this.buf = new byte[MTU];
-        Object objct;
+        Object object = null;
 
         DatagramPacket packet = new DatagramPacket(buf, MTU);
 
