@@ -2,6 +2,7 @@ package UDPBC;
 
 import TCPSM.TCPSM;
 import CDC.CDC;
+import Protocols.Bullets;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -47,6 +48,16 @@ public class UDPBC {
         timer.schedule(do_update, UPDATE_DELAY, UPDATE_DELAY);
     }
 
+    public void stop() {
+        this.tcp_server = null;
+        this.data_center = null;
+        this.timer.cancel();
+        this.timer = null;
+        this.do_update = null;
+        this.socket.close();
+        this.socket = null;
+    }
+
     void get_servers() {
         ArrayList<String> ip_tables = tcp_server.getClientIPTable();
         servers = new ArrayList<InetAddress>();
@@ -71,8 +82,10 @@ public class UDPBC {
 
     ArrayList get_all_info() {
         ArrayList info = new ArrayList();
+        Bullets bullets = new Bullets();
         info.addAll(data_center.getCharacter());
-        info.addAll(data_center.getBullets());
+        bullets.addAll(data_center.getBullets());
+        info.add(bullets);
         info.addAll(data_center.getWoodBox());
 
         return info;

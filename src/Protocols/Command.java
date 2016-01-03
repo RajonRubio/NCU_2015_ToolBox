@@ -1,8 +1,9 @@
 package Protocols;
 
 import com.sun.org.apache.xml.internal.resolver.helpers.PublicId;
+import java.io.Serializable;
 
-public class Command {
+public class Command implements Serializable {
 	String type;
 	
 	public Command(String type) {
