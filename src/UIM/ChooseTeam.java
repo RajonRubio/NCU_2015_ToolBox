@@ -105,7 +105,7 @@ public class ChooseTeam extends BasicGameState{
 	Color MarinesColor;
 	Color CannonColor;
 	
-	
+	boolean IsEnterThisState;
 	
 	
 
@@ -172,7 +172,7 @@ public class ChooseTeam extends BasicGameState{
 		MouseOnLeftTime = 0;
 		MouseOnRightTime = 0;
 		teamState = new TeamState();
-		
+		IsEnterThisState = false;
 	}
 
 	@Override
@@ -280,6 +280,11 @@ public class ChooseTeam extends BasicGameState{
 		y = gc.getInput().getMouseY();
 		time += delta;
 
+		if(!IsEnterThisState){
+			tcpcm.chooseTeam(Team.NULL);
+			IsEnterThisState = true;
+		}
+		
 		if (gc.getInput().isKeyPressed(Input.KEY_ESCAPE)) {
 			grabbed = !grabbed;
 			gc.setMouseGrabbed(grabbed);

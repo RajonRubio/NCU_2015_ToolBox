@@ -31,6 +31,7 @@ public class EventListener {
 	boolean SHOOTPressed;
 	boolean Ischange;
 	ArrayList<ServerAction> move;
+	ServerAction lastmove;
 	TCPCM tcpcm;
 	Point2D.Double pDouble;
 
@@ -57,6 +58,12 @@ public class EventListener {
 	public void listent(GameContainer gc,int delta){
 		time += delta;
 		Ischange = false;
+		if(move.isEmpty()){
+			lastmove = ServerAction.STANDING;
+		}else {
+			lastmove = move.get(0);
+		}
+		
 		
 		if(time%UpdatePerTime<25 && !IsUpdate){
 			WPressed = IsWPressed;
@@ -162,8 +169,10 @@ public class EventListener {
 				System.out.println("STANDING");
 				tcpcm.keyChange(ServerAction.STANDING);
 			}else {
-				System.out.println(""+move.get(0));
-				tcpcm.keyChange(move.get(0));
+				if(lastmove != move.get(0)){
+					System.out.println(""+move.get(0));
+					tcpcm.keyChange(move.get(0));
+				}
 			}
 		}
 	}
