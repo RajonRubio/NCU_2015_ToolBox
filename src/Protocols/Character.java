@@ -2,7 +2,7 @@ package Protocols;
 
 import java.awt.geom.Point2D;
 
-public class Character {
+public class Character extends Command {
 	public int clientno;
 	public Status status;
 	public int HP;
@@ -13,6 +13,7 @@ public class Character {
 	public int dead;
 		
 	public Character(int clientno, Status status, int HP, Point2D.Double location, boolean [] debuff, int kill, int dead) {
+		super("Character");
 		this.clientno = clientno;
 		this.status = status;
 		this.HP = HP;
