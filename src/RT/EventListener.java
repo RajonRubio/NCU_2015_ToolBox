@@ -149,8 +149,8 @@ public class EventListener {
 			if(IsSHOOTPressed!=SHOOTPressed||x!=lastx||y!=lasty){
 				if(IsSHOOTPressed){
 					System.out.println("SHOOT: (" + (x-480) + "," + (y-360) +")");
-					pDouble.x = (x-480);
-					pDouble.y = (y-360);
+					pDouble.x = (double)(x-480);
+					pDouble.y = (double)(y-360);
 					tcpcm.attack(pDouble);
 				}else if(!IsSHOOTPressed && IsSHOOTPressed!=SHOOTPressed){
 					System.out.println("SHOOT release");
