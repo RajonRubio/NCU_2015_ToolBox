@@ -1,9 +1,11 @@
 package UDPUS;
 
 import DOM.DOM;
+import SDM.SDM;
 
-import Protocols.Command;
 import Protocols.Character;
+import Protocols.Bullet;
+import Protocols.WoodBox;
 
 import java.io.ObjectInputStream;
 import java.io.ByteArrayInputStream;
@@ -36,36 +38,41 @@ public class UDPUS {
     }
 
     void do_update() {
-        Command command = recieve_object();
-        String type = command.get_type();
+        Object object = recieve_object();
 
-        if (type.equals("Bullet")) {
-            //update_Bullet(command);
-        } else if (type.equals("Character")) {
-            update_character((Character)command);
-        } else if (type.equals("Box")) {
-            //update_character(command);
+        if (object instanceof Bullet) {
+            update_bullet((Bullet)object);
+        } else if (object instanceof Character) {
+            update_character((Character)object);
+        } else if (object instanceof WoodBox) {
+            update_woodbox((WoodBox)object);
         }
     }
 
-    //void update_bullet(ArrayList<Bullet> bullets) {
-    //    dynamic_object.updateBullet(bullets);
-    //}
+    void update_bullet(Bullet bullet) {
+        ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+        bullets.add(bullet)
+        dynamic_object.updateBullet(bullets);
+    }
 
     void update_character(Character character) {
-        int no = character.get_client_no();
-        int status = character.get_status();
-        int hp = character.get_current_hp();
-        dynamic_object.updateVirtualCharacter(no, status, hp);
+        dynamic_object.updateVirtualCharacter(character.clientno,
+                                              character.status,
+                                              character.location,
+                                              character.HP,
+                                              character.time,
+                                              character.debuff,
+                                              character.kill,
+                                              character.dead);
     }
 
     //void update_box(Box box) {
     //
     //}
 
-    Command recieve_object() {
+    Object recieve_object() {
         this.buf = new byte[MTU];
-        Command command = new Command("Null");
+        Object objct;
 
         DatagramPacket packet = new DatagramPacket(buf, MTU);
 
@@ -81,15 +88,14 @@ public class UDPUS {
         try {
             ByteArrayInputStream baos = new ByteArrayInputStream(this.buf);
             ObjectInputStream oos = new ObjectInputStream(baos);
-            command = (Command)oos.readObject();
-            System.out.println(command.getClass());
+            object = oos.readObject();
         } catch (IOException exception) {
             assert false;
         } catch (ClassNotFoundException exception) {
             assert false;
         }
 
-        return command;
+        return object;
     }
 }
 
