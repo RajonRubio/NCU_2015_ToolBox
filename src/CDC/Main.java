@@ -14,7 +14,7 @@ public class Main {
 		tcpsm.setDataCenter(cdc);
 		try {
 			UDPBC udpbc = new UDPBC(5000, tcpsm, cdc);
-			udpbc.start();
+			cdc.setUDPBC(udpbc);
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}

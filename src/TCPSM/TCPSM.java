@@ -239,6 +239,7 @@ public class TCPSM {
 		 * @Param code action code
 		 */
 		private void switchCode(ServerAction code) throws Exception{
+			System.out.println(code);
 			switch(code) {
 				case UP_PRESS:
 				case DOWN_PRESS:

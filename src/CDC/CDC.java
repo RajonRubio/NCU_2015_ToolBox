@@ -12,9 +12,11 @@ import Protocols.CharacterState.Person;
 import Protocols.TeamState.Member;
 import SETTINGS.*;
 import TCPSM.TCPSM;
+import UDPBC.UDPBC;
 
 public class CDC {
 	private TCPSM tcpsm;
+	private UDPBC udpbc;
 	private int maximum = 4;
 	private int gameTime = 120;
 	private BasicBlock [][] map = new BasicBlock [40][100];
@@ -29,6 +31,10 @@ public class CDC {
 		this.tcpsm.initServer();
 		teamstate = new TeamState();
 		loadmap();
+	}
+	
+	public void setUDPBC(UDPBC udpbc) {
+		this.udpbc = udpbc;
 	}
 	
 	public void loadmap() {
@@ -277,9 +283,14 @@ public class CDC {
 		timer.schedule(new BulletsMove(), new Date(), 1000/60);
 		try {
 			tcpsm.gameStart(cs);
+			udpbc.start();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void UDPBCstart() {
+		
 	}
 	
 	public void RandomLocation(int number) {
@@ -302,6 +313,7 @@ public class CDC {
 	}
 	
 	public void CharacterMove(int clientnumber, ServerAction action) {
+		System.out.println(action);
 		switch(action)
 		{
 			case UP_PRESS:
@@ -398,6 +410,7 @@ public class CDC {
 	}
 	
 	public void addBullet(int clientnumber, Point2D.Double angle) {
+		System.out.println("add a bullet");
 		if(characters.get(searchClientNumber(clientnumber)).getCanAttack())
 		{
 			Role role = characters.get(clientnumber).getRole();
@@ -588,6 +601,10 @@ public class CDC {
 			int dead = characters.get(i).getDead();
 			changecharacters.add(new Protocols.Character(clientno, status, HP, location, debuff, kill, dead));
 		}
+		for(int i=0;i<changecharacters.size();i++)
+		{
+			System.out.println(changecharacters.get(i).location.getX() + " " + changecharacters.get(i).location.getY());
+		}
 		return changecharacters;
 	}
 	
@@ -600,6 +617,7 @@ public class CDC {
 			Point2D.Double location = bullets.get(i).getLocation();
 			changebullets.add(new Protocols.BulletT(team, role, location));
 		}
+		System.out.println("bullet size:" + changebullets.size());
 		return changebullets;
 	}
 	

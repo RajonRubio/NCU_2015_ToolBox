@@ -4,6 +4,9 @@ import java.awt.geom.Point2D;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import com.sun.swing.internal.plaf.synth.resources.synth_zh_TW;
+
 import Protocols.*;
 import SETTINGS.*;
 
@@ -219,6 +222,7 @@ public class Character {
 						break;
 				}
 			}
+			System.out.println(status + "x:" + location.getX() + "y: " + location.getY());
 		}
 	}
 }
