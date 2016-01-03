@@ -171,14 +171,9 @@ public class Character {
 		}
 	}
 	
-	public void TimerResume(BasicBlock map[][]) {
+	public void TimerStart(BasicBlock map[][]) {
 		timer = new Timer();
 		timer.schedule(new Move(map), new Date(), 16);
-	}
-
-	
-	public void TimerPause() {
-		timer.cancel();
 	}
 	
 	public class Move extends TimerTask {
@@ -228,10 +223,8 @@ public class Character {
 					case UP:
 						if(location.getY()-movespeed > 350 && location.getY()-movespeed < 1450 && map[(int)(location.getY()-movespeed+50)/50][(int)(location.getX()+50)/50].getType() == 0)
 						{
-							//System.out.println("NO."+clientnumber+"Y:"+location.getY());
 							location.setLocation(location.getX(),location.getY()-movespeed);
 						}
-						//System.out.println("NO."+clientnumber+"Y:"+location.getY());
 						break;
 					case DOWN:
 						if(location.getY()+movespeed > 350 && location.getY()+movespeed < 1450 && map[(int)(location.getY()+movespeed+50)/50][(int)(location.getX()+50)/50].getType() == 0)
@@ -252,11 +245,9 @@ public class Character {
 						}
 						break;
 					default:
-						//System.out.println(status);
 						break;
 				}
 			}
-			//System.out.println("NO." + clientnumber + "X:" + location.getX() + "Y:" + location.getY());
 		}
 	}
 }

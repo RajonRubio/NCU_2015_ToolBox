@@ -271,6 +271,7 @@ public class CDC {
 		for(int i=0;i<maximum;i++)
 		{
 			RandomLocation(i);
+			characters.get(i).TimerStart(map);
 		}
 		CharacterState cs = new CharacterState();
 		for(int i=0;i<characters.size();i++)
@@ -314,19 +315,15 @@ public class CDC {
 		{
 			case UP_PRESS:
 				characters.get(searchClientNumber(clientnumber)).setStatus(Status.UP);
-				characters.get(searchClientNumber(clientnumber)).TimerResume(map);
 				break;
 			case DOWN_PRESS:
 				characters.get(searchClientNumber(clientnumber)).setStatus(Status.DOWN);
-				characters.get(searchClientNumber(clientnumber)).TimerResume(map);
 				break;
 			case RIGHT_PRESS:
 				characters.get(searchClientNumber(clientnumber)).setStatus(Status.RIGHT);
-				characters.get(searchClientNumber(clientnumber)).TimerResume(map);
 				break;
 			case LEFT_PRESS:
 				characters.get(searchClientNumber(clientnumber)).setStatus(Status.LEFT);
-				characters.get(searchClientNumber(clientnumber)).TimerResume(map);
 				break;
 			case STANDING:
 				Status status = characters.get(searchClientNumber(clientnumber)).getState();
@@ -345,7 +342,6 @@ public class CDC {
 						characters.get(searchClientNumber(clientnumber)).setStatus(Status.LEFT_STOP);
 						break;
 				}
-				characters.get(searchClientNumber(clientnumber)).TimerPause();
 				break;
 		}
 	}
@@ -413,8 +409,8 @@ public class CDC {
 			Team team = characters.get(searchClientNumber(clientnumber)).getTeam();
 			double temp = Math.sqrt(angle.getX() * angle.getX() + angle.getY() * angle.getY());
 			angle.setLocation(angle.getX()/temp, angle.getY()/temp);
-			Point2D.Double location = characters.get(searchClientNumber(clientnumber)).getLocation();
-			System.out.println("X:"+location.getX()+"Y:"+location.getY());
+			Point2D.Double location = new Point2D.Double();
+			location.setLocation(characters.get(searchClientNumber(clientnumber)).getLocation().x, characters.get(searchClientNumber(clientnumber)).getLocation().y);
 			Skill skill = Skill.NULL;
 			switch(role)
 			{
@@ -524,6 +520,7 @@ public class CDC {
 //						break;
 //				}
 				location.setLocation(location.getX()+bulletspeed*angle.getX(), location.getY()+bulletspeed*angle.getY());
+				//System.out.println("NO.1 X:"+characters.get(i).getLocation().getX()+"Y:"+characters.get(i).getLocation().getY());
 				//System.out.println("X:"+location.getX()+"Y:"+location.getY());
 				bullets.get(i).setLocation(location);
 			}
