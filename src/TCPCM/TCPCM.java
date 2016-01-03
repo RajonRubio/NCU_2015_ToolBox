@@ -167,7 +167,8 @@ public class TCPCM {
 						((RT)this.main.getCurrentState()).claimKill(killer, victim);
 						break;
 					case GAME_OVER:
-						// ask game scene to over
+						System.out.println("GameOver");
+						((RT)this.main.getCurrentState()).goNext();
 						break;
 					}
 				} catch (ClassNotFoundException e) {

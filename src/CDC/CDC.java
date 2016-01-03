@@ -570,6 +570,7 @@ public class CDC {
 			{
 				this.cancel();
 				try {
+					System.out.println("GG");
 					tcpsm.gameOver();
 				}catch (Exception e) {
 					e.printStackTrace();
