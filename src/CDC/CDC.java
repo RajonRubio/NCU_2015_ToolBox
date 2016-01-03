@@ -9,6 +9,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.sun.glass.ui.CommonDialogs.Type;
+import com.sun.media.jfxmedia.control.VideoDataBuffer;
 
 import Protocols.*;
 import Protocols.CharacterState.Person;
@@ -307,61 +308,43 @@ public class CDC {
 	}
 	
 	public void CharacterMove(int clientnumber, ServerAction action) {
-		Point2D.Double location = characters.get(searchClientNumber(clientnumber)).getLocation();
-		double x = location.getX(), y = location.getX();
-		double movespeed = characters.get(searchClientNumber(clientnumber)).getMoveSpeed();
-		boolean [] debuff = {true,false};
-		if(characters.get(searchClientNumber(clientnumber)).getDeBuff() == debuff)
+		switch(action)
 		{
-			switch(action)
-			{
-				case UP_PRESS:
-					location.setLocation(x+movespeed,y);
-					characters.get(searchClientNumber(clientnumber)).setStatus(Status.UP);
-					break;
-				case DOWN_PRESS:
-					location.setLocation(x-movespeed,y);
-					characters.get(searchClientNumber(clientnumber)).setStatus(Status.DOWN);
-					break;
-				case RIGHT_PRESS:
-					location.setLocation(x,y-movespeed);
-					characters.get(searchClientNumber(clientnumber)).setStatus(Status.RIGHT);
-					break;
-				case LEFT_PRESS:
-					location.setLocation(x,y+movespeed);
-					characters.get(searchClientNumber(clientnumber)).setStatus(Status.LEFT);
-					break;
-				default:
-					break;
-			}
-		}
-		else
-		{
-			switch(action)
-			{
-				case UP_PRESS:
-					location.setLocation(x-movespeed,y);
-					characters.get(searchClientNumber(clientnumber)).setStatus(Status.UP);
-					break;
-				case DOWN_PRESS:
-					location.setLocation(x+movespeed,y);
-					characters.get(searchClientNumber(clientnumber)).setStatus(Status.DOWN);
-					break;
-				case RIGHT_PRESS:
-					location.setLocation(x,y+movespeed);
-					characters.get(searchClientNumber(clientnumber)).setStatus(Status.RIGHT);
-					break;
-				case LEFT_PRESS:
-					location.setLocation(x,y-movespeed);
-					characters.get(searchClientNumber(clientnumber)).setStatus(Status.LEFT);
-					break;
-				default:
-					break;
-			}
-		}
-		if(map[(int)location.getY()/50][(int)location.getX()/50].getType() == 0)
-		{
-			characters.get(searchClientNumber(clientnumber)).setLocation(location);
+			case UP_PRESS:
+				characters.get(searchClientNumber(clientnumber)).setStatus(Status.UP);
+				characters.get(searchClientNumber(clientnumber)).TimerResume();
+				break;
+			case DOWN_PRESS:
+				characters.get(searchClientNumber(clientnumber)).setStatus(Status.DOWN);
+				characters.get(searchClientNumber(clientnumber)).TimerResume();
+				break;
+			case RIGHT_PRESS:
+				characters.get(searchClientNumber(clientnumber)).setStatus(Status.RIGHT);
+				characters.get(searchClientNumber(clientnumber)).TimerResume();
+				break;
+			case LEFT_PRESS:
+				characters.get(searchClientNumber(clientnumber)).setStatus(Status.LEFT);
+				characters.get(searchClientNumber(clientnumber)).TimerResume();
+				break;
+			case STANDING:
+				Status status = characters.get(searchClientNumber(clientnumber)).getState();
+				switch(status)
+				{
+					case UP:
+						characters.get(searchClientNumber(clientnumber)).setStatus(Status.UP_STOP);
+						break;
+					case DOWN:
+						characters.get(searchClientNumber(clientnumber)).setStatus(Status.DOWN_STOP);
+						break;
+					case RIGHT:
+						characters.get(searchClientNumber(clientnumber)).setStatus(Status.RIGHT_STOP);
+						break;
+					case LEFT:
+						characters.get(searchClientNumber(clientnumber)).setStatus(Status.LEFT_STOP);
+						break;
+				}
+				characters.get(searchClientNumber(clientnumber)).TimerPause();
+				break;
 		}
 	}
 	
@@ -517,7 +500,13 @@ public class CDC {
 						break;
 					case 1:
 						changebullet.add(i);
-						//bullets.add(new Bullet(bullets.get(i).getClientNumber(), bullets.get(i).getTeam(), bullets.get(i).getRole(), bullets.get(i).getLocation(), Skill.NULL, angle, 1, bullets.get(i).getAttack()));
+						for(int j=0;j<=4;j++)
+						{
+							double rx = (angle.getX() * Math.cos(45)) - (angle.getY() * Math.sin(45));
+						    double ry = (angle.getX() * Math.sin(45)) + (angle.getY() * Math.cos(45));
+						    angle.setLocation(rx, ry);
+							bullets.add(new Bullet(bullets.get(i).getClientNumber(), bullets.get(i).getTeam(), bullets.get(i).getRole(), location, bulletspeed, Skill.NULL, angle, 1, bullets.get(i).getAttack()));
+						}			
 						break;
 					case 2:
 						angle.setLocation(-angle.getX(), angle.getY());
@@ -579,6 +568,7 @@ public class CDC {
 			}
 			else
 			{
+				this.cancel();
 				try {
 					tcpsm.gameOver();
 				}catch (Exception e) {

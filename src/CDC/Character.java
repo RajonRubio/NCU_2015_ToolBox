@@ -1,6 +1,7 @@
 package CDC;
 
 import java.awt.geom.Point2D;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import Protocols.*;
@@ -23,6 +24,7 @@ public class Character {
 	private int dead = 0;
 	private int time = 0;
 	private boolean ready = false;
+	Timer timer = new Timer();
 	
 	public Character(int clientnumber, String name) {
 		this.clientnumber = clientnumber;
@@ -163,6 +165,60 @@ public class Character {
 	public class ReadyAttack extends TimerTask {
 		public void run() {
 			canattack = true;
+		}
+	}
+	
+	public void TimerResume() {
+		timer.schedule(new Move(), new Date(), 1000);
+	}
+
+	
+	public void TimerPause() {
+		timer.cancel();
+	}
+	
+	public class Move extends TimerTask {
+		public void run() {
+			if(debuff[1] == true)
+			{
+				switch(status)
+				{
+					case UP:
+						location.setLocation(location.getX()+movespeed,location.getY());
+						break;
+					case DOWN:
+						location.setLocation(location.getX()-movespeed,location.getY());
+						break;
+					case RIGHT:
+						location.setLocation(location.getX(),location.getY()-movespeed);
+						break;
+					case LEFT:
+						location.setLocation(location.getX(),location.getY()+movespeed);
+						break;
+					default:
+						break;
+				}
+			}
+			else
+			{
+				switch(status)
+				{
+					case UP:
+						location.setLocation(location.getX()-movespeed,location.getY());
+						break;
+					case DOWN:
+						location.setLocation(location.getX()+movespeed,location.getY());
+						break;
+					case RIGHT:
+						location.setLocation(location.getX(),location.getY()+movespeed);
+						break;
+					case LEFT:
+						location.setLocation(location.getX(),location.getY()-movespeed);
+						break;
+					default:
+						break;
+				}
+			}
 		}
 	}
 }
