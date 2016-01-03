@@ -47,6 +47,16 @@ public class UDPBC {
         timer.schedule(do_update, UPDATE_DELAY, UPDATE_DELAY);
     }
 
+    public void stop() {
+        this.tcp_server = null;
+        this.data_center = null;
+        this.timer.cancel();
+        this.timer = null;
+        this.do_update = null;
+        this.socket.close();
+        this.socket = null;
+    }
+
     void get_servers() {
         ArrayList<String> ip_tables = tcp_server.getClientIPTable();
         servers = new ArrayList<InetAddress>();
