@@ -1,6 +1,7 @@
 package RT;
 
 import java.awt.Font;
+import java.net.SocketException;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
@@ -51,7 +52,11 @@ public class RT extends BasicGameState{
 		this.dom = dom;
 		spritere = new SPRITERE(dom);
 		scenere = new SCENERE(dom);
-		//udpus = new UDPUS(dom);
+		try {
+			udpus = new UDPUS(5000, dom);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
