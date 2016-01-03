@@ -3,19 +3,23 @@ package UDPUS;
 import DOM.Bullet;
 import DOM.DOM;
 import SDM.SDM;
+
 import Protocols.BulletT;
 import Protocols.Character;
 import Protocols.WoodBox;
 
-import java.io.ObjectInputStream;
-import java.io.ByteArrayInputStream;
-import java.net.DatagramSocket;
-import java.net.DatagramPacket;
-import java.io.IOException;
-import java.net.SocketException;
 import java.util.ArrayList;
 
-public class UDPUS {
+import java.io.ObjectInputStream;
+import java.io.ByteArrayInputStream;
+
+import java.net.DatagramSocket;
+import java.net.DatagramPacket;
+
+import java.io.IOException;
+import java.net.SocketException;
+
+public class UDPUS extends Thread {
     DOM dynamic_object;
 
     int port;
@@ -29,6 +33,10 @@ public class UDPUS {
         this.MTU = 1500;
         this.socket = new DatagramSocket(port);
     }
+
+	public void run() {
+		init();
+	}
 
     public void init() {
         while (true) {
