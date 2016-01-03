@@ -369,13 +369,14 @@ public class CDC {
 				}
 			}
 		}
-		int type = map[(int)(b_x+s*a_x+30)][(int)(b_y)].getType();
+		System.out.println((int)(b_x+s*a_x+30)/50 +"  "+(int)(b_y)/50);
+		int type = map[(int)(b_x+s*a_x+30)/50][(int)(b_y)/50].getType();
 		if(type == 1 || type == 2 || type ==3)
 		{
 			ChangeCollisiontime(i);
 			return 2;
 		}
-		type = map[(int)(b_x)][(int)(b_y+s*a_y+30)].getType();
+		type = map[(int)(b_x)/50][(int)(b_y+s*a_y+30)/50].getType();
 		if(type == 1 || type == 2 || type ==3)
 		{
 			ChangeCollisiontime(i);
