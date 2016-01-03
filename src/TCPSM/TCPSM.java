@@ -244,6 +244,7 @@ public class TCPSM {
 				case DOWN_PRESS:
 				case RIGHT_PRESS:
 				case LEFT_PRESS:
+				case STANDING:
 					cdc.CharacterMove(this.id, code);
 					break;
 				case ATTACK:

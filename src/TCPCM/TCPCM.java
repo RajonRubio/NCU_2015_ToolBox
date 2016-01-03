@@ -1,5 +1,6 @@
 package TCPCM;
 
+import java.awt.geom.Point2D;
 import java.io.*;
 import java.net.*;
 import java.util.Timer;
@@ -55,11 +56,10 @@ public class TCPCM {
 		}
 	}
 	
-	public void attack(int x, int y) {
+	public void attack(Point2D.Double v) {
 		try {
 			writer.writeObject(ServerAction.ATTACK);
-			writer.writeInt(x);
-			writer.writeInt(y);
+			writer.writeObject(v);
 			writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
