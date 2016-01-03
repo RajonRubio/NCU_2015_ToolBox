@@ -54,6 +54,7 @@ public class RT extends BasicGameState{
 		scenere = new SCENERE(dom);
 		try {
 			udpus = new UDPUS(5000, dom);
+			udpus.start();
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
