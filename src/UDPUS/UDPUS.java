@@ -6,6 +6,7 @@ import SDM.SDM;
 
 import Protocols.BulletT;
 import Protocols.Character;
+import Protocols.Command;
 import Protocols.WoodBox;
 
 import java.util.ArrayList;
@@ -45,13 +46,16 @@ public class UDPUS extends Thread {
     }
 
     void do_update() {
-        Object object = recieve_object();
+        Command command = recieve_object();
+        String type = command.get_type();
 
-        if (object instanceof BulletT) {
-            update_bullet((BulletT)object);
-        } else if (object instanceof Character) {
-            update_character((Character)object);
-        } else if (object instanceof WoodBox) {
+        if (type.equals("Bullet")) {
+	    System.out.println("receive a bullet");
+            update_bullet((BulletT)command);
+        } else if (type.equals("Character")) {
+            System.out.println("receive a character");
+            update_character((Character)command);
+        } else if (type.equals("WoodBox")) {
             //update_woodbox((WoodBox)object);
         }
     }
@@ -64,6 +68,7 @@ public class UDPUS extends Thread {
     }
 
     void update_character(Character character) {
+    	System.out.println("clientno: " + character.clientno + ", LocationX: " + character.location.x + ", LocationY: " + character.location.y);
         dynamic_object.updateVirtualCharacter(character.clientno,
                                               character.status.ordinal(),
                                               character.location,
@@ -78,16 +83,16 @@ public class UDPUS extends Thread {
     //
     //}
 
-    Object recieve_object() {
+    Command recieve_object() {
         this.buf = new byte[MTU];
-        Object object = null;
+        Command command = new Command("Null");
 
         DatagramPacket packet = new DatagramPacket(buf, MTU);
 
         try {
-            System.out.println("update");
+            //System.out.println("update");
             socket.receive(packet);
-            System.out.println("We receive a message from " + packet.getAddress().getHostAddress());
+            //System.out.println("We receive a message from " + packet.getAddress().getHostAddress());
         } catch (IOException exception) {
             assert false;
             System.out.println("Receive data fail.");
@@ -96,14 +101,14 @@ public class UDPUS extends Thread {
         try {
             ByteArrayInputStream baos = new ByteArrayInputStream(this.buf);
             ObjectInputStream oos = new ObjectInputStream(baos);
-            object = oos.readObject();
+            command = (Command)oos.readObject();
         } catch (IOException exception) {
             assert false;
         } catch (ClassNotFoundException exception) {
             assert false;
         }
 
-        return object;
+        return command;
     }
 }
 
