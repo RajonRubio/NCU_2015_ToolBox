@@ -347,20 +347,21 @@ public class CDC {
 	}
 	
 	public int checkCollision(int i) {
-		double b_x = bullets.get(i).getLocation().getX();
-		double b_y = bullets.get(i).getLocation().getY();
-		double a_x = bullets.get(i).getAngle().getX();
-		double a_y = bullets.get(i).getAngle().getY();
+		double b_x = bullets.get(i).getLocation().x;
+		double b_y = bullets.get(i).getLocation().y;
+		double a_x = bullets.get(i).getAngle().x;
+		double a_y = bullets.get(i).getAngle().y;
 		double s = bullets.get(i).getBulletspeed();
 		for(int j=0;j<maximum;j++)
 		{
-			double c_x = characters.get(j).getLocation().getX();
-			double c_y = characters.get(j).getLocation().getY();
-			if((b_x+s*a_x+30 >= c_x && b_x+s*a_x+30 <= c_x+25) || (b_y+s*a_y+30 >= c_y && b_y+s*a_y+30 <= c_y+25))
+			double c_x = characters.get(j).getLocation().x;
+			double c_y = characters.get(j).getLocation().y;
+			if(b_x+s*a_x+30 >= c_x-16 && b_x+s*a_x+30 <= c_x+16 && b_y+s*a_y+30 >= c_y-16 && b_y+s*a_y+30 <= c_y+16)
 			{
-				if(characters.get(j).getTeam() == bullets.get(i).getTeam())
+				if(characters.get(j).getTeam() != bullets.get(i).getTeam())
 				{
-					Attack(bullets.get(i).getClientNumber(), characters.get(i).getClientNumber(), bullets.get(i).getAttack(), bullets.get(i).getSkill());
+					System.out.println("attack");
+					Attack(bullets.get(i).getClientNumber(), characters.get(j).getClientNumber(), bullets.get(i).getAttack(), bullets.get(i).getSkill());
 					if(bullets.get(i).getSkill() == Skill.PENETRATE)
 					{
 						return -1;
@@ -373,15 +374,25 @@ public class CDC {
 				}
 			}
 		}
-		System.out.println((int)((b_x+s*a_x+30)-480)/50 +"  "+(int)((b_y)-360)/50);
-		int type = map[(int)((b_y)-360)/50][(int)((b_x+s*a_x+30)-480)/50].getType();
-		if(type == 1 || type == 2 || type ==3)
+		System.out.println((int)((b_x+s*a_x+30)+50)/50 +"  "+(int)((b_y)+50)/50);
+		if((b_x+s*a_x+30) < 350 || (b_x+s*a_x+30) > 4450)
 		{
 			ChangeCollisiontime(i);
 			return 2;
 		}
-		type = map[(int)((b_y+s*a_y+30)-360)/50][(int)((b_x)-480)/50].getType();
-		if(type == 1 || type == 2 || type ==3)
+		int type = map[(int)((b_y)+50)/50][(int)((b_x+s*a_x+30)+50)/50].getType();
+		if(type == 1 || type == 2 || type == 3 || type == 4)
+		{
+			ChangeCollisiontime(i);
+			return 2;
+		}
+		if((b_y+s*a_y+30) < 400 || (b_y+s*a_y+30) > 1400)
+		{
+			ChangeCollisiontime(i);
+			return 3;
+		}
+		type = map[(int)((b_y+s*a_y+30)+50)/50][(int)((b_x)+50)/50].getType();
+		if(type == 1 || type == 2 || type == 3 || type == 4)
 		{
 			ChangeCollisiontime(i);
 			return 3;
@@ -395,9 +406,10 @@ public class CDC {
 		{
 			changebullet.add(i);
 		}
-		else if(c <= 4 && c >= 1)
+		else
 		{
-			bullets.get(i).setCollisiontime(c-1);
+			c -= 1;
+			bullets.get(i).setCollisiontime(c);
 		}
 	}
 	
@@ -435,7 +447,8 @@ public class CDC {
 	public void Attack(int clientnumber1, int clientnumber2, int attack, Skill skill) {
 		boolean debuff[] = {false,false};
 		int HP = characters.get(searchClientNumber(clientnumber2)).getNowHP();
-		characters.get(searchClientNumber(clientnumber2)).setNowHP(HP - attack);
+		HP -= attack;
+		characters.get(searchClientNumber(clientnumber2)).setNowHP(HP);
 		Timer timer = new Timer();
 		switch(skill)
 		{
@@ -494,40 +507,40 @@ public class CDC {
 				location = bullets.get(i).getLocation();
 				bulletspeed = bullets.get(i).getBulletspeed();
 				angle = bullets.get(i).getAngle();
-//				int type = checkCollision(i);
-//				switch(type)
-//				{
-//					case -1:
-//						break;
-//					case 0:
-//						changebullet.add(i);
-//						break;
-//					case 1:
-//						changebullet.add(i);
-//						for(int j=0;j<=4;j++)
-//						{
-//							double rx = (angle.getX() * Math.cos(45)) - (angle.getY() * Math.sin(45));
-//						    double ry = (angle.getX() * Math.sin(45)) + (angle.getY() * Math.cos(45));
-//						    angle.setLocation(rx, ry);
-//							bullets.add(new Bullet(bullets.get(i).getClientNumber(), bullets.get(i).getTeam(), bullets.get(i).getRole(), location, bulletspeed, Skill.NULL, angle, 1, bullets.get(i).getAttack()));
-//						}			
-//						break;
-//					case 2:
-//						angle.setLocation(-angle.getX(), angle.getY());
-//						break;
-//					case 3:
-//						angle.setLocation(angle.getX(), -angle.getY());
-//						break;
-//				}
+				int type = checkCollision(i);
+				switch(type)
+				{
+					case -1:
+						break;
+					case 0:
+						changebullet.add(i);
+						break;
+					case 1:
+						changebullet.add(i);
+						for(int j=0;j<=4;j++)
+						{
+							double rx = (angle.getX() * Math.cos(45)) - (angle.getY() * Math.sin(45));
+						    double ry = (angle.getX() * Math.sin(45)) + (angle.getY() * Math.cos(45));
+						    angle.setLocation(rx, ry);
+							bullets.add(new Bullet(bullets.get(i).getClientNumber(), bullets.get(i).getTeam(), bullets.get(i).getRole(), location, bulletspeed, Skill.NULL, angle, 1, bullets.get(i).getAttack()));
+						}			
+						break;
+					case 2:
+						angle.setLocation(-angle.getX(), angle.getY());
+						break;
+					case 3:
+						angle.setLocation(angle.getX(), -angle.getY());
+						break;
+				}
 				location.setLocation(location.getX()+bulletspeed*angle.getX(), location.getY()+bulletspeed*angle.getY());
 				//System.out.println("NO.1 X:"+characters.get(i).getLocation().getX()+"Y:"+characters.get(i).getLocation().getY());
 				//System.out.println("X:"+location.getX()+"Y:"+location.getY());
 				bullets.get(i).setLocation(location);
 			}
-//			for(int i=0;i<changebullet.size();i++)
-//			{
-//				bullets.remove(changebullet.get(i));
-//			}
+			for(int i=0;i<changebullet.size();i++)
+			{
+				bullets.remove(changebullet.get(i));
+			}
 		}
 	}
 	
