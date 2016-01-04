@@ -107,6 +107,8 @@ public class RT extends BasicGameState{
 			}	
 		}
 		g.drawImage(Mouse, mouseX-15, mouseY-15);
+		g.setColor(Color.red);
+		g.drawString(""+tcpcm.XXXX, 50, 50);
 	}
 
 	@Override
