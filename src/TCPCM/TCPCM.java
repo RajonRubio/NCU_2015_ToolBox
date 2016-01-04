@@ -26,6 +26,7 @@ public class TCPCM {
 	private ObjectOutputStream writer = null;
 	private ObjectInputStream reader = null;
 	private DOM dom;
+	public int XXXX;
 	
 	public TCPCM(MAIN main,DOM dom) {
 		this.main = main;
@@ -159,9 +160,10 @@ public class TCPCM {
 					switch(action) {
 					case UPDATE_CHARACTER:
 						ArrayList<Protocols.Character> characters = (ArrayList<Protocols.Character>)reader.readObject();
-						for(Protocols.Character c : characters) {
+						for(Protocols.Character c:characters){
 							update_character(c);
 						}
+						XXXX++;
 						break;
 					case UPDATE_BULLET:
 						ArrayList<Protocols.BulletT> bulletTs = (ArrayList<Protocols.BulletT>)reader.readObject();
