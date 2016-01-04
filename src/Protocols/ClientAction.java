@@ -8,7 +8,9 @@ public enum ClientAction {
 	GAME_START,
 	GAME_KILL,
 	GAME_OVER,
-	HEART_BEAT
+	HEART_BEAT,
+	UPDATE_CHARACTER,
+	UPDATE_BULLET,
 }
 
 /*

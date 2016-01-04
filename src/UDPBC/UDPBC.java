@@ -3,18 +3,16 @@ package UDPBC;
 import TCPSM.TCPSM;
 import CDC.CDC;
 import Protocols.Bullets;
+import Protocols.ClientAction;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import java.net.InetAddress;
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
-
 import java.io.ObjectOutputStream;
 import java.io.ByteArrayOutputStream;
-
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -31,7 +29,7 @@ public class UDPBC {
 
     Timer timer;
     TimerTask do_update;
-    final int UPDATE_DELAY = 200;
+    final int UPDATE_DELAY = 20;
 
     public UDPBC(int port, TCPSM tcp_server, CDC data_center) throws SocketException {
         this.port = port;
@@ -73,11 +71,13 @@ public class UDPBC {
     }
 
     void update_all_info() {
-        ArrayList info = get_all_info();
+    	tcp_server.broadcastObject(ClientAction.UPDATE_CHARACTER, data_center.getCharacter());
+    	tcp_server.broadcastObject(ClientAction.UPDATE_BULLET, data_center.getBullets());
+        /*ArrayList info = get_all_info();
 
         for (Object obj : info) {
             send_all_server(obj);
-        }
+        }*/
     }
 
     ArrayList get_all_info() {

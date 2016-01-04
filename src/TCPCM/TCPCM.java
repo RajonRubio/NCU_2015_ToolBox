@@ -3,9 +3,14 @@ package TCPCM;
 import java.awt.geom.Point2D;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Timer;
 
+import DOM.Bullet;
 import DOM.DOM;
+import Protocols.BulletT;
+import Protocols.Bullets;
+import Protocols.Character;
 import Protocols.ServerAction;
 import Protocols.CharacterState;
 import Protocols.ClientAction;
@@ -122,6 +127,28 @@ public class TCPCM {
 			this.timer.cancel();
 			// disconnected
 		}
+		
+		void update_bullet(Bullets bullets) {
+	        ArrayList<BulletT> list = bullets.get_list();
+	        ArrayList<Bullet> bs = new ArrayList<Bullet>();
+	        for (BulletT bullet : bullets.get_list()) {
+	            Bullet b = new Bullet(bullet.team, bullet.role, bullet.location);
+	            bs.add(b);
+	        }
+	        dom.updateBullet(bs);
+	    }
+
+	    void update_character(Character character) {
+	    	//System.out.println("clientno: " + character.clientno + ", LocationX: " + character.location.x + ", LocationY: " + character.location.y);
+	        dom.updateVirtualCharacter(character.clientno,
+	                                              character.status.ordinal(),
+	                                              character.location,
+	                                              character.HP,
+	                                              character.time,
+	                                              character.debuff,
+	                                              character.kill,
+	                                              character.dead);
+	    }
 
 		@Override
 		public void run() {
@@ -131,6 +158,13 @@ public class TCPCM {
 				try {
 					action = (ClientAction)reader.readObject();
 					switch(action) {
+					case UPDATE_CHARACTER:
+						ArrayList<Protocols.Character> characters = (ArrayList<Protocols.Character>)reader.readObject();
+						break;
+					case UPDATE_BULLET:
+						ArrayList<Protocols.BulletT> bulletTs = (ArrayList<Protocols.BulletT>)reader.readObject();
+						
+						break;
 					case HEART_BEAT:
 						this.timeout = 10;
 						break;

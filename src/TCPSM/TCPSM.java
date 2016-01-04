@@ -128,6 +128,23 @@ public class TCPSM {
 		}
 	}
 	
+	/*
+	 * Called by CDC
+	 * broadcast Teamstate to all client
+	 */
+	public void broadcastObject(ClientAction action, Object t){
+		for(ClientHandler c : this.clients) {
+			try {
+				c.writer.writeObject(action);
+				c.writer.writeObject(t);
+//				c.writer.flush();
+				c.writer.reset();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public void killBroadcast(String killer, String victim) throws IOException {
 		for(ClientHandler c : this.clients) {
 			c.writer.writeObject(ClientAction.GAME_KILL);
