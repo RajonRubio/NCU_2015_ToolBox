@@ -128,10 +128,9 @@ public class TCPCM {
 			// disconnected
 		}
 		
-		void update_bullet(Bullets bullets) {
-	        ArrayList<BulletT> list = bullets.get_list();
+		void update_bullet(ArrayList<BulletT> list) {
 	        ArrayList<Bullet> bs = new ArrayList<Bullet>();
-	        for (BulletT bullet : bullets.get_list()) {
+	        for (BulletT bullet : list) {
 	            Bullet b = new Bullet(bullet.team, bullet.role, bullet.location);
 	            bs.add(b);
 	        }
@@ -160,10 +159,13 @@ public class TCPCM {
 					switch(action) {
 					case UPDATE_CHARACTER:
 						ArrayList<Protocols.Character> characters = (ArrayList<Protocols.Character>)reader.readObject();
+						for(Protocols.Character c : characters) {
+							update_character(c);
+						}
 						break;
 					case UPDATE_BULLET:
 						ArrayList<Protocols.BulletT> bulletTs = (ArrayList<Protocols.BulletT>)reader.readObject();
-						
+						update_bullet(bulletTs);
 						break;
 					case HEART_BEAT:
 						this.timeout = 10;
